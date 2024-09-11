@@ -10,25 +10,34 @@ plugins {
     `java-gradle-plugin`
 }
 
+
+group = "com.canonical"
+version = "0.1.1-SNAPSHOT"
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
+    implementation(libs.osdetector)
+    implementation(libs.commons.text)
     // Use JUnit Jupiter for testing.
-    implementation("org.apache.commons:commons-text:1.12.0")
-
     testImplementation(libs.junit.jupiter)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
 }
 
 gradlePlugin {
-    // Define the plugin
-    val plugin by plugins.creating {
-        id = "com.canonical.rockcraft.plugin"
-        implementationClass = "com.canonical.rockcraft.plugin.RockcraftPlugin"
+    plugins {
+        create("rockcraftPlugin") {
+            id = "com.canonical.rockcraft-plugin"
+            displayName = "ROCK plugin"
+            description = "Plugin for ROCK generation"
+            implementationClass = "com.canonical.rockcraft.plugin.RockcraftPlugin"
+        }
     }
 }
 

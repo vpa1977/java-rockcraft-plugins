@@ -6,4 +6,4 @@
  */
 
 rootProject.name = "rockcraft-plugin"
-include("plugin")
+include("rockcraft-plugin")

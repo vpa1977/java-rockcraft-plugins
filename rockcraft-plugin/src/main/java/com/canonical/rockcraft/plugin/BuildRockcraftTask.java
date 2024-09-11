@@ -7,6 +7,5 @@ public class BuildRockcraftTask extends DefaultTask {
 
     @TaskAction
     public void buildROCK() {
-
     }
 }

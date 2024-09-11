@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.io.FileWriter;
-import java.nio.file.Files;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
@@ -33,14 +32,16 @@ class RockcraftPluginFunctionalTest {
         writeString(getSettingsFile(), "");
         writeString(getBuildFile(),
             "plugins {" +
-            "  id('com.canonical.rockcraft.plugin')" +
+            "  id('com.canonical.rockcraft-plugin')" +
             "}");
 
         // Run the build
         GradleRunner runner = GradleRunner.create();
         runner.forwardOutput();
         runner.withPluginClasspath();
-        runner.withArguments("createRockcraft");
+        runner.withArguments("jar");
+        runner.withDebug(true);
+        runner.withArguments("--stacktrace");
         runner.withProjectDir(projectDir);
         BuildResult result = runner.build();
 

@@ -3,6 +3,10 @@
 
 [versions]
 junit-jupiter = "5.10.0"
+commons-text = "1.12.0"
+osdetector = "1.7.3"
 
 [libraries]
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+commons-text = { module="org.apache.commons:commons-text", version.ref = "commons-text" }
+osdetector = { module ="com.google.gradle:osdetector-gradle-plugin", version.ref = "osdetector" }

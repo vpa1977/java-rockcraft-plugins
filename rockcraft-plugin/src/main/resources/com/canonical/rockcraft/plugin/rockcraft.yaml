@@ -4,7 +4,7 @@ summary: ${project.summary}
 description: |
   ${project.description}
 
-platforms: 
+platforms:
   ${project.platforms}
 
 base: bare
@@ -18,7 +18,7 @@ parts:
     plugin: dump
     override-build: |
       mkdir -p ${CRAFT_PART_INSTALL}/jars
-      ${copy} ${project.output} ${CRAFT_PART_INSTALL}/jars/
+      ${project.copyoutput}
 
   gradle/rockcraft/runtime:
     after:
@@ -26,7 +26,7 @@ parts:
       - deps
     plugin: jlink
     jlink-jars:
-      ${}
+      ${project.output}
 
   deps:
     plugin: nil
