@@ -3,21 +3,22 @@
  */
 package com.canonical.rockcraft.plugin;
 
-import org.gradle.testfixtures.ProjectBuilder;
-import org.gradle.api.Project;
+import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * A simple unit test for the 'com.canonical.rockcraft.plugin.greeting' plugin.
- */
-class RockcraftPluginTest {
-    @Test void pluginRegistersATask() {
-        // Create a test project and apply the plugin
-        Project project = ProjectBuilder.builder().build();
-        project.getPlugins().apply("com.canonical.rockcraft.plugin.greeting");
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class RockcraftPluginTest extends BaseRockcraftTest {
+
+    @Test
+    void canRunTask() throws IOException {
+
+        // Run the build
+        BuildResult result = runBuild("jar");
 
         // Verify the result
-        assertNotNull(project.getTasks().findByName("greeting"));
+        assertTrue(result.getOutput().contains("Foobar"));
     }
 }
