@@ -3,19 +3,12 @@
  */
 package com.canonical.rockcraft.plugin;
 
-import com.google.gradle.osdetector.OsDetectorPlugin;
 import com.google.gradle.osdetector.OsDetector;
-
-import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaBasePlugin;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-
+import com.google.gradle.osdetector.OsDetectorPlugin;
 import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+
+import java.io.IOException;
 
 /**
  * A simple 'hello world' plugin.
@@ -24,19 +17,43 @@ public class RockcraftPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
 
-        project.getPlugins().apply(JavaBasePlugin.class);
         project.getPlugins().apply(OsDetectorPlugin.class);
 
-        OsDetector detector = project.getExtensions().getByType(OsDetector.class);
+        var options = project.getExtensions().create("rockcraft", RockcraftOptions.class);
 
-        // Register a task
-        var createRockcraft =
-            project.getTasks().register("createRockcraft", CreateRockcraftTask.class);
+        var detector = project.getExtensions().getByType(OsDetector.class);
 
-        // run task after jar
-        project.getTasks().
-            getByName("jar").
-            finalizedBy(createRockcraft);
+        if (!"linux".equals(detector.getOs()))
+            throw new UnsupportedOperationException("Rockcraft is only supported on linux systems");
+
+        var checkTask = project.getTasks().register("checkRockcraft", s -> {
+            s.doFirst( x -> {
+                try {
+                    var pb = new ProcessBuilder("rockcraft", "--version");
+                    pb.inheritIO();
+                    var versionProcess = pb.start();
+                    int ret = versionProcess.waitFor();
+                    if (ret != 0)
+                        throw new UnsupportedOperationException("Please install rockcraft 'snap install rockcraft'.");
+                }
+                catch (IOException | InterruptedException e) {
+                    throw new UnsupportedOperationException(e.getMessage());
+                }
+            });
+        });
+
+        var buildTasks = project.getTasksByName("build", false);
+        if (buildTasks.isEmpty())
+            throw new UnsupportedOperationException("Rockcraft plugin requires build task");
+
+        for (var t : buildTasks)
+            t.finalizedBy(checkTask);
+
+        var tasks = project.getTasksByName("jar", false);
+        if (tasks.isEmpty())
+            throw new UnsupportedOperationException("Rockcraft plugin requires jar task");
+        for (var t : tasks)
+            t.finalizedBy(project.getTasks().register("createRockcraft", CreateRockcraftTask.class, options));
     }
 
 }

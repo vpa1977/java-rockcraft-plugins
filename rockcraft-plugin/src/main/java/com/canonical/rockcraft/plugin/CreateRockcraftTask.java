@@ -1,21 +1,20 @@
 package com.canonical.rockcraft.plugin;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.util.HashMap;
+import org.apache.commons.text.StringSubstitutor;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
-import org.apache.commons.text.StringSubstitutor;
+import java.io.*;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CreateRockcraftTask extends DefaultTask {
 
     private static final String ROCKCRAFT_YAML = "rockcraft.yaml";
+
+    private RockcraftOptions options;
 
     private String readTemplate() throws IOException {
         try (var templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ROCKCRAFT_YAML)))) {
@@ -29,28 +28,38 @@ public class CreateRockcraftTask extends DefaultTask {
         }
     }
 
-    @TaskAction
-    public void writeRockcraft() throws IOException {
-        SourceSet mainSourceSet = getProject().getExtensions().getByType(SourceSet.class);
-        String mainOutput = mainSourceSet.getOutput().getAsPath();
-
-        try (BufferedWriter wr = new BufferedWriter(new FileWriter(Path.of(mainOutput, ROCKCRAFT_YAML).toFile()))) {
-            wr.write(createRockcraft());
-        }
-
+    public CreateRockcraftTask(RockcraftOptions options){
+        this.options = options;
     }
 
-    private String createRockcraft() throws IOException {
+    @TaskAction
+    public void writeRockcraft() {
+        getProject().getConfigurations().getByName("archives", archives -> {
+            try {
+                var buildDir = getProject().getLayout().getBuildDirectory();
+                try (BufferedWriter wr = new BufferedWriter(new FileWriter(buildDir.file(ROCKCRAFT_YAML).get().getAsFile()))) {
+                    wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), archives.getArtifacts().getFiles().getFiles()));
+                }
+            } catch (IOException e ) {
+                throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
+            }
+        });
+    }
+
+    private String createRockcraft(Path root, Set<File> files) throws IOException {
+        Set<String> relativeJars = new HashSet<String>();
+        for (var file : files)
+            relativeJars.add(root.relativize(file.toPath()).toString());
         var variables = new HashMap<String, String>();
         variables.put("project.name", getProject().getName());
         variables.put("project.version", String.valueOf(getProject().getVersion()));
         variables.put("project.summary", getProjectSummary());
         variables.put("project.description", getProjectDescription());
         variables.put("project.platforms", getProjectPlatforms());
-        variables.put("project.service", getProjectService());
-        variables.put("project.copyoutput", getProjectCopyOutput());
-        variables.put("project.output", getProjectOutput());
-        variables.put("project.output", getProjectDeps());
+        variables.put("project.service", getProjectService(relativeJars));
+        variables.put("project.copyoutput", getProjectCopyOutput(relativeJars));
+        variables.put("project.output", getProjectOutput(files));
+        variables.put("project.deps", getProjectDeps());
 
         return StringSubstitutor.replace(readTemplate(), variables);
     }
@@ -59,17 +68,27 @@ public class CreateRockcraftTask extends DefaultTask {
      * Return list of the chisel slices
      */
     private String getProjectDeps() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectDeps'");
+        var buffer = new StringBuffer();
+        for (var dep : options.getSlices()) {
+            if (!buffer.isEmpty())
+                buffer.append(" ");
+            buffer.append(dep);
+        }
+        return buffer.toString();
     }
 
     /**
-     * Get yaml list of the project output [ foo.jar, bar.jar ]
-     * @return
+     * Get yaml list of the project output
+     * @return [ jars/foo.jar, jars/bar.jar ]
      */
-    private String getProjectOutput() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectOutput'");
+    private String getProjectOutput(Set<File> outputFiles) {
+        var buffer = new StringBuffer();
+        for (var file : outputFiles) {
+            if (!buffer.isEmpty())
+                buffer.append(", ");
+            buffer.append(String.format("jars/{}", file.getName()));
+        }
+        return String.format("[ {} ]", buffer.toString().trim());
     }
 
     /**
@@ -78,28 +97,50 @@ public class CreateRockcraftTask extends DefaultTask {
      * cp bar.jar ${CRAFT_PART_INSTALL}/jars
      * @return
      */
-    private String getProjectCopyOutput() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectCopyOutput'");
+    private String getProjectCopyOutput(Set<String> relativeJars) {
+        var buffer = new StringBuffer();
+        for (var jar : relativeJars) {
+            buffer.append(String.format("cp {} ${CRAFT_PART_INSTALL}/jars", jar));
+        }
+        return buffer.toString();
     }
 
-    private String getProjectService() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectService'");
+    private String getProjectService(Set<String> relativeJars) {
+        String command = options.getCommand();
+        var jarList = relativeJars.stream().filter( x -> !x.endsWith("-plain.jar")).toList();
+        if (command == null || command.isBlank()) {
+            if (jarList.size() == 1) {
+                command = String.format("/usr/bin/java -jar {}", jarList.iterator().next());
+            } else
+                throw new UnsupportedOperationException("Rockcraft plugin requires either single jar output or command defined");
+        }
+
+        return String.format("""
+                services:
+                  {}:
+                    override: replace
+                    summary: {}
+                    startup: enabled
+                    command: {} 
+                """, getProject().getName(), options.getSummary(), command);
     }
 
     private String getProjectPlatforms() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectPlatforms'");
+        if (options.getArchitectures().isEmpty())
+            return "  amd:";
+
+        var buffer = new StringBuffer();
+        for (var item : options.getArchitectures()) {
+            buffer.append(String.format("  {}", item));
+        }
+        return buffer.toString();
     }
 
     private String getProjectSummary() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectSummary'");
+        return options.getSummary();
     }
 
     private String getProjectDescription() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProjectDescription'");
+        return options.getDescription();
     }
 }
