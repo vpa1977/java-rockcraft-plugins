@@ -4,17 +4,18 @@ import org.apache.commons.text.StringSubstitutor;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
+import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CreateRockcraftTask extends DefaultTask {
+public abstract class CreateRockcraftTask extends DefaultTask {
 
     private static final String ROCKCRAFT_YAML = "rockcraft.yaml";
 
-    private RockcraftOptions options;
+    private final RockcraftOptions options;
 
     private String readTemplate() throws IOException {
         try (var templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ROCKCRAFT_YAML)))) {
@@ -28,7 +29,12 @@ public class CreateRockcraftTask extends DefaultTask {
         }
     }
 
-    public CreateRockcraftTask(RockcraftOptions options){
+    private RockcraftOptions getOptions() {
+        return options;
+    }
+
+    @Inject
+    public CreateRockcraftTask(RockcraftOptions options) {
         this.options = options;
     }
 
@@ -46,20 +52,20 @@ public class CreateRockcraftTask extends DefaultTask {
         });
     }
 
-    private String createRockcraft(Path root, Set<File> files) throws IOException {
+    protected String createRockcraft(Path root, Set<File> files) throws IOException {
         Set<String> relativeJars = new HashSet<String>();
         for (var file : files)
             relativeJars.add(root.relativize(file.toPath()).toString());
         var variables = new HashMap<String, String>();
-        variables.put("project.name", getProject().getName());
-        variables.put("project.version", String.valueOf(getProject().getVersion()));
-        variables.put("project.summary", getProjectSummary());
-        variables.put("project.description", getProjectDescription());
-        variables.put("project.platforms", getProjectPlatforms());
-        variables.put("project.service", getProjectService(relativeJars));
-        variables.put("project.copyoutput", getProjectCopyOutput(relativeJars));
-        variables.put("project.output", getProjectOutput(files));
-        variables.put("project.deps", getProjectDeps());
+        variables.put("name", getProject().getName());
+        variables.put("version", String.valueOf(getProject().getVersion()));
+        variables.put("summary", getProjectSummary());
+        variables.put("description", getProjectDescription());
+        variables.put("platforms", getProjectPlatforms());
+        variables.put("service", getProjectService(relativeJars));
+        variables.put("copyoutput", getProjectCopyOutput(relativeJars));
+        variables.put("output", getProjectOutput(files));
+        variables.put("deps", getProjectDeps());
 
         return StringSubstitutor.replace(readTemplate(), variables);
     }
@@ -69,7 +75,7 @@ public class CreateRockcraftTask extends DefaultTask {
      */
     private String getProjectDeps() {
         var buffer = new StringBuffer();
-        for (var dep : options.getSlices()) {
+        for (var dep : getOptions().getSlices()) {
             if (!buffer.isEmpty())
                 buffer.append(" ");
             buffer.append(dep);
@@ -106,7 +112,7 @@ public class CreateRockcraftTask extends DefaultTask {
     }
 
     private String getProjectService(Set<String> relativeJars) {
-        String command = options.getCommand();
+        String command = getOptions().getCommand();
         var jarList = relativeJars.stream().filter( x -> !x.endsWith("-plain.jar")).toList();
         if (command == null || command.isBlank()) {
             if (jarList.size() == 1) {
@@ -121,26 +127,26 @@ public class CreateRockcraftTask extends DefaultTask {
                     override: replace
                     summary: {}
                     startup: enabled
-                    command: {} 
-                """, getProject().getName(), options.getSummary(), command);
+                    command: {}
+                """, getProject().getName(), getOptions().getSummary(), command);
     }
 
     private String getProjectPlatforms() {
-        if (options.getArchitectures().isEmpty())
+        if (getOptions().getArchitectures().isEmpty())
             return "  amd:";
 
         var buffer = new StringBuffer();
-        for (var item : options.getArchitectures()) {
+        for (var item : getOptions().getArchitectures()) {
             buffer.append(String.format("  {}", item));
         }
         return buffer.toString();
     }
 
     private String getProjectSummary() {
-        return options.getSummary();
+        return getOptions().getSummary();
     }
 
     private String getProjectDescription() {
-        return options.getDescription();
+        return getOptions().getDescription();
     }
 }
