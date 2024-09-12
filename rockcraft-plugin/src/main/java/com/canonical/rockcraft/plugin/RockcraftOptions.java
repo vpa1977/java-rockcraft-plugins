@@ -7,7 +7,17 @@ public class RockcraftOptions {
     private String summary = "";
     private String description = "";
     private String command = "";
-    private String depsource = "";
+    private String source;
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
+    private String branch;
     // @TODO: make architecture enumeration type-safe
     private List<String> architectures = new ArrayList<String>();
     private List<String> slices = new ArrayList<String>();
@@ -51,11 +61,11 @@ public class RockcraftOptions {
         this.slices = slices;
     }
 
-    public String getDepsource() {
-        return depsource;
+    public String getSource() {
+        return source;
     }
 
-    public void setDepsource(String depsource) {
-        this.depsource = depsource;
+    public void setSource(String depsource) {
+        this.source = source;
     }
 }
