@@ -1,16 +1,15 @@
 package com.canonical.rockcraft.plugin;
 
-import org.apache.commons.text.StringSubstitutor;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -35,7 +34,8 @@ public abstract class CreateRockcraftTask extends DefaultTask {
             try {
                 var buildDir = getProject().getLayout().getBuildDirectory();
                 try (BufferedWriter wr = new BufferedWriter(new FileWriter(buildDir.file(ROCKCRAFT_YAML).get().getAsFile()))) {
-                    wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), archives.getArtifacts().getFiles().getFiles()));
+                    var files = archives.getArtifacts().getFiles().getFiles().stream().filter( x -> x.getName().endsWith("jar")).toList();
+                    wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), files));
                 }
             } catch (IOException e ) {
                 throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
@@ -43,8 +43,8 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         });
     }
 
-    protected String createRockcraft(Path root, Set<File> files) throws IOException {
-        Set<String> relativeJars = new HashSet<String>();
+    protected String createRockcraft(Path root, List<File> files) throws IOException {
+        List<String> relativeJars = new ArrayList<String>();
         for (var file : files)
             relativeJars.add(root.relativize(file.toPath()).toString());
 
@@ -52,13 +52,25 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         rockcraft.put("name", getProject().getName());
         rockcraft.put("version", String.valueOf(getProject().getVersion()));
         rockcraft.put("summary", getOptions().getSummary());
-        rockcraft.put("description", getOptions().getDescription());
-        rockcraft.put("platforms", getOptions().getArchitectures());
+        var descriptionFile = getProject().getLayout().getProjectDirectory().file(getOptions().getDescription()).getAsFile();
+        if (!descriptionFile.exists())
+            throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
+        rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
+        rockcraft.put("platforms", getPlatforms());
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
         rockcraft.put("services", getProjectService(relativeJars));
         rockcraft.put("parts", getProjectParts(files, relativeJars));
         return new Yaml().dump(rockcraft);
+    }
+
+    private Map<String, Object> getPlatforms() {
+        var archs = new HashMap<String, Object>();
+        for (var a : getOptions().getArchitectures())
+            archs.put(a, "");
+        if (archs.isEmpty())
+            archs.put("amd64", "");
+        return archs;
     }
 
     /**
@@ -80,17 +92,17 @@ public abstract class CreateRockcraftTask extends DefaultTask {
      * cp bar.jar ${CRAFT_PART_INSTALL}/jars
      * @return
      */
-    private String getProjectCopyOutput(Set<String> relativeJars) {
+    private String getProjectCopyOutput(List<String> relativeJars) {
         var buffer = new StringBuffer();
         buffer.append("mkdir -p ${CRAFT_PART_INSTALL}/jars\n");
         for (var jar : relativeJars) {
-            buffer.append(String.format("cp {} ${CRAFT_PART_INSTALL}/jars\n", jar));
+            buffer.append(String.format("cp %s ${CRAFT_PART_INSTALL}/jars\n", jar));
         }
 
         return buffer.toString();
     }
 
-    private Map<String, Object> getProjectParts(Set<File> files, Set<String> relativeJars) {
+    private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
         var parts = new HashMap<String, Object>();
         parts.put("gradle/rockcraft/dump", getDumpPart(relativeJars));
         parts.put("gradle/rockcraft/runtime", getRuntimePart(files));
@@ -98,7 +110,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         return parts;
     }
 
-    private Map<String, Object> getDumpPart(Set<String> relativeJars) {
+    private Map<String, Object> getDumpPart(List<String> relativeJars) {
         var part = new HashMap<String, Object>();
         part.put("source", ".");
         part.put("plugin", "nil");
@@ -106,10 +118,10 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         return part;
     }
 
-    private Map<String, Object> getRuntimePart(Set<File> jars) {
+    private Map<String, Object> getRuntimePart(List<File> jars) {
         var relativeJars = new ArrayList<String>();
         for (var jar : jars) {
-            relativeJars.add(String.format("jars/{}", jar.getName()));
+            relativeJars.add(String.format("jars/%s", jar.getName()));
         }
         var part = new HashMap<String, Object>();
         part.put("after", new String[]{"gradle/rockcraft/dump", "gradle/rockcraft/deps"});
@@ -128,24 +140,27 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         if (getOptions().getBranch() != null) {
             part.put("branch", getOptions().getBranch());
         }
-        part.put("override-build", String.format("""
-                                        chisel cut --release ./ --root ${CRAFT_PART_INSTALL} libc6_libs \
-                                        libgcc-s1_libs \
-                                        libstdc++6_libs \
-                                        zlib1g_libs \
-                                        libnss3_libs \
-                                        base-files_base {}
-                                        craftctl default
-            """, getProjectDeps()));
+
+        var overrideCommands = new StringBuffer();
+        overrideCommands.append("chisel cut --release ./ --root ${CRAFT_PART_INSTALL} libc6_libs \\\n");
+        overrideCommands.append(" libgcc-s1_libs \\\n");
+        overrideCommands.append(" libstdc++6_libs \\\n");
+        overrideCommands.append(" zlib1g_libs \\\n");
+        overrideCommands.append(" base-files_base \\\n");
+        if (getProjectDeps() != null) {
+            overrideCommands.append(getProjectDeps());
+            overrideCommands.append("\n");
+        }
+        overrideCommands.append("craftctl default");
         return part;
     }
 
-    private Map<String, Object> getProjectService(Set<String> relativeJars) {
+    private Map<String, Object> getProjectService(List<String> relativeJars) {
         String command = getOptions().getCommand();
         var jarList = relativeJars.stream().filter( x -> !x.endsWith("-plain.jar")).toList();
         if (command == null || command.isBlank()) {
             if (jarList.size() == 1) {
-                command = String.format("/usr/bin/java -jar {}", jarList.iterator().next());
+                command = String.format("/usr/bin/java -jar %s", jarList.iterator().next());
             } else
                 throw new UnsupportedOperationException("Rockcraft plugin requires either single jar output or command defined");
         }
