@@ -22,14 +22,13 @@ repositories {
 dependencies {
     implementation(libs.osdetector)
     implementation(libs.commons.text)
+    implementation(libs.snakeyaml)
 
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
-    testImplementation(libs.snakeyaml)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testRuntimeOnly(libs.snakeyaml)
 
 }
 
