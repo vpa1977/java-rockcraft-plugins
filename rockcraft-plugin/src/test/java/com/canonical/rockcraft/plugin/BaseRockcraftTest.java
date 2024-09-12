@@ -20,7 +20,7 @@ public abstract class BaseRockcraftTest {
     protected File projectDir;
 
     protected File getJavaSource() {
-        return Path.of(projectDir.getAbsolutePath(), "src", "main", "Test.java").toFile();
+        return Path.of(projectDir.getAbsolutePath(), "src", "main", "java", "Test.java").toFile();
     }
 
     protected File getProjectDir() { return projectDir; }
@@ -41,7 +41,7 @@ public abstract class BaseRockcraftTest {
 
     @BeforeEach
     protected void setUp() throws IOException {
-        assertTrue(Path.of(projectDir.getAbsolutePath(), "src", "main").toFile().mkdirs());
+        assertTrue(Path.of(projectDir.getAbsolutePath(), "src", "main", "java").toFile().mkdirs());
         writeString(getJavaSource(),
                 """
                         public class Test {
@@ -54,7 +54,7 @@ public abstract class BaseRockcraftTest {
         writeString(getBuildFile(),
                 """
                         plugins {
-                            id('java')
+                            id('application')
                             id('com.canonical.rockcraft-plugin')
                         }
                         """);

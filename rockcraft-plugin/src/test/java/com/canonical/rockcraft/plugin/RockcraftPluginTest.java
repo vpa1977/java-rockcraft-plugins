@@ -7,6 +7,7 @@ import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -37,16 +38,18 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                 
                 rockcraft {
                     summary = "Foobar"
-                    description = ''' Foobar 
-                                    Foobar'''
+                    description = "readme.txt"
                 }
                  
                  """);
+        writeString(new File(getProjectDir(), "readme.txt"), """
+                This is a multiline description
+                of the rock file
+                """);
         BuildResult result = runBuild("jar");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
-
         }
     }
 }
