@@ -20,8 +20,10 @@ public abstract class BaseRockcraftTest {
     protected File projectDir;
 
     protected File getJavaSource() {
-        return Path.of(projectDir.getAbsolutePath(), "src","main",  "Test.java").toFile();
+        return Path.of(projectDir.getAbsolutePath(), "src", "main", "Test.java").toFile();
     }
+
+    protected File getProjectDir() { return projectDir; }
 
     protected File getBuildFile() {
         return new File(projectDir, "build.gradle");
@@ -39,7 +41,7 @@ public abstract class BaseRockcraftTest {
 
     @BeforeEach
     protected void setUp() throws IOException {
-        assertTrue(Path.of(projectDir.getAbsolutePath(), "src","main").toFile().mkdirs());
+        assertTrue(Path.of(projectDir.getAbsolutePath(), "src", "main").toFile().mkdirs());
         writeString(getJavaSource(),
                 """
                         public class Test {
@@ -51,11 +53,11 @@ public abstract class BaseRockcraftTest {
         writeString(getSettingsFile(), "");
         writeString(getBuildFile(),
                 """
-                    plugins {
-                        id('java')
-                        id('com.canonical.rockcraft-plugin')
-                    }
-                    """);
+                        plugins {
+                            id('java')
+                            id('com.canonical.rockcraft-plugin')
+                        }
+                        """);
     }
 
     public BuildResult runBuild(String target) {
