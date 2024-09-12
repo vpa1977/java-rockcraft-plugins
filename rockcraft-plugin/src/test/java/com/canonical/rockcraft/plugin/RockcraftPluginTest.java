@@ -5,20 +5,25 @@ package com.canonical.rockcraft.plugin;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
-    void canRunTask() throws IOException {
-
-        // Run the build
+    void validRockcraftYaml() throws IOException {
         BuildResult result = runBuild("jar");
-
-        // Verify the result
-        assertTrue(result.getOutput().contains("Foobar"));
+        try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
+            var yaml = new Yaml();
+            Map<String, Object> parsed = yaml.load(is);
+            assertEquals("ubuntu@24.04", parsed.get("build-base"));
+        }
     }
 }
