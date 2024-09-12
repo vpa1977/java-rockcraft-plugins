@@ -1,14 +1,15 @@
 package com.canonical.rockcraft.plugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RockcraftOptions {
-    private String summary;
-    private String description;
-    private String command;
+    private String summary = "";
+    private String description = "";
+    private String command = "";
     // @TODO: make architecture enumeration type-safe
-    private List<String> architectures;
-    private List<String> slices;
+    private List<String> architectures = new ArrayList<String>();
+    private List<String> slices = new ArrayList<String>();
 
     public String getSummary() {
         return summary;
