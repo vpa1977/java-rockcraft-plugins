@@ -66,6 +66,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         variables.put("copyoutput", getProjectCopyOutput(relativeJars));
         variables.put("output", getProjectOutput(files));
         variables.put("deps", getProjectDeps());
+        variables.put("deps-source", getOptions().getDepsource());
 
         return StringSubstitutor.replace(readTemplate(), variables);
     }
