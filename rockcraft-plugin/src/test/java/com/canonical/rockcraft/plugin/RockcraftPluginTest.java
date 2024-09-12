@@ -26,4 +26,27 @@ class RockcraftPluginTest extends BaseRockcraftTest {
             assertEquals("ubuntu@24.04", parsed.get("build-base"));
         }
     }
+
+    @Test
+    void rockcraftPluginOptions() throws IOException {
+        writeString(getBuildFile(), """
+                plugins {
+                    id('java')
+                    id('com.canonical.rockcraft-plugin')
+                }
+                
+                rockcraft {
+                    summary = "Foobar"
+                    description = ''' Foobar 
+                                    Foobar'''
+                }
+                 
+                 """);
+        BuildResult result = runBuild("jar");
+        try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
+            var yaml = new Yaml();
+            Map<String, Object> parsed = yaml.load(is);
+
+        }
+    }
 }
