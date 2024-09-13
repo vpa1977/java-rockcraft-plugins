@@ -35,12 +35,12 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                     id('java')
                     id('com.canonical.rockcraft-plugin')
                 }
-                
+
                 rockcraft {
                     summary = "Foobar"
                     description = "readme.txt"
                 }
-                 
+
                  """);
         writeString(new File(getProjectDir(), "readme.txt"), """
                 This is a multiline description
