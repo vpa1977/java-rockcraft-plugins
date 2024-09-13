@@ -95,4 +95,6 @@ Contributions can be submitted via [Pull requests](https://github.com/canonical/
 
 # TODO
 
-- Allow runtime version customisation.
+- Allow runtime package/version customisation.
+- Allow custom rockcraft.yaml/snippets
+- Error handling (empty jar file), no main class
