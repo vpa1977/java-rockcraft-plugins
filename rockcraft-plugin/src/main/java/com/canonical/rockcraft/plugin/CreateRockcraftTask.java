@@ -52,10 +52,16 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         rockcraft.put("name", getProject().getName());
         rockcraft.put("version", String.valueOf(getProject().getVersion()));
         rockcraft.put("summary", getOptions().getSummary());
-        var descriptionFile = getProject().getLayout().getProjectDirectory().file(getOptions().getDescription()).getAsFile();
-        if (!descriptionFile.exists())
-            throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
-        rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
+        var description = getOptions().getDescription();
+        if (!description.isEmpty()) {
+            var descriptionFile = getProject().getLayout().getProjectDirectory().file(description).getAsFile();
+            if (!descriptionFile.exists())
+                throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
+            rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
+        } else {
+            rockcraft.put("description", "");
+        }
+
         rockcraft.put("platforms", getPlatforms());
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
