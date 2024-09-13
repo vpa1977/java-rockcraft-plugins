@@ -41,15 +41,16 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                     description = "readme.txt"
                 }
 
-                 """);
+                """);
         writeString(new File(getProjectDir(), "readme.txt"), """
                 This is a multiline description
                 of the rock file
                 """);
-        BuildResult result = runBuild("jar");
+        runBuild("jar");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
+            assertEquals("Foobar", parsed.get("summary"));
         }
     }
 }
