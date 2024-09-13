@@ -1,0 +1,55 @@
+name: Release
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 5
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build and verify project
+        run: |
+          ./gradlew clean build -i
+
+      - name: Publish to Gradle plugin repository
+        id: deploy
+        run: |
+          ./gradlew publishPlugins -Pgradle.publish.key=$PUBLISH_KEY -Pgradle.publish.secret=$PUBLISH_SECRET
+        shell: bash
+        env:
+          PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
+          PUBLISH_SECRET: ${{ secrets.PUBLISH_SECRET }}
+
+      - name: Commit next development version
+        if: steps.deploy.outputs.exit_code == 0
+        run: |
+          git config user.email ""
+          git config user.name "Gluon Bot"
+          TAG=${GITHUB_REF/refs\/tags\//}
+          # Update project version
+          newVersion=${TAG%.*}.$((${TAG##*.} + 1))
+          echo "Update project version to next snapshot version"
+          sed -i "0,/^version = '$TAG'/s//version = '$newVersion-SNAPSHOT'/" build.gradle
+          git commit build.gradle -m "Prepare development of $newVersion"
+          git push ${REPO} HEAD:main
+        env:
+          PAT: ${{ secrets.GITHUB_TOKEN }}
+          REPO: https://github.com/vpa1977/rockcraft-gradle-plugin
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true

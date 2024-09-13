@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  gradlevalidation:
+    name: "Validate Gradle Wrapper"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: gradle/wrapper-validation-action@v1
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build and verify project
+        run: |
+
+          ./gradlew clean build -i
+
+      - name: Publish Snapshots
+        if: github.ref == 'refs/heads/master'
+        run: |
+          # Find project version
+          ver=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
+          # deploy if snapshot found
+          if [[ $ver == *"SNAPSHOT"* ]]
+          then
+              ./gradlew publish
+          fi
+        shell: bash
