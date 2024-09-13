@@ -30,6 +30,8 @@ jobs:
       - name: Build and verify project
         run: |
           sudo snap install rockcraft --classic
+          lxd init --auto
+
           ./gradlew clean build -i
 
       - name: Publish Snapshots
@@ -41,6 +43,7 @@ jobs:
           if [[ $ver == *"SNAPSHOT"* ]]
           then
               sudo snap install rockcraft --classic
+              lxd init --auto
               ./gradlew publish
           fi
         shell: bash
