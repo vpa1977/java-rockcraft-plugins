@@ -1,9 +1,6 @@
-************
-Contributing
-************
+# Contributing
 
-Committing code
----------------
+## Committing code
 
 Please follow these guidelines when committing code for this project:
 
