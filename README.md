@@ -1,7 +1,7 @@
 # Rockcraft Gradle Plugin
 
 Builds [Ubuntu ROCK](https://documentation.ubuntu.com/rockcraft/en/latest/explanation/rocks/) image for your application.
-The plugin requires [rockcraft](https://github/canonical/rockcraft).
+The plugin requires [rockcraft](https://github/canonical/rockcraft) installed.
 
 ![Github Actions](https://github.com/canonical/rockcraft-gradle-plugin/actions/workflows/build.yml/badge.svg)
 [![GNU GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.html#license-text)
