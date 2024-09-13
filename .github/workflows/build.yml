@@ -29,7 +29,7 @@ jobs:
 
       - name: Build and verify project
         run: |
-
+          sudo snap install rockcraft --classic
           ./gradlew clean build -i
 
       - name: Publish Snapshots
@@ -40,6 +40,7 @@ jobs:
           # deploy if snapshot found
           if [[ $ver == *"SNAPSHOT"* ]]
           then
+              sudo snap install rockcraft --classic
               ./gradlew publish
           fi
         shell: bash
