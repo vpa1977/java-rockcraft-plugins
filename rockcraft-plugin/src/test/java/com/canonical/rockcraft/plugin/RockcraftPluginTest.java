@@ -59,4 +59,40 @@ class RockcraftPluginTest extends BaseRockcraftTest {
             assertEquals("Foobar", parsed.get("summary"));
         }
     }
+
+    @Test
+    void onlySingleRockExists() throws IOException {
+        writeString(getBuildFile(), """
+            plugins {
+                id('java')
+                id('com.canonical.rockcraft-plugin')
+            }
+
+            version = 0.01
+
+            rockcraft {
+            }
+
+            """);
+        runBuild("build-rock");
+        File output = Path.of(getProjectDir().getAbsolutePath(), "build","rock").toFile();
+        assertEquals(1, output.list( (dir, name) -> name.endsWith("rock")).length);
+
+        writeString(getBuildFile(), """
+            plugins {
+                id('java')
+                id('com.canonical.rockcraft-plugin')
+            }
+
+            version = '0.02updated'
+
+            rockcraft {
+            }
+
+            """);
+        runBuild("build-rock");
+        String[] rocks = output.list( (dir, name) -> name.endsWith("rock"));
+        assertEquals(1, rocks.length);
+        assertTrue(rocks[0].contains("0.02updated"));
+    }
 }
