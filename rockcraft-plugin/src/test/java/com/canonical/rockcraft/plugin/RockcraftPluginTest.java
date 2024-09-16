@@ -19,8 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
+    void buildRockTest() throws IOException {
+        var result = runBuild("build-rock");
+        assertTrue(true); // the build needs to succeed
+    }
+
+    @Test
     void validRockcraftYaml() throws IOException {
-        BuildResult result = runBuild("jar");
+        runBuild("create-rock");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
@@ -46,7 +52,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                 This is a multiline description
                 of the rock file
                 """);
-        runBuild("jar");
+        runBuild("create-rock");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
