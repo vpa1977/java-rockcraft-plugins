@@ -53,4 +53,28 @@ class RockcraftPluginTest extends BaseRockcraftTest {
             assertEquals("Foobar", parsed.get("summary"));
         }
     }
+
+    @Test
+    void testArchitecture() throws IOException {
+        writeString(getBuildFile(), """
+                plugins {
+                    id('java')
+                    id('com.canonical.rockcraft-plugin')
+                }
+
+                rockcraft {
+                    summary = "Foobar"
+                    architectures = [ "amd64", "arm64" ]
+                }
+
+                """);
+        runBuild("jar");
+        try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
+            var yaml = new Yaml();
+            Map<String, Object> parsed = yaml.load(is);
+            Map<String, Object> platforms = (Map<String, Object>)parsed.get("platforms");
+            assertTrue(platforms.containsKey("amd64"));
+            assertTrue(platforms.containsKey("arm64"));
+        }
+    }
 }
