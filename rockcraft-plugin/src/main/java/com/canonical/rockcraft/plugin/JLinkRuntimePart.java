@@ -24,6 +24,8 @@ public class JLinkRuntimePart implements IRuntimeProvider {
             relativeJars.add(String.format("jars/%s", jar.getName()));
         }
         var part = new HashMap<String, Object>();
+        part.put("build-packages", new String[]{options.getBuildPackage()});
+        part.put("multi-release", options.getTargetRelease());
         part.put("after", new String[]{"gradle/rockcraft/dump", "gradle/rockcraft/deps"});
         part.put("plugin", "jlink");
         part.put("jlink-jars", relativeJars);

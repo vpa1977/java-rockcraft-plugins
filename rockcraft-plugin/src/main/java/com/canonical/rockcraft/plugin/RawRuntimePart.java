@@ -12,7 +12,7 @@ public class RawRuntimePart implements IRuntimeProvider {
 
     private final RockcraftOptions options;
 
-    public RawRuntimePart(RockcraftOptions options){
+    public RawRuntimePart(RockcraftOptions options) {
         this.options = options;
     }
 
@@ -25,7 +25,7 @@ public class RawRuntimePart implements IRuntimeProvider {
     public Map<String, Object> getRuntimePart(List<File> files) {
         var part = new HashMap<String, Object>();
         part.put("plugin", "nil");
-        part.put("build-packages", new String[]{"openjdk-21-jdk"});
+        part.put("build-packages", new String[]{options.getBuildPackage()});
 
         var jarList = new StringBuffer();
         for (var jar : files) {
@@ -35,7 +35,8 @@ public class RawRuntimePart implements IRuntimeProvider {
         }
 
         var commands = new StringBuffer();
-        var javaHome = "usr/lib/jvm/java-21-openjdk-${CRAFT_ARCH_BUILD_FOR}";
+        append(commands, "JAVA_HOME=$(dirname $(dirname $(readlink -f /usr/bin/java)))");
+        append(commands, "JAVA_HOME=${JAVA_HOME:1}");
         append(commands, "PROCESS_JARS=" + jarList);
         append(commands, "mkdir -p ${CRAFT_PART_BUILD}/tmp");
         append(commands,
@@ -44,31 +45,27 @@ public class RawRuntimePart implements IRuntimeProvider {
         append(commands, "CPATH=$(find ${CRAFT_PART_BUILD}/tmp -type f -name *.jar)");
         append(commands, "CPATH=$(echo ${CPATH}:. | sed s'/[[:space:]]/:/'g)");
         append(commands, "echo ${CPATH}");
-        append(commands, """
+        append(commands, String.format("""
                 if [ "x${PROCESS_JARS}" != "x" ]; then
                 deps=$(jdeps --class-path=${CPATH} -q --recursive  --ignore-missing-deps \
-                    --print-module-deps --multi-release 21 ${PROCESS_JARS}); else deps=java.base; fi
-                """);
-        append(commands, "INSTALL_ROOT=${CRAFT_PART_INSTALL}/" + javaHome);
+                    --print-module-deps --multi-release %d ${PROCESS_JARS}); else deps=java.base; fi
+                """, options.getTargetRelease()));
+        append(commands, "INSTALL_ROOT=${CRAFT_PART_INSTALL}/${JAVA_HOME}");
         append(commands,
                 "rm -rf ${INSTALL_ROOT} && jlink --add-modules ${deps} --output ${INSTALL_ROOT}"
         );
 
         append(commands,
-                "(cd ${CRAFT_PART_INSTALL} && mkdir -p usr/bin && ln -s --relative "
-                        + javaHome
-                        + "/bin/java usr/bin/)");
+                "(cd ${CRAFT_PART_INSTALL} && mkdir -p usr/bin && ln -s --relative ${JAVA_HOME}/bin/java usr/bin/)");
         append(commands, "mkdir -p ${CRAFT_PART_INSTALL}/etc/ssl/certs/java/");
 
         append(commands,
                 "cp /etc/ssl/certs/java/cacerts ${CRAFT_PART_INSTALL}/etc/ssl/certs/java/cacerts"
         );
         append(commands, "cd ${CRAFT_PART_INSTALL}");
-        append(commands, "rm -f " + javaHome + "/lib/security/cacerts");
+        append(commands, "rm -f ${JAVA_HOME}/lib/security/cacerts");
         append(commands,
-                "ln -s --relative etc/ssl/certs/java/cacerts "
-                        + javaHome
-                        + "/lib/security/cacerts"
+                "ln -s --relative etc/ssl/certs/java/cacerts ${JAVA_HOME}/lib/security/cacerts"
         );
         part.put("override-build", commands.toString());
         part.put("after", new String[]{"gradle/rockcraft/dump", "gradle/rockcraft/deps"});
