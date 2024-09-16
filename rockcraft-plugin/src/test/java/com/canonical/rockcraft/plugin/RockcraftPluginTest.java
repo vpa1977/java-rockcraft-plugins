@@ -68,7 +68,8 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                 }
 
                 """);
-        runBuild("jar");
+        runBuild("jar", "create-rock");
+
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
