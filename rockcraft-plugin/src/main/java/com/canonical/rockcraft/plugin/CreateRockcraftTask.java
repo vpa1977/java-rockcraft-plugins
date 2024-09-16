@@ -110,75 +110,12 @@ public abstract class CreateRockcraftTask extends DefaultTask {
     }
 
     private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
+        IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
         var parts = new HashMap<String, Object>();
         parts.put("gradle/rockcraft/dump", getDumpPart(relativeJars));
-        parts.put("gradle/rockcraft/runtime", getOptions().getJlink() ? getRuntimePart(files) : getRuntimePartWorkaround(files));
+        parts.put("gradle/rockcraft/runtime", provider.getRuntimePart(files));
         parts.put("gradle/rockcraft/deps", getDepsPart());
         return parts;
-    }
-
-    private void append(StringBuffer buffer, String str) {
-        buffer.append(str);
-        buffer.append("\n");
-    }
-
-    /***
-     * This method is a workaround for the missing jlink plugin in rockcraft.
-     * Retire it after jlink plugin is merged
-     * @param files
-     * @return part definition for making runtime
-     */
-    private Map<String, Object> getRuntimePartWorkaround(List<File> jars) {
-        var part = new HashMap<String, Object>();
-        part.put("plugin", "nil");
-        part.put("build-packages", new String[]{"openjdk-21-jdk"});
-
-        var jarList = new StringBuffer();
-        for (var jar : jars) {
-            if (!jarList.isEmpty())
-                jarList.append(" ");
-            jarList.append(String.format("${CRAFT_STAGE}/jars/%s", jar.getName()));
-        }
-
-        var commands = new StringBuffer();
-        var javaHome = "usr/lib/jvm/java-21-openjdk-${CRAFT_ARCH_BUILD_FOR}";
-        append(commands, "PROCESS_JARS=" + jarList.toString());
-        append(commands, "mkdir -p ${CRAFT_PART_BUILD}/tmp");
-        append(commands,
-                "(cd ${CRAFT_PART_BUILD}/tmp && for jar in ${PROCESS_JARS}; do jar xvf ${jar}; done;)"
-        );
-        append(commands, "CPATH=$(find ${CRAFT_PART_BUILD}/tmp -type f -name *.jar)");
-        append(commands, "CPATH=$(echo ${CPATH}:. | sed s'/[[:space:]]/:/'g)");
-        append(commands, "echo ${CPATH}");
-        append(commands, """
-                if [ "x${PROCESS_JARS}" != "x" ]; then
-                deps=$(jdeps --class-path=${CPATH} -q --recursive  --ignore-missing-deps \
-                    --print-module-deps --multi-release 21 ${PROCESS_JARS}); else deps=java.base; fi
-                """);
-        append(commands, "INSTALL_ROOT=${CRAFT_PART_INSTALL}/" + javaHome);
-        append(commands,
-                "rm -rf ${INSTALL_ROOT} && jlink --add-modules ${deps} --output ${INSTALL_ROOT}"
-        );
-
-        append(commands,
-                "(cd ${CRAFT_PART_INSTALL} && mkdir -p usr/bin && ln -s --relative "
-                        + javaHome
-                        + "/bin/java usr/bin/)");
-        append(commands, "mkdir -p ${CRAFT_PART_INSTALL}/etc/ssl/certs/java/");
-
-        append(commands,
-                "cp /etc/ssl/certs/java/cacerts ${CRAFT_PART_INSTALL}/etc/ssl/certs/java/cacerts"
-        );
-        append(commands, "cd ${CRAFT_PART_INSTALL}");
-        append(commands, "rm -f " + javaHome + "/lib/security/cacerts");
-        append(commands,
-                "ln -s --relative etc/ssl/certs/java/cacerts "
-                        + javaHome
-                        + "/lib/security/cacerts"
-        );
-        part.put("override-build", commands.toString());
-        part.put("after", new String[]{"gradle/rockcraft/dump", "gradle/rockcraft/deps"});
-        return part;
     }
 
     private Map<String, Object> getDumpPart(List<String> relativeJars) {
@@ -186,18 +123,6 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         part.put("source", ".");
         part.put("plugin", "nil");
         part.put("override-build", getProjectCopyOutput(relativeJars));
-        return part;
-    }
-
-    private Map<String, Object> getRuntimePart(List<File> jars) {
-        var relativeJars = new ArrayList<String>();
-        for (var jar : jars) {
-            relativeJars.add(String.format("jars/%s", jar.getName()));
-        }
-        var part = new HashMap<String, Object>();
-        part.put("after", new String[]{"gradle/rockcraft/dump", "gradle/rockcraft/deps"});
-        part.put("plugin", "jlink");
-        part.put("jlink-jars", relativeJars);
         return part;
     }
 
