@@ -19,13 +19,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
+    void buildRockTest() throws IOException {
+        var result = runBuild("build-rock");
+        assertTrue(true); // the build needs to succeed
+    }
+
+    @Test
     void validRockcraftYaml() throws IOException {
-        BuildResult result = runBuild("jar");
+        runBuild("create-rock");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
             assertEquals("ubuntu@24.04", parsed.get("build-base"));
         }
+    }
+
+    @Test
+    void buildRockJava11Test() throws IOException {
+        writeString(getBuildFile(), """
+                plugins {
+                    id('java')
+                    id('com.canonical.rockcraft-plugin')
+                }
+
+                rockcraft {
+                    buildPackage = "openjdk-11-jdk"
+                    targetRelease = 11
+                }
+
+                """);
+        var result = runBuild("build-rock");
+        assertTrue(true); // the build needs to succeed
     }
 
     @Test
@@ -46,7 +70,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                 This is a multiline description
                 of the rock file
                 """);
-        runBuild("jar");
+        runBuild("create-rock");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
