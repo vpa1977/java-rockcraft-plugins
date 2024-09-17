@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
-public class RunimePartTest extends BaseRockcraftTest {
+public class RawRunimePartTest extends BaseRockcraftTest {
     @Test
     void rawRuntimePart() {
         RockcraftOptions options = new RockcraftOptions();
