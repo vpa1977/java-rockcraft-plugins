@@ -32,6 +32,24 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     }
 
     @Test
+    void buildRockJava11Test() throws IOException {
+        writeString(getBuildFile(), """
+                plugins {
+                    id('java')
+                    id('com.canonical.rockcraft-plugin')
+                }
+
+                rockcraft {
+                    buildPackage = "openjdk-11-jdk"
+                    targetRelease = 11
+                }
+
+                """);
+        var result = runBuild("build-rock");
+        assertTrue(true); // the build needs to succeed
+    }
+
+    @Test
     void rockcraftPluginOptions() throws IOException {
         writeString(getBuildFile(), """
                 plugins {

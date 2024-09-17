@@ -15,6 +15,8 @@ public class RockcraftOptions {
         s390x;
     }
 
+    private String buildPackage = "openjdk-21-jdk";
+    private int targetRelease = 21;
     private boolean jlink = false;
     private String summary = "";
     private String description = "";
@@ -23,6 +25,22 @@ public class RockcraftOptions {
     private String branch;
     private RockArchitecture[] architectures = new RockArchitecture[0];
     private List<String> slices = new ArrayList<String>();
+
+    public int getTargetRelease() {
+        return targetRelease;
+    }
+
+    public void setTargetRelease(int targetRelease) {
+        this.targetRelease = targetRelease;
+    }
+
+    public String getBuildPackage() {
+        return buildPackage;
+    }
+
+    public void setBuildPackage(String buildPackage) {
+        this.buildPackage = buildPackage;
+    }
 
     public boolean getJlink() {
         return jlink;
