@@ -60,11 +60,11 @@ public abstract class BaseRockcraftTest {
                         """);
     }
 
-    public BuildResult runBuild(String target) {
+    public BuildResult runBuild(String... target) {
         GradleRunner runner = GradleRunner.create();
         runner.forwardOutput();
         runner.withPluginClasspath();
-        runner.withArguments(target, "--stacktrace");
+        runner.withArguments(target);
         runner.withDebug(true);
         runner.withProjectDir(projectDir);
         return runner.build();

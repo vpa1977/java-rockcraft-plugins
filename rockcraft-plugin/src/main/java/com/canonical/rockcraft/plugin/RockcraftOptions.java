@@ -4,6 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RockcraftOptions {
+
+    public enum RockArchitecture {
+        amd64,
+        arm64,
+        armhf,
+        i386,
+        ppc64el,
+        riscv64,
+        s390x;
+    }
+
     private String buildPackage = "openjdk-21-jdk";
     private int targetRelease = 21;
     private boolean jlink = false;
@@ -12,8 +23,7 @@ public class RockcraftOptions {
     private String command = "";
     private String source;
     private String branch;
-    // @TODO: make architecture enumeration type-safe
-    private List<String> architectures = new ArrayList<String>();
+    private RockArchitecture[] architectures = new RockArchitecture[0];
     private List<String> slices = new ArrayList<String>();
 
     public int getTargetRelease() {
@@ -63,11 +73,11 @@ public class RockcraftOptions {
     public void setDescription(String description) {
         this.description = description;
     }
-    public List<String> getArchitectures() {
+    public RockArchitecture[] getArchitectures() {
         return architectures;
     }
 
-    public void setArchitectures(List<String> architectures) {
+    public void setArchitectures(RockArchitecture[] architectures) {
         this.architectures = architectures;
     }
 
