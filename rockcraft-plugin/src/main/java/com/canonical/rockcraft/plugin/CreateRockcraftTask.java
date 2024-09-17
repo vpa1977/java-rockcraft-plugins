@@ -73,7 +73,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
     private Map<String, Object> getPlatforms() {
         var archs = new HashMap<String, Object>();
         for (var a : getOptions().getArchitectures())
-            archs.put(a, "");
+            archs.put(String.valueOf(a), "");
         if (archs.isEmpty())
             archs.put("amd64", "");
         return archs;
