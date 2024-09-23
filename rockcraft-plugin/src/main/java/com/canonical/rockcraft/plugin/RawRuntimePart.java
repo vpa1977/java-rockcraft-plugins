@@ -1,3 +1,16 @@
+/**
+ * Copyright 2024 Canonical Ltd.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.canonical.rockcraft.plugin;
 
 import java.io.File;
@@ -6,12 +19,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides a verbose list of commands to generate Java runtime
+ * Uses a verbose list of commands to generate Java runtime
  */
 public class RawRuntimePart implements IRuntimeProvider {
 
     private final RockcraftOptions options;
 
+    /**
+     * Constructs the RawRuntimePart
+     * @param options - plugin options
+     */
     public RawRuntimePart(RockcraftOptions options) {
         this.options = options;
     }
@@ -21,6 +38,11 @@ public class RawRuntimePart implements IRuntimeProvider {
         buffer.append("\n");
     }
 
+    /**
+     * Generate code to create Java runtime image
+     * @param files - list of jar files to analyze
+     * @return part content
+     */
     @Override
     public Map<String, Object> getRuntimePart(List<File> files) {
         var part = new HashMap<String, Object>();

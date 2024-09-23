@@ -15,6 +15,16 @@ import java.io.IOException;
  */
 public class RockcraftPlugin implements Plugin<Project> {
 
+    /**
+     * Constructs RockcraftPlugin
+     */
+    public RockcraftPlugin() { super(); }
+
+
+    /**
+     * Applies the plugin
+     * @param project The target object
+     */
     public void apply(Project project) {
 
         project.getPlugins().apply(OsDetectorPlugin.class);

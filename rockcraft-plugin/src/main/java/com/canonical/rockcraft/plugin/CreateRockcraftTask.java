@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
+/**
+ * This task writes <i>rockcraft.yaml</i> file for the application.
+ */
 public abstract class CreateRockcraftTask extends DefaultTask {
 
     private static final String ROCKCRAFT_YAML = "rockcraft.yaml";
@@ -23,11 +26,18 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         return options;
     }
 
+    /**
+     * Constructs the CreateRockcraft task
+     * @param options - plugin options
+     */
     @Inject
     public CreateRockcraftTask(RockcraftOptions options) {
         this.options = options;
     }
 
+    /**
+     * Task action to write <i>rockcraft.yaml</i>
+     */
     @TaskAction
     public void writeRockcraft() {
         getProject().getConfigurations().getByName("archives", archives -> {
@@ -43,6 +53,13 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         });
     }
 
+    /**
+     * Generate content of the <i>rockcraft.yaml</i>
+     * @param root - location of build directory
+     * @param files - list of .jar file artifacts
+     * @return content of the <i>rockcraft.yaml</i>
+     * @throws IOException - IO error writing <i>rockcraft.yaml</i>
+     */
     protected String createRockcraft(Path root, List<File> files) throws IOException {
         List<String> relativeJars = new ArrayList<String>();
         for (var file : files)
@@ -53,8 +70,8 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         rockcraft.put("version", String.valueOf(getProject().getVersion()));
         rockcraft.put("summary", getOptions().getSummary());
         var description = getOptions().getDescription();
-        if (!description.isEmpty()) {
-            var descriptionFile = getProject().getLayout().getProjectDirectory().file(description).getAsFile();
+        if (description != null) {
+            var descriptionFile = description.toFile();
             if (!descriptionFile.exists())
                 throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
             rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));

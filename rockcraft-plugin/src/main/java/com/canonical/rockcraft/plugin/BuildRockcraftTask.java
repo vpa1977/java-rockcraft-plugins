@@ -4,13 +4,25 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 
+/**
+ * This task builds a ROCK image by calling <i>rockcraft pack</i>.
+ * It removes all previous ROCK artifacts from the build directory.
+ */
 public class BuildRockcraftTask extends DefaultTask {
 
     private static final String ROCK_DIR = "rock";
 
+    /**
+     * Constructs BuildRockcraft task
+     */
+    public BuildRockcraftTask() { super();}
+    /**
+     * The task action
+     * @throws IOException - IO error while writing <i>rockcraft.yaml</i>
+     * @throws InterruptedException - <i>rockcraft</i> process was aborted
+     */
     @TaskAction
     public void packRock() throws IOException, InterruptedException {
         var buildDir = getProject().getLayout().getBuildDirectory();
@@ -20,7 +32,7 @@ public class BuildRockcraftTask extends DefaultTask {
         var process = pb.start();
         int result = process.waitFor();
         if (result != 0)
-            throw new UnsupportedEncodingException("Failed to pack rock for "+ getProject().getName());
+            throw new UnsupportedOperationException("Failed to pack rock for "+ getProject().getName());
 
         var rockDest = buildDir.dir(ROCK_DIR).get().getAsFile();
         rockDest.mkdirs();
