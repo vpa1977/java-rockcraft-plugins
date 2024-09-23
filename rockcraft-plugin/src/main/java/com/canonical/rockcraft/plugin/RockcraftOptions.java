@@ -151,8 +151,8 @@ public class RockcraftOptions {
      * Sets the path to the description file
      * @param description - description file
      */
-    public void setDescription(Path description) {
-        this.description = description;
+    public void setDescription(String description) {
+        this.description = Path.of(description);
     }
 
     /**
