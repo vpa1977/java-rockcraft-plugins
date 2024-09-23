@@ -20,9 +20,6 @@ import org.gradle.api.Project;
 
 import java.io.IOException;
 
-/**
- * A simple 'hello world' plugin.
- */
 public class RockcraftPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
