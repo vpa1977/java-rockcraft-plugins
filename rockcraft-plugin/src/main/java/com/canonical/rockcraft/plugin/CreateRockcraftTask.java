@@ -71,7 +71,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         rockcraft.put("summary", getOptions().getSummary());
         var description = getOptions().getDescription();
         if (description != null) {
-            var descriptionFile = description.toFile();
+            var descriptionFile = Path.of(getProject().getProjectDir().getAbsolutePath(), description.toString()).toFile();
             if (!descriptionFile.exists())
                 throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
             rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
