@@ -19,12 +19,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides a verbose list of commands to generate Java runtime
+ * Uses a verbose list of commands to generate Java runtime
  */
 public class RawRuntimePart implements IRuntimeProvider {
 
     private final RockcraftOptions options;
 
+    /**
+     * Constructs the RawRuntimePart
+     * @param options - plugin options
+     */
     public RawRuntimePart(RockcraftOptions options) {
         this.options = options;
     }
@@ -34,6 +38,11 @@ public class RawRuntimePart implements IRuntimeProvider {
         buffer.append("\n");
     }
 
+    /**
+     * Generate code to create Java runtime image
+     * @param files - list of jar files to analyze
+     * @return part content
+     */
     @Override
     public Map<String, Object> getRuntimePart(List<File> files) {
         var part = new HashMap<String, Object>();

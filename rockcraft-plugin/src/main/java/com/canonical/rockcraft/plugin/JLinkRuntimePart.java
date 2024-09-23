@@ -20,16 +20,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ *  Implements Rockcraft Java runtime part using JLink plugin (experimental)
  */
 public class JLinkRuntimePart implements IRuntimeProvider {
 
     private final RockcraftOptions options;
 
+    /**
+     * Constructs the JLinkRuntimePart
+     * @param options - plugin options
+     */
     public JLinkRuntimePart(RockcraftOptions options){
         this.options = options;
     }
 
+    /**
+     * Retuns the part contents
+     * @param files - list of jar files to analyze
+     * @return part contents
+     */
     @Override
     public Map<String, Object> getRuntimePart(List<File> files) {
         var relativeJars = new ArrayList<String>();

@@ -68,7 +68,7 @@ public abstract class BaseRockcraftTest {
                 """
                         plugins {
                             id('application')
-                            id('com.canonical.rockcraft-plugin')
+                            id('io.github.vpa1977.rockcraft-plugin')
                         }
                         """);
     }
