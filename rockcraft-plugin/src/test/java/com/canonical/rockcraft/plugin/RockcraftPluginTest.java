@@ -36,7 +36,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft-plugin')
+                    id('io.github.vpa1977.rockcraft-plugin')
                 }
 
                 rockcraft {
@@ -54,7 +54,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft-plugin')
+                    id('io.github.vpa1977.rockcraft-plugin')
                 }
 
                 rockcraft {
@@ -67,7 +67,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
                 This is a multiline description
                 of the rock file
                 """);
-        runBuild("create-rock");
+        runBuild("create-rock", "--stacktrace");
         try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
@@ -80,7 +80,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft-plugin')
+                    id('io.github.vpa1977.rockcraft-plugin')
                 }
 
                 rockcraft {
@@ -105,7 +105,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
             plugins {
                 id('java')
-                id('com.canonical.rockcraft-plugin')
+                id('io.github.vpa1977.rockcraft-plugin')
             }
 
             version = 0.01
@@ -121,7 +121,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
             plugins {
                 id('java')
-                id('com.canonical.rockcraft-plugin')
+                id('io.github.vpa1977.rockcraft-plugin')
             }
 
             version = '0.02updated'
