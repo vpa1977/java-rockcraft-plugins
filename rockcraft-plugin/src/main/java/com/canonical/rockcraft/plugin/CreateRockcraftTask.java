@@ -21,10 +21,7 @@ import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * This task writes <i>rockcraft.yaml</i> file for the application.
@@ -53,17 +50,18 @@ public abstract class CreateRockcraftTask extends DefaultTask {
      */
     @TaskAction
     public void writeRockcraft() {
-        getProject().getConfigurations().getByName("archives", archives -> {
-            try {
-                var buildDir = getProject().getLayout().getBuildDirectory();
-                try (BufferedWriter wr = new BufferedWriter(new FileWriter(buildDir.file(ROCKCRAFT_YAML).get().getAsFile()))) {
-                    var files = archives.getArtifacts().getFiles().getFiles().stream().filter(x -> x.getName().endsWith("jar")).toList();
-                    wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), files));
-                }
-            } catch (IOException e) {
-                throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
+        HashSet<File> artifacts = new HashSet<File>();
+        for (var conf : getProject().getConfigurations()) {
+            artifacts.addAll(conf.getArtifacts().getFiles().getFiles().stream().filter(x -> x.getName().endsWith("jar")).toList());
+        }
+        try {
+            var buildDir = getProject().getLayout().getBuildDirectory();
+            try (BufferedWriter wr = new BufferedWriter(new FileWriter(buildDir.file(ROCKCRAFT_YAML).get().getAsFile()))) {
+                wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), artifacts.stream().toList()));
             }
-        });
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
+        }
     }
 
     /**
