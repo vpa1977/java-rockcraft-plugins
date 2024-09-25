@@ -190,9 +190,18 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         var jarList = relativeJars.stream().filter(x -> !x.endsWith("-plain.jar")).toList();
         if (command == null || command.isBlank()) {
             if (jarList.size() == 1) {
-                command = String.format("/usr/bin/java -jar %s", jarList.iterator().next());
-            } else
-                throw new UnsupportedOperationException("Rockcraft plugin requires either single jar output or command defined");
+
+                command = String.format("/usr/bin/java -jar /jars/%s", Path.of(jarList.iterator().next()).getFileName().toString());
+            } else {
+                StringBuffer message = new StringBuffer();
+                message.append("[ ");
+                for (var entry : jarList) {
+                    message.append(entry);
+                    message.append(" ");
+                }
+                message.append("]");
+                throw new UnsupportedOperationException("Rockcraft plugin requires either single jar output or a command defined: "+ message);
+            }
         }
         var serviceData = new HashMap<String, String>();
         serviceData.put("override", "replace");
