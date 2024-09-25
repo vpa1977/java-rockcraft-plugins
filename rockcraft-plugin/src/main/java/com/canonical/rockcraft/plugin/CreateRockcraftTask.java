@@ -167,17 +167,23 @@ public abstract class CreateRockcraftTask extends DefaultTask {
             part.put("branch", getOptions().getBranch());
         }
 
-        var overrideCommands = new StringBuffer();
-        overrideCommands.append("chisel cut --release ./ --root ${CRAFT_PART_INSTALL} libc6_libs \\\n");
-        overrideCommands.append(" libgcc-s1_libs \\\n");
-        overrideCommands.append(" libstdc++6_libs \\\n");
-        overrideCommands.append(" zlib1g_libs \\\n");
-        overrideCommands.append(" base-files_base \\\n");
-        if (getProjectDeps() != null) {
-            overrideCommands.append(getProjectDeps());
-            overrideCommands.append("\n");
+        String overrideCommands = "chisel cut ";
+        if (getOptions().getSource() != null) {
+            overrideCommands += "--release ./ ";
         }
-        overrideCommands.append("craftctl default");
+        overrideCommands += """
+            --root ${CRAFT_PART_INSTALL}/ libc6_libs \\
+                libgcc-s1_libs \\
+                libstdc++6_libs \\
+                zlib1g_libs \\
+                base-files_base \\
+                libnss3_libs """;
+
+        if (getProjectDeps() != null) {
+            overrideCommands += getProjectDeps();
+        }
+        overrideCommands += "\ncraftctl default\n";
+        part.put("override-build", overrideCommands);
         return part;
     }
 
