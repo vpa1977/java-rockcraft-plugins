@@ -41,6 +41,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
             assertEquals("ubuntu@24.04", parsed.get("build-base"));
+            Map<String, Object> parts = (Map<String, Object>)parsed.get("parts");
+            //
+            Map<String, Object> dumpPart = (Map<String, Object>)parts.get("gradle/rockcraft/dump");
+            assertTrue(dumpPart.containsKey("override-build"));
+            Map<String, Object> runtimePart = (Map<String, Object>)parts.get("gradle/rockcraft/runtime");
+            assertTrue(runtimePart.containsKey("override-build"));
+            Map<String, Object> depsPart = (Map<String, Object>)parts.get("gradle/rockcraft/deps");
+            assertTrue(depsPart.containsKey("override-build"));
         }
     }
 
