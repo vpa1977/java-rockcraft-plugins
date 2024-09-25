@@ -72,6 +72,8 @@ public abstract class CreateRockcraftTask extends DefaultTask {
      * @throws IOException - IO error writing <i>rockcraft.yaml</i>
      */
     protected String createRockcraft(Path root, List<File> files) throws IOException {
+        files = files.stream().filter(x -> !x.getName().endsWith("-plain.jar")).toList();
+
         List<String> relativeJars = new ArrayList<String>();
         for (var file : files)
             relativeJars.add(root.relativize(file.toPath()).toString());
@@ -187,15 +189,14 @@ public abstract class CreateRockcraftTask extends DefaultTask {
 
     private Map<String, Object> getProjectService(List<String> relativeJars) {
         String command = getOptions().getCommand();
-        var jarList = relativeJars.stream().filter(x -> !x.endsWith("-plain.jar")).toList();
         if (command == null || command.isBlank()) {
-            if (jarList.size() == 1) {
+            if (relativeJars.size() == 1) {
 
-                command = String.format("/usr/bin/java -jar /jars/%s", Path.of(jarList.iterator().next()).getFileName().toString());
+                command = String.format("/usr/bin/java -jar /jars/%s", Path.of(relativeJars.iterator().next()).getFileName().toString());
             } else {
                 StringBuffer message = new StringBuffer();
                 message.append("[ ");
-                for (var entry : jarList) {
+                for (var entry : relativeJars) {
                     message.append(entry);
                     message.append(" ");
                 }
