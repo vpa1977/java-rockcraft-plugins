@@ -19,13 +19,13 @@ To use the plugin, apply the following two steps:
 **Groovy**
 
     plugins {
-        id 'com.canonical.rockcraft-plugin' version '0.0.1'
+        id 'com.canonical.rockcraft' version '0.1.1'
     }
 
 **Kotlin**
 
     plugins {
-        id("com.canonical.rockcraft-plugin") version "0.1.0"
+        id("com.canonical.rockcraft") version "0.1.1"
     }
 
 ##### Alternatively, you can use the `buildscript` DSL:
@@ -39,7 +39,7 @@ To use the plugin, apply the following two steps:
             }
         }
         dependencies {
-            classpath 'com.canonical.rockcraft-plugin:0.0.1'
+            classpath 'com.canonical.rockcraft:0..1'
         }
     }
     apply plugin: 'com.canonical.rockcraft-plugin'
@@ -53,10 +53,10 @@ To use the plugin, apply the following two steps:
             }
         }
         dependencies {
-            classpath("com.canonical.rockcraft-plugin:0.0.1")
+            classpath("com.canonical.rockcraft:0.1.1")
         }
     }
-    apply(plugin = "com.canonical.rockcraft-plugin")
+    apply(plugin = "com.canonical.rockcraft")
 
 
 ### 2. Configure ROCK container
@@ -67,24 +67,29 @@ target architectures and the startup service command line.
 **Groovy**
 
     rockcraft {
+        buildPackage = 'openjdk-21-jdk'
+        targetRelease = 21
         summary = 'A ROCK summary'
         description = 'README.md'
         command = '/usr/bin/java -jar jars/application.jar'
         source = 'http://github.com/myuser/chisel-releases'
         branch = 'my-chisel-release-branch'
         slices = ['busybox_bins', 'fontconfig_config']
-
+        architectures = ['amd64', 'arm64']
     }
 
 **Kotlin**
 
     rockcraft {
+        buildPackage = "openjdk-21-jdk"
+        targetRelease = 21
         summary = "A ROCK summary"
         description = "README.md"
         command = "/usr/bin/java -jar jars/application.jar"
         source = "http://github.com/myuser/chisel-releases"
         branch = "my-chisel-release-branch"
         slices("busybox_bins", "fontconfig_config")
+        architectures("amd64", "arm64")
     }
 
 ## Issues and Contributions
@@ -95,6 +100,6 @@ Contributions can be submitted via [Pull requests](https://github.com/canonical/
 
 # TODO
 
-- Allow runtime package/version customisation.
 - Allow custom rockcraft.yaml/snippets
 - Error handling (empty jar file), no main class
+

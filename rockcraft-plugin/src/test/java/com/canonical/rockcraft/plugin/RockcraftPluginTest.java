@@ -49,7 +49,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('io.github.vpa1977.rockcraft-plugin')
+                    id('com.canonical.rockcraft')
                 }
 
                 rockcraft {
@@ -67,7 +67,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('io.github.vpa1977.rockcraft-plugin')
+                    id('com.canonical.rockcraft')
                 }
 
                 rockcraft {
@@ -93,7 +93,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('io.github.vpa1977.rockcraft-plugin')
+                    id('com.canonical.rockcraft')
                 }
 
                 rockcraft {
@@ -118,7 +118,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
             plugins {
                 id('java')
-                id('io.github.vpa1977.rockcraft-plugin')
+                id('com.canonical.rockcraft')
             }
 
             version = 0.01
@@ -134,7 +134,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
             plugins {
                 id('java')
-                id('io.github.vpa1977.rockcraft-plugin')
+                id('com.canonical.rockcraft')
             }
 
             version = '0.02updated'
