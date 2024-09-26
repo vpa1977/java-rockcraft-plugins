@@ -156,4 +156,31 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         assertEquals(1, rocks.length);
         assertTrue(rocks[0].contains("0.02updated"));
     }
+
+    @Test
+    void testAllOptions() throws IOException {
+        writeString(new File(getProjectDir(), "README.md"), "test");
+        writeString(getBuildFile(), """
+            plugins {
+                id('java')
+                id('io.github.vpa1977.rockcraft-plugin')
+            }
+
+            version = 0.01
+
+            rockcraft {
+                buildPackage = 'openjdk-17-jdk'
+                targetRelease = 17
+                summary = 'A ROCK summary'
+                description = 'README.md'
+                command = '/usr/bin/java -jar jars/application.jar'
+                source = 'http://github.com/canonical/chisel-releases'
+                branch = 'ubuntu-24.04'
+                slices = ['busybox_bins', 'ca-certificates_data-with-certs']
+                architectures = ['amd64', 'arm64']
+            }
+            """);
+        var result = runBuild("build-rock", "--stacktrace");
+        assertEquals(TaskOutcome.SUCCESS, result.getTasks().getLast().getOutcome()); // the build needs to succeed
+    }
 }

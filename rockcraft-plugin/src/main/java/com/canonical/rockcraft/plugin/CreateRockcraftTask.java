@@ -164,7 +164,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
             part.put("source-type", "git");
         }
         if (getOptions().getBranch() != null) {
-            part.put("branch", getOptions().getBranch());
+            part.put("source-branch", getOptions().getBranch());
         }
 
         String overrideCommands = "chisel cut ";
@@ -180,7 +180,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
                 libnss3_libs """;
 
         if (getProjectDeps() != null) {
-            overrideCommands += getProjectDeps();
+            overrideCommands +=" "+ getProjectDeps();
         }
         overrideCommands += "\ncraftctl default\n";
         part.put("override-build", overrideCommands);
