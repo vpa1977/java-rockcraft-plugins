@@ -20,6 +20,10 @@ import org.gradle.api.Project;
 
 import java.io.IOException;
 
+/**
+ * Gradle plugin for Rockcraft.
+ * Allows to build rock images for Gradle projects.
+ */
 public class RockcraftPlugin implements Plugin<Project> {
 
     /**
