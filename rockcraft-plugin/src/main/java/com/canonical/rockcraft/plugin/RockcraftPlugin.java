@@ -70,9 +70,11 @@ public class RockcraftPlugin implements Plugin<Project> {
         for (var t : buildTasks)
             t.finalizedBy(checkTask);
 
-        var tasks = project.getTasksByName("jar", false);
+        var tasks = project.getTasksByName("bootJar", false);
         if (tasks.isEmpty())
-            throw new UnsupportedOperationException("Rockcraft plugin requires jar task");
+            tasks = project.getTasksByName("jar", false);
+        if (tasks.isEmpty())
+            throw new UnsupportedOperationException("Rockcraft plugin requires bootJar or jar task");
 
         project.getTasks().register("build-rock", BuildRockcraftTask.class);
         var create = project.getTasks().register("create-rock", CreateRockcraftTask.class, options);

@@ -59,7 +59,7 @@ public class RawRuntimePart implements IRuntimeProvider {
         var commands = new StringBuffer();
         append(commands, "JAVA_HOME=$(dirname $(dirname $(readlink -f /usr/bin/java)))");
         append(commands, "JAVA_HOME=${JAVA_HOME:1}");
-        append(commands, "PROCESS_JARS=" + jarList);
+        append(commands, "PROCESS_JARS=\"" + jarList+"\"");
         append(commands, "mkdir -p ${CRAFT_PART_BUILD}/tmp");
         append(commands,
                 "(cd ${CRAFT_PART_BUILD}/tmp && for jar in ${PROCESS_JARS}; do jar xvf ${jar}; done;)"

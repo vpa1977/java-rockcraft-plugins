@@ -21,10 +21,7 @@ import javax.inject.Inject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * This task writes <i>rockcraft.yaml</i> file for the application.
@@ -53,17 +50,18 @@ public abstract class CreateRockcraftTask extends DefaultTask {
      */
     @TaskAction
     public void writeRockcraft() {
-        getProject().getConfigurations().getByName("archives", archives -> {
-            try {
-                var buildDir = getProject().getLayout().getBuildDirectory();
-                try (BufferedWriter wr = new BufferedWriter(new FileWriter(buildDir.file(ROCKCRAFT_YAML).get().getAsFile()))) {
-                    var files = archives.getArtifacts().getFiles().getFiles().stream().filter(x -> x.getName().endsWith("jar")).toList();
-                    wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), files));
-                }
-            } catch (IOException e) {
-                throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
+        HashSet<File> artifacts = new HashSet<File>();
+        for (var conf : getProject().getConfigurations()) {
+            artifacts.addAll(conf.getArtifacts().getFiles().getFiles().stream().filter(x -> x.getName().endsWith("jar")).toList());
+        }
+        try {
+            var buildDir = getProject().getLayout().getBuildDirectory();
+            try (BufferedWriter wr = new BufferedWriter(new FileWriter(buildDir.file(ROCKCRAFT_YAML).get().getAsFile()))) {
+                wr.write(createRockcraft(buildDir.getAsFile().get().toPath(), artifacts.stream().toList()));
             }
-        });
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
+        }
     }
 
     /**
@@ -74,6 +72,8 @@ public abstract class CreateRockcraftTask extends DefaultTask {
      * @throws IOException - IO error writing <i>rockcraft.yaml</i>
      */
     protected String createRockcraft(Path root, List<File> files) throws IOException {
+        files = files.stream().filter(x -> !x.getName().endsWith("-plain.jar")).toList();
+
         List<String> relativeJars = new ArrayList<String>();
         for (var file : files)
             relativeJars.add(root.relativize(file.toPath()).toString());
@@ -164,31 +164,45 @@ public abstract class CreateRockcraftTask extends DefaultTask {
             part.put("source-type", "git");
         }
         if (getOptions().getBranch() != null) {
-            part.put("branch", getOptions().getBranch());
+            part.put("source-branch", getOptions().getBranch());
         }
 
-        var overrideCommands = new StringBuffer();
-        overrideCommands.append("chisel cut --release ./ --root ${CRAFT_PART_INSTALL} libc6_libs \\\n");
-        overrideCommands.append(" libgcc-s1_libs \\\n");
-        overrideCommands.append(" libstdc++6_libs \\\n");
-        overrideCommands.append(" zlib1g_libs \\\n");
-        overrideCommands.append(" base-files_base \\\n");
-        if (getProjectDeps() != null) {
-            overrideCommands.append(getProjectDeps());
-            overrideCommands.append("\n");
+        String overrideCommands = "chisel cut ";
+        if (getOptions().getSource() != null) {
+            overrideCommands += "--release ./ ";
         }
-        overrideCommands.append("craftctl default");
+        overrideCommands += """
+            --root ${CRAFT_PART_INSTALL}/ libc6_libs \\
+                libgcc-s1_libs \\
+                libstdc++6_libs \\
+                zlib1g_libs \\
+                base-files_base \\
+                libnss3_libs """;
+
+        if (getProjectDeps() != null) {
+            overrideCommands +=" "+ getProjectDeps();
+        }
+        overrideCommands += "\ncraftctl default\n";
+        part.put("override-build", overrideCommands);
         return part;
     }
 
     private Map<String, Object> getProjectService(List<String> relativeJars) {
         String command = getOptions().getCommand();
-        var jarList = relativeJars.stream().filter(x -> !x.endsWith("-plain.jar")).toList();
         if (command == null || command.isBlank()) {
-            if (jarList.size() == 1) {
-                command = String.format("/usr/bin/java -jar %s", jarList.iterator().next());
-            } else
-                throw new UnsupportedOperationException("Rockcraft plugin requires either single jar output or command defined");
+            if (relativeJars.size() == 1) {
+
+                command = String.format("/usr/bin/java -jar /jars/%s", Path.of(relativeJars.iterator().next()).getFileName().toString());
+            } else {
+                StringBuffer message = new StringBuffer();
+                message.append("[ ");
+                for (var entry : relativeJars) {
+                    message.append(entry);
+                    message.append(" ");
+                }
+                message.append("]");
+                throw new UnsupportedOperationException("Rockcraft plugin requires either single jar output or a command defined: "+ message);
+            }
         }
         var serviceData = new HashMap<String, String>();
         serviceData.put("override", "replace");
