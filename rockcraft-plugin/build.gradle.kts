@@ -3,7 +3,7 @@ plugins {
     id("com.gradle.plugin-publish") version "1.3.0"
 }
 
-group = "io.github.vpa1977"
+group = "com.canonical"
 version = "0.1.1"
 
 repositories {
@@ -21,7 +21,6 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-
 }
 
 gradlePlugin {
@@ -30,10 +29,10 @@ gradlePlugin {
 
     plugins {
         create("rockcraftPlugin") {
-            id = "io.github.vpa1977.rockcraft-plugin"
-            displayName = "ROCK plugin"
-            description = "Plugin for ROCK generation"
-            implementationClass = "io.github.vpa1977.rockcraft.plugin.RockcraftPlugin"
+            id = "com.canonical.rockcraft"
+            displayName = "Rockcraft plugin"
+            description = "Plugin for rock image generation"
+            implementationClass = "com.canonical.rockcraft.plugin.RockcraftPlugin"
             tags = listOf("rockcraft", "rock", "container", "docker", "oci")
         }
     }
