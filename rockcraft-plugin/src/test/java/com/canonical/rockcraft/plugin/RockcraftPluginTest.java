@@ -41,6 +41,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
             var yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
             assertEquals("ubuntu@24.04", parsed.get("build-base"));
+            Map<String, Object> parts = (Map<String, Object>)parsed.get("parts");
+            //
+            Map<String, Object> dumpPart = (Map<String, Object>)parts.get("gradle/rockcraft/dump");
+            assertTrue(dumpPart.containsKey("override-build"));
+            Map<String, Object> runtimePart = (Map<String, Object>)parts.get("gradle/rockcraft/runtime");
+            assertTrue(runtimePart.containsKey("override-build"));
+            Map<String, Object> depsPart = (Map<String, Object>)parts.get("gradle/rockcraft/deps");
+            assertTrue(depsPart.containsKey("override-build"));
         }
     }
 
@@ -147,5 +155,32 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         String[] rocks = output.list( (dir, name) -> name.endsWith("rock"));
         assertEquals(1, rocks.length);
         assertTrue(rocks[0].contains("0.02updated"));
+    }
+
+    @Test
+    void testAllOptions() throws IOException {
+        writeString(new File(getProjectDir(), "README.md"), "test");
+        writeString(getBuildFile(), """
+            plugins {
+                id('java')
+                id('io.github.vpa1977.rockcraft-plugin')
+            }
+
+            version = 0.01
+
+            rockcraft {
+                buildPackage = 'openjdk-17-jdk'
+                targetRelease = 17
+                summary = 'A ROCK summary'
+                description = 'README.md'
+                command = '/usr/bin/java -jar jars/application.jar'
+                source = 'http://github.com/canonical/chisel-releases'
+                branch = 'ubuntu-24.04'
+                slices = ['busybox_bins', 'ca-certificates_data-with-certs']
+                architectures = ['amd64', 'arm64']
+            }
+            """);
+        var result = runBuild("build-rock", "--stacktrace");
+        assertEquals(TaskOutcome.SUCCESS, result.getTasks().getLast().getOutcome()); // the build needs to succeed
     }
 }
