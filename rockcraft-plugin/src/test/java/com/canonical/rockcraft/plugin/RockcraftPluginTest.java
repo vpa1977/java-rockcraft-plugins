@@ -163,7 +163,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
             plugins {
                 id('java')
-                id('io.github.vpa1977.rockcraft-plugin')
+                id('com.canonical.rockcraft')
             }
 
             version = 0.01
