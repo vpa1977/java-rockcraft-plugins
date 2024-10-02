@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Rockcraft creation options
+ * Rockcraft.yaml generation options
  */
 public class RockcraftOptions {
 

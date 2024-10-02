@@ -141,9 +141,9 @@ public class RockCrafter {
     private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
         IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
         var parts = new HashMap<String, Object>();
-        parts.put("gradle/rockcraft/dump", getDumpPart(relativeJars));
-        parts.put("gradle/rockcraft/runtime", provider.getRuntimePart(files));
-        parts.put("gradle/rockcraft/deps", getDepsPart());
+        parts.put(settings.getGeneratorName() +  "/rockcraft/dump", getDumpPart(relativeJars));
+        parts.put(settings.getGeneratorName() +  "/rockcraft/runtime", provider.getRuntimePart(files));
+        parts.put(settings.getGeneratorName() +  "/rockcraft/deps", getDepsPart());
         return parts;
     }
 

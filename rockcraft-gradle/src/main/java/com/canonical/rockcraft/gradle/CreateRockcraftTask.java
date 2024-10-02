@@ -57,7 +57,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
 
         try {
             var buildDir = getProject().getLayout().getBuildDirectory();
-            var settings = new RockProjectSettings(getProject().getName(), String.valueOf(getProject().getVersion()), getProject().getProjectDir().toPath());
+            var settings = RockSettingsFactory.createRockProjectSettings(getProject());
             RockCrafter crafter = new RockCrafter(settings, getOptions(), buildDir.getAsFile().get(), new ArrayList<File>(artifacts));
             crafter.writeRockcraft();
         } catch (IOException e) {
