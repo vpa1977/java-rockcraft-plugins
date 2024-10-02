@@ -25,21 +25,21 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <buildPackage>openjdk-17</buildPackage>
-                    <targetRelease>11</targetRelease>
+                    <buildPackage>openjdk-17-jdk-headless</buildPackage>
+                    <targetRelease>17</targetRelease>
                     <jlink>false</jlink>
                     <summary>foo</summary>
                     <description>readme.txt</description>
                     <command>foocommand</command>
-                    <source>sourcefoo</source>
-                    <branch>branchfoo</branch>
+                    <source>https://github.com/vpa1977/chisel-releases</source>
+                    <branch>24.04-openjdk-17</branch>
                     <architectures>
                         <architecture>amd64</architecture>
                         <architecture>arm64</architecture>
                     </architectures>
                     <slices>
-                        <slice>slice1</slice>
-                        <slice>slice2</slice>
+                        <slice>busybox_bins</slice>
+                        <slice>dash_bins</slice>
                     </slices>
                 </configuration>
             </plugin>
