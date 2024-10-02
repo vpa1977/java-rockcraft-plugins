@@ -33,9 +33,16 @@ jobs:
         with:
           channel: 5.21/candidate
 
-      - name: Build and verify project
+      - name: Setup rockcraft
         run: |
           sudo snap install rockcraft --classic
+
+      - name: Build and verify maven project
+        run: |
+          mvn package
+
+      - name: Build and verify gradle project
+        run: |
           ./gradlew clean build -i
 
       - name: Publish Snapshots
