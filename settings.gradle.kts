@@ -7,4 +7,4 @@ pluginManagement {
 
 rootProject.name = "rockcraft-plugin"
 
-include("rockcraft", "rockcraft-gradle", "rockcraft-maven")
+include("rockcraft-build", "rockcraft-gradle", "rockcraft-maven")
