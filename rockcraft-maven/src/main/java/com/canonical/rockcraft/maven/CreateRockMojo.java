@@ -97,7 +97,7 @@ public class CreateRockMojo extends AbstractMojo {
         try {
             rockCrafter.writeRockcraft();
         } catch (IOException e) {
-            throw new MojoExecutionException(e, e.getMessage());
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 }
