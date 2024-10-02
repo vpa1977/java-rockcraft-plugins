@@ -3,9 +3,6 @@ plugins {
     id("com.gradle.plugin-publish") version "1.3.0"
 }
 
-group = "com.canonical"
-version = "0.1.1"
-
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()

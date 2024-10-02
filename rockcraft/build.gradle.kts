@@ -2,9 +2,6 @@ plugins {
     `java`
 }
 
-group = "com.canonical"
-version = "0.1.1"
-
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
