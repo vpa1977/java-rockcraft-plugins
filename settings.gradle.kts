@@ -5,4 +5,6 @@ pluginManagement {
 }
 
 rootProject.name = "rockcraft-plugin"
-include("rockcraft-plugin")
+
+include("rockcraft", "rockcraft-gradle")
+
