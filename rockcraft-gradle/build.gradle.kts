@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":rockcraft"))
+    implementation(project(":rockcraft-build"))
     implementation(libs.osdetector)
 
     // Use JUnit Jupiter for testing.
