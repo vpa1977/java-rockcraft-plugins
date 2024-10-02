@@ -91,15 +91,13 @@ public class CreateRockMojo extends AbstractMojo {
             throw new MojoExecutionException("No project artifacts found.");
         }
         var output = project.getBuild().getOutputDirectory();
-        RockProjectSettings settings = new RockProjectSettings(project.getName(),
-            project.getVersion(), project.getBasedir().toPath() );
+        var settings = RockSettingsFactory.createRockProjectSettings(project);
 
         var rockCrafter = new RockCrafter(settings, options, new File(output), jars);
         try {
             rockCrafter.writeRockcraft();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new MojoExecutionException(e.getMessage());
+            throw new MojoExecutionException(e, e.getMessage());
         }
     }
 }
