@@ -142,7 +142,12 @@ public class RockCrafter {
         IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
         var parts = new HashMap<String, Object>();
         parts.put(settings.getGeneratorName() +  "/rockcraft/dump", getDumpPart(relativeJars));
-        parts.put(settings.getGeneratorName() +  "/rockcraft/runtime", provider.getRuntimePart(files));
+        var runtimePart = provider.getRuntimePart(files);
+        runtimePart.put("after", new String[]{
+                settings.getGeneratorName() + "/rockcraft/dump",
+                settings.getGeneratorName() + "/rockcraft/deps"
+        });
+        parts.put(settings.getGeneratorName() +  "/rockcraft/runtime", runtimePart);
         parts.put(settings.getGeneratorName() +  "/rockcraft/deps", getDepsPart());
         return parts;
     }
