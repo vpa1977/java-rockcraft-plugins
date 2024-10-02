@@ -13,9 +13,20 @@
  */
 package com.canonical.rockcraft.maven;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
+
+import com.canonical.rockcraft.builder.RockProjectSettings;
+
 
 @Mojo(name="build-rock", defaultPhase = LifecyclePhase.PACKAGE)
 public class BuildRockMojo extends AbstractMojo {
