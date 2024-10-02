@@ -35,20 +35,17 @@ public class RockCrafter {
 
     private final RockProjectSettings settings;
     private final RockcraftOptions options;
-    private final File output;
     private final List<File> artifacts;
 
     /**
      * Creates RockCrafter
      * @param settings - Rockcraft project settins
      * @param options - Rockcraft creation options
-     * @param output - output directory for rockcraft.yaml
      * @param artifacts - list of artifacts to package
      */
-    public RockCrafter(RockProjectSettings settings, RockcraftOptions options, File output, List<File> artifacts) {
+    public RockCrafter(RockProjectSettings settings, RockcraftOptions options, List<File> artifacts) {
         this.settings = settings;
         this.options = options;
-        this.output = output;
         this.artifacts = artifacts;
     }
 
@@ -57,8 +54,8 @@ public class RockCrafter {
      * @throws IOException - the method fails to write rockcraft.yaml
      */
     public void writeRockcraft() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(output, ROCKCRAFT_YAML)))) {
-            String rockcraft = createRockcraft(output.toPath(), artifacts);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(settings.getRockOutput().resolve(ROCKCRAFT_YAML).toFile()))) {
+            String rockcraft = createRockcraft(settings.getRockOutput(), artifacts);
             writer.write(rockcraft);
         }
     }

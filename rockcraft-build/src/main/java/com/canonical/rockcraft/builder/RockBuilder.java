@@ -48,29 +48,28 @@ public class RockBuilder {
     /**
      * Builds the rock image
      * @param  settings - rockcraft project settings
-     * @param output - output directory
      * @throws IOException - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
-    public static void buildRock(RockProjectSettings settings, File output) throws InterruptedException, IOException {
+    public static void buildRock(RockProjectSettings settings) throws InterruptedException, IOException {
         var pb = new ProcessBuilder("rockcraft", "pack")
-                .directory(output)
+                .directory(settings.getRockOutput().toFile())
                 .inheritIO();
         var process = pb.start();
         int result = process.waitFor();
         if (result != 0)
             throw new UnsupportedOperationException("Failed to pack rock for " + settings.getName());
 
-        var rockDest = new File(output, ROCK_DIR);
+        var rockDestPath = settings.getRockOutput().resolve(ROCK_DIR);
+        var rockDest = rockDestPath.toFile();
         rockDest.mkdirs();
         for (var f : rockDest.listFiles((dir, file) -> file.endsWith(".rock"))) {
             f.delete();
         }
         // refresh rocks
-        for (var f : output.listFiles((dir, file) -> file.endsWith(".rock"))) {
+        for (var f : settings.getRockOutput().toFile().listFiles((dir, file) -> file.endsWith(".rock"))) {
             var source = f.toPath();
-            var dest = new File(output, ROCK_DIR).toPath();
-            Files.move(source, dest.resolve(source.getFileName()));
+            Files.move(source, rockDestPath.resolve(source.getFileName()));
         }
     }
 }

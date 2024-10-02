@@ -40,8 +40,7 @@ public class BuildRockcraftTask extends DefaultTask {
      */
     @TaskAction
     public void packRock() throws IOException, InterruptedException {
-        var buildDir = getProject().getLayout().getBuildDirectory().getAsFile().get();
         var settings = RockSettingsFactory.createRockProjectSettings(getProject());
-        RockBuilder.buildRock(settings, buildDir);
+        RockBuilder.buildRock(settings);
     }
 }

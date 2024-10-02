@@ -39,9 +39,8 @@ public class BuildRockMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException {
         try {
-            var output = new File(project.getBuild().getOutputDirectory());
             var settings = RockSettingsFactory.createRockProjectSettings(project);
-            RockBuilder.buildRock(settings, output);
+            RockBuilder.buildRock(settings);
         } catch (InterruptedException | IOException e ){
             throw new MojoExecutionException(e.getMessage(), e);
         }

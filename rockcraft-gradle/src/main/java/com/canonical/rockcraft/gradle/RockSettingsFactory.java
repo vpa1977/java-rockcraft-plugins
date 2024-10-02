@@ -6,6 +6,7 @@ import com.rockcraft.builder.RockProjectSettings;
 
 public class RockSettingsFactory {
     public static final RockProjectSettings createRockProjectSettings(Project project) {
-        return new RockProjectSettings("gradle", project.getName(), String.valueOf(project.getVersion()), project.getProjectDir().toPath());
+        return new RockProjectSettings("gradle", project.getName(), String.valueOf(project.getVersion()), project.getProjectDir().toPath(),
+            project.getLayout().getBuildDirectory());
     }
 }

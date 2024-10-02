@@ -56,9 +56,8 @@ public abstract class CreateRockcraftTask extends DefaultTask {
         }
 
         try {
-            var buildDir = getProject().getLayout().getBuildDirectory();
             var settings = RockSettingsFactory.createRockProjectSettings(getProject());
-            RockCrafter crafter = new RockCrafter(settings, getOptions(), buildDir.getAsFile().get(), new ArrayList<File>(artifacts));
+            RockCrafter crafter = new RockCrafter(settings, getOptions(), new ArrayList<File>(artifacts));
             crafter.writeRockcraft();
         } catch (IOException e) {
             throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());

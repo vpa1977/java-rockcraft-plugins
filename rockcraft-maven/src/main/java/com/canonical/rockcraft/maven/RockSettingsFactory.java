@@ -18,7 +18,9 @@ import org.apache.maven.project.MavenProject;
 
 public class RockSettingsFactory {
     public static final RockProjectSettings createRockProjectSettings(MavenProject project) {
+        var outputPath = project.getArtifact().getFile().getParentFile().toPath();
         return new RockProjectSettings("maven", project.getName(),
-                project.getVersion(), project.getBasedir().toPath() );
+                project.getVersion(), project.getBasedir().getAbsoluteFile().toPath(),
+                outputPath );
     }
 }
