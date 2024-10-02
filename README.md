@@ -58,7 +58,6 @@ To use the plugin, apply the following two steps:
     }
     apply(plugin = "com.canonical.rockcraft")
 
-
 ### 2. Configure ROCK container
 
 The plugin allows setting up container summary and description,
@@ -102,4 +101,3 @@ Contributions can be submitted via [Pull requests](https://github.com/canonical/
 
 - Allow custom rockcraft.yaml/snippets
 - Error handling (empty jar file), no main class
-
