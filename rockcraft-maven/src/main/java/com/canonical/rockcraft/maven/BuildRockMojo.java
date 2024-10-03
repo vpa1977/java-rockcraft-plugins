@@ -14,25 +14,20 @@
 package com.canonical.rockcraft.maven;
 
 import com.canonical.rockcraft.builder.RockBuilder;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 
-@Mojo(name = "build-rock", defaultPhase = LifecyclePhase.PACKAGE)
-public class BuildRockMojo extends AbstractMojo {
-
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+@Mojo(name = "build-rock", threadSafe = false, requiresProject = true, defaultPhase = LifecyclePhase.INSTALL)
+public class BuildRockMojo extends AbstractRockMojo {
 
     public void execute() throws MojoExecutionException {
+        super.execute();
         try {
-            var settings = RockSettingsFactory.createRockProjectSettings(project);
-            RockBuilder.buildRock(settings);
+            var settings = RockSettingsFactory.createRockProjectSettings(getProject());
+            RockBuilder.buildRock(settings, getOptions());
         } catch (InterruptedException | IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
