@@ -14,6 +14,7 @@
 package com.canonical.rockcraft.builder;
 
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.DumperOptions;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,6 +77,9 @@ public class RockCrafter {
         List<String> relativeJars = new ArrayList<String>();
         for (var file : files)
             relativeJars.add(root.relativize(file.toPath()).toString());
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        var yaml = new Yaml(options);
 
         var rockcraft = new HashMap<String, Object>();
         rockcraft.put("name", settings.getName());
@@ -94,9 +98,23 @@ public class RockCrafter {
         rockcraft.put("platforms", getPlatforms());
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
+
+        StringBuilder yamlOutput = new StringBuilder();
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
         rockcraft.put("services", getProjectService(relativeJars));
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
         rockcraft.put("parts", getProjectParts(files, relativeJars));
-        return new Yaml().dump(rockcraft);
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
+        return yamlOutput.toString();
     }
 
     private Map<String, Object> getPlatforms() {
