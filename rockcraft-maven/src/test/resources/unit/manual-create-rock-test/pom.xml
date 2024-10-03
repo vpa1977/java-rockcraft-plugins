@@ -17,14 +17,15 @@
                 <artifactId>rockcraft-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>package</phase>
                         <goals>
                             <goal>create-rock</goal>
                             <goal>build-rock</goal>
+                            <goal>push-rock</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <docker>true</docker>
                     <buildPackage>openjdk-17-jdk-headless</buildPackage>
                     <targetRelease>17</targetRelease>
                     <jlink>false</jlink>
@@ -45,3 +46,4 @@
         </plugins>
     </build>
 </project>
+
