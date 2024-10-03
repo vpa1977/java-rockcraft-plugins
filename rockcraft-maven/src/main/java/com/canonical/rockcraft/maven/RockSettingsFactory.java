@@ -16,7 +16,22 @@ package com.canonical.rockcraft.maven;
 import com.canonical.rockcraft.builder.RockProjectSettings;
 import org.apache.maven.project.MavenProject;
 
+/**
+ * Creates RockProjectSettings from Maven project
+ */
 public class RockSettingsFactory {
+
+    /**
+     * Constructs RockSettingsFactory
+     */
+    RockSettingsFactory() {}
+
+    /**
+     * Creates RockProjectSettings from Maven project
+     *
+     * @param project - Maven project
+     * @return RockProjectSettings
+     */
     public static final RockProjectSettings createRockProjectSettings(MavenProject project) {
         var outputPath = project.getArtifact().getFile().getParentFile().toPath();
         return new RockProjectSettings("maven", project.getName(),
