@@ -17,6 +17,7 @@ import com.canonical.rockcraft.builder.RockBuilder;
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import org.gradle.api.tasks.TaskAction;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 /**
@@ -31,6 +32,7 @@ public class BuildRockcraftTask extends AbstractRockcraftTask {
      *
      * @param options - rockcraft options
      */
+    @Inject
     public BuildRockcraftTask(RockcraftOptions options) {
         super(options);
     }
