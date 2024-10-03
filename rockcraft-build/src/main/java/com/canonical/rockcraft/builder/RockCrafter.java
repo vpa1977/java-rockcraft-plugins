@@ -13,8 +13,8 @@
  */
 package com.canonical.rockcraft.builder;
 
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,8 +31,6 @@ import java.util.Map;
  * Creates a rockcraft.yaml based on RockOptions
  */
 public class RockCrafter {
-
-    private static final String ROCKCRAFT_YAML = "rockcraft.yaml";
 
     private final RockProjectSettings settings;
     private final RockcraftOptions options;
@@ -57,7 +55,7 @@ public class RockCrafter {
      * @throws IOException - the method fails to write rockcraft.yaml
      */
     public void writeRockcraft() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(settings.getRockOutput().resolve(ROCKCRAFT_YAML).toFile()))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(settings.getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
             String rockcraft = createRockcraft(settings.getRockOutput(), artifacts);
             writer.write(rockcraft);
         }
@@ -82,8 +80,8 @@ public class RockCrafter {
         var yaml = new Yaml(options);
 
         var rockcraft = new HashMap<String, Object>();
-        rockcraft.put("name", settings.getName());
-        rockcraft.put("version", String.valueOf(settings.getVersion()));
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, settings.getName());
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_VERSION, String.valueOf(settings.getVersion()));
         rockcraft.put("summary", getOptions().getSummary());
         var description = getOptions().getDescription();
         if (description != null) {
