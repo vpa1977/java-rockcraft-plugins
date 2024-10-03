@@ -21,6 +21,6 @@ public class RockSettingsFactory {
         var outputPath = project.getArtifact().getFile().getParentFile().toPath();
         return new RockProjectSettings("maven", project.getName(),
                 project.getVersion(), project.getBasedir().getAbsoluteFile().toPath(),
-                outputPath );
+                outputPath);
     }
 }

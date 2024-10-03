@@ -13,10 +13,7 @@
  */
 package com.canonical.rockcraft.maven;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.maven.artifact.Artifact;
+import com.canonical.rockcraft.builder.RockBuilder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -24,14 +21,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Mojo;
+import java.io.IOException;
 
-import com.canonical.rockcraft.builder.RockBuilder;
-import com.canonical.rockcraft.builder.RockProjectSettings;
-
-@Mojo(name="build-rock", defaultPhase = LifecyclePhase.PACKAGE)
+@Mojo(name = "build-rock", defaultPhase = LifecyclePhase.PACKAGE)
 public class BuildRockMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
@@ -41,7 +33,7 @@ public class BuildRockMojo extends AbstractMojo {
         try {
             var settings = RockSettingsFactory.createRockProjectSettings(project);
             RockBuilder.buildRock(settings);
-        } catch (InterruptedException | IOException e ){
+        } catch (InterruptedException | IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
 

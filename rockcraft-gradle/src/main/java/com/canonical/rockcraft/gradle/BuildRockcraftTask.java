@@ -14,7 +14,6 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockBuilder;
-import com.canonical.rockcraft.builder.RockProjectSettings;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
@@ -35,7 +34,8 @@ public class BuildRockcraftTask extends DefaultTask {
 
     /**
      * The task action
-     * @throws IOException - IO error while writing <i>rockcraft.yaml</i>
+     *
+     * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
     @TaskAction

@@ -27,6 +27,7 @@ public class RawRuntimePart implements IRuntimeProvider {
 
     /**
      * Constructs the RawRuntimePart
+     *
      * @param options - plugin options
      */
     public RawRuntimePart(RockcraftOptions options) {
@@ -40,6 +41,7 @@ public class RawRuntimePart implements IRuntimeProvider {
 
     /**
      * Generate code to create Java runtime image
+     *
      * @param files - list of jar files to analyze
      * @return part content
      */

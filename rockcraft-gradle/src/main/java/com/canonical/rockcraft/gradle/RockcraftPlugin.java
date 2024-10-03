@@ -38,6 +38,7 @@ public class RockcraftPlugin implements Plugin<Project> {
 
     /**
      * Applies the plugin
+     *
      * @param project The target object
      */
     public void apply(Project project) {

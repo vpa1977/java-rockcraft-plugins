@@ -14,7 +14,6 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockCrafter;
-import com.canonical.rockcraft.builder.RockProjectSettings;
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
@@ -34,6 +33,7 @@ public abstract class CreateRockcraftTask extends DefaultTask {
 
     /**
      * Constructs the CreateRockcraft task
+     *
      * @param options - plugin options
      */
     @Inject

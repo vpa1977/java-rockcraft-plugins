@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  Implements Rockcraft Java runtime part using JLink plugin (experimental)
+ * Implements Rockcraft Java runtime part using JLink plugin (experimental)
  */
 public class JLinkRuntimePart implements IRuntimeProvider {
 
@@ -28,6 +28,7 @@ public class JLinkRuntimePart implements IRuntimeProvider {
 
     /**
      * Constructs the JLinkRuntimePart
+     *
      * @param options - plugin options
      */
     public JLinkRuntimePart(RockcraftOptions options) {
@@ -36,6 +37,7 @@ public class JLinkRuntimePart implements IRuntimeProvider {
 
     /**
      * Retuns the part contents
+     *
      * @param files - list of jar files to analyze
      * @return part contents
      */

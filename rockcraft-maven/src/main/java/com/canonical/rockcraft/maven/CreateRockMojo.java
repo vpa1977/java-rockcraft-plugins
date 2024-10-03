@@ -13,8 +13,9 @@
  */
 package com.canonical.rockcraft.maven;
 
-import com.canonical.rockcraft.builder.RockProjectSettings;
-import org.apache.maven.artifact.Artifact;
+import com.canonical.rockcraft.builder.RockCrafter;
+import com.canonical.rockcraft.builder.RockcraftOptions;
+import com.canonical.rockcraft.builder.RockcraftOptions.RockArchitecture;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -22,27 +23,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.canonical.rockcraft.builder.RockCrafter;
-import com.canonical.rockcraft.builder.RockcraftOptions;
-import com.canonical.rockcraft.builder.RockcraftOptions.RockArchitecture;
-
 import java.io.File;
 import java.io.IOException;
-
-import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-@Mojo(name="create-rock", defaultPhase = LifecyclePhase.PACKAGE)
+@Mojo(name = "create-rock", defaultPhase = LifecyclePhase.PACKAGE)
 public class CreateRockMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     @Parameter(property = "buildPackage")
-    private String buildPackage  = "openjdk-21-jdk";
+    private String buildPackage = "openjdk-21-jdk";
 
     @Parameter(property = "targetRelease")
     private int targetRelease = 21;
@@ -65,10 +58,10 @@ public class CreateRockMojo extends AbstractMojo {
     @Parameter(property = "branch")
     private String branch;
 
-    @Parameter(property="architectures")
+    @Parameter(property = "architectures")
     private RockArchitecture[] architectures = new RockArchitecture[0];
 
-    @Parameter(property="slices")
+    @Parameter(property = "slices")
     private List<String> slices = new ArrayList<String>();
 
     public void execute() throws MojoExecutionException {

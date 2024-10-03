@@ -39,8 +39,9 @@ public class RockCrafter {
 
     /**
      * Creates RockCrafter
-     * @param settings - Rockcraft project settins
-     * @param options - Rockcraft creation options
+     *
+     * @param settings  - Rockcraft project settins
+     * @param options   - Rockcraft creation options
      * @param artifacts - list of artifacts to package
      */
     public RockCrafter(RockProjectSettings settings, RockcraftOptions options, List<File> artifacts) {
@@ -51,6 +52,7 @@ public class RockCrafter {
 
     /**
      * Writes a rockcraft.yaml file to the output directory
+     *
      * @throws IOException - the method fails to write rockcraft.yaml
      */
     public void writeRockcraft() throws IOException {
@@ -62,7 +64,8 @@ public class RockCrafter {
 
     /**
      * Generate content of the <i>rockcraft.yaml</i>
-     * @param root - location of build directory
+     *
+     * @param root  - location of build directory
      * @param files - list of .jar file artifacts
      * @return content of the <i>rockcraft.yaml</i>
      * @throws IOException - IO error writing <i>rockcraft.yaml</i>
@@ -138,14 +141,14 @@ public class RockCrafter {
     private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
         IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
         var parts = new HashMap<String, Object>();
-        parts.put(settings.getGeneratorName() +  "/rockcraft/dump", getDumpPart(relativeJars));
+        parts.put(settings.getGeneratorName() + "/rockcraft/dump", getDumpPart(relativeJars));
         var runtimePart = provider.getRuntimePart(files);
         runtimePart.put("after", new String[]{
                 settings.getGeneratorName() + "/rockcraft/dump",
                 settings.getGeneratorName() + "/rockcraft/deps"
         });
-        parts.put(settings.getGeneratorName() +  "/rockcraft/runtime", runtimePart);
-        parts.put(settings.getGeneratorName() +  "/rockcraft/deps", getDepsPart());
+        parts.put(settings.getGeneratorName() + "/rockcraft/runtime", runtimePart);
+        parts.put(settings.getGeneratorName() + "/rockcraft/deps", getDepsPart());
         return parts;
     }
 

@@ -14,7 +14,6 @@
 package com.canonical.rockcraft.builder;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -33,8 +32,9 @@ public class RockBuilder {
 
     /**
      * Checks that rockcraft is installed
+     *
      * @throws InterruptedException - unable to start rockcraft
-     * @throws IOException - unable to start rockcraft
+     * @throws IOException          - unable to start rockcraft
      */
     public static void checkRockcraft() throws InterruptedException, IOException {
         var pb = new ProcessBuilder("rockcraft", "--version");
@@ -47,8 +47,9 @@ public class RockBuilder {
 
     /**
      * Builds the rock image
-     * @param  settings - rockcraft project settings
-     * @throws IOException - IO error while writing <i>rockcraft.yaml</i>
+     *
+     * @param settings - rockcraft project settings
+     * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
     public static void buildRock(RockProjectSettings settings) throws InterruptedException, IOException {

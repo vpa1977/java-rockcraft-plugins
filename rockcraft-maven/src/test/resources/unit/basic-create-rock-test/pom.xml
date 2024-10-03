@@ -17,11 +17,11 @@
                 <artifactId>rockcraft-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                      <phase>package</phase>
-                      <goals>
-                        <goal>create-rock</goal>
-                        <goal>build-rock</goal>
-                      </goals>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>create-rock</goal>
+                            <goal>build-rock</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <configuration>
@@ -30,7 +30,6 @@
                     <jlink>false</jlink>
                     <summary>foo</summary>
                     <description>readme.txt</description>
-                    <command>foocommand</command>
                     <source>https://github.com/vpa1977/chisel-releases</source>
                     <branch>24.04-openjdk-17</branch>
                     <architectures>

@@ -32,6 +32,7 @@ public class RockcraftOptions {
     private String branch;
     private RockArchitecture[] architectures = new RockArchitecture[0];
     private List<String> slices = new ArrayList<String>();
+
     /**
      * Construct RockcraftOptions
      */
@@ -40,6 +41,7 @@ public class RockcraftOptions {
 
     /**
      * Gets the target release (integer)
+     *
      * @return target release
      */
     public int getTargetRelease() {
@@ -48,6 +50,7 @@ public class RockcraftOptions {
 
     /**
      * Sets the target release
+     *
      * @param targetRelease - target OpenJDK release
      */
     public void setTargetRelease(int targetRelease) {
@@ -56,6 +59,7 @@ public class RockcraftOptions {
 
     /**
      * Get the Ubuntu OpenJDK package used to build the runtime image
+     *
      * @return package name
      */
     public String getBuildPackage() {
@@ -64,6 +68,7 @@ public class RockcraftOptions {
 
     /**
      * Set the OpenJDK package used to build the runtime image
+     *
      * @param buildPackage - Ubuntu package name
      */
     public void setBuildPackage(String buildPackage) {
@@ -73,6 +78,7 @@ public class RockcraftOptions {
     /**
      * Gets a flag whether to use jlink plugin (early access option).
      * Default - false.
+     *
      * @return jlink plugin flag
      */
     public boolean getJlink() {
@@ -81,6 +87,7 @@ public class RockcraftOptions {
 
     /**
      * Enable/Disable jlink plugin
+     *
      * @param jlink - flag
      */
     public void setJlink(boolean jlink) {
@@ -89,6 +96,7 @@ public class RockcraftOptions {
 
     /**
      * Gets <i>chisel-releases</i> branch
+     *
      * @return <i>chisel-releases</i> branch
      */
     public String getBranch() {
@@ -97,6 +105,7 @@ public class RockcraftOptions {
 
     /**
      * Sets <i>chisel-releases</i> branch
+     *
      * @param branch - git branch
      */
     public void setBranch(String branch) {
@@ -105,6 +114,7 @@ public class RockcraftOptions {
 
     /**
      * Gets the summary comment for the ROCK
+     *
      * @return summary comment
      */
     public String getSummary() {
@@ -113,6 +123,7 @@ public class RockcraftOptions {
 
     /**
      * Sets the summary comment for the ROCK
+     *
      * @param summary - summary comment
      */
     public void setSummary(String summary) {
@@ -121,6 +132,7 @@ public class RockcraftOptions {
 
     /**
      * Gets a description file for the ROCK
+     *
      * @return path to the description
      */
     public Path getDescription() {
@@ -129,6 +141,7 @@ public class RockcraftOptions {
 
     /**
      * Sets the path to the description file
+     *
      * @param description - description file
      */
     public void setDescription(String description) {
@@ -137,6 +150,7 @@ public class RockcraftOptions {
 
     /**
      * Gets the list of the supported architectures
+     *
      * @return supported architectures
      */
     public RockArchitecture[] getArchitectures() {
@@ -145,6 +159,7 @@ public class RockcraftOptions {
 
     /**
      * Sets the list of the supported architectures
+     *
      * @param architectures - supported architectures
      */
     public void setArchitectures(RockArchitecture[] architectures) {
@@ -153,6 +168,7 @@ public class RockcraftOptions {
 
     /**
      * Gets the service command (opitonal, override)
+     *
      * @return the service command line
      */
     public String getCommand() {
@@ -161,6 +177,7 @@ public class RockcraftOptions {
 
     /**
      * Override the service command line
+     *
      * @param command - command line
      */
     public void setCommand(String command) {
@@ -169,6 +186,7 @@ public class RockcraftOptions {
 
     /**
      * Get chisel slices to install
+     *
      * @return list of the slice names
      */
     public List<String> getSlices() {
@@ -177,6 +195,7 @@ public class RockcraftOptions {
 
     /**
      * Overrides chisel slices to install
+     *
      * @param slices - list of chisel slices
      */
     public void setSlices(List<String> slices) {
@@ -185,6 +204,7 @@ public class RockcraftOptions {
 
     /**
      * Get Git repository URL of the <i>chisel-releases</i>
+     *
      * @return Git repository URL
      */
     public String getSource() {
@@ -193,6 +213,7 @@ public class RockcraftOptions {
 
     /**
      * Override <i>chisel-releases</i> repository URL
+     *
      * @param source - Git repository URL
      */
     public void setSource(String source) {
