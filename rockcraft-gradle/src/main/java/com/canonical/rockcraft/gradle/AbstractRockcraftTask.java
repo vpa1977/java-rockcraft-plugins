@@ -15,6 +15,7 @@ package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.Input;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,7 @@ import javax.inject.Inject;
  */
 public class AbstractRockcraftTask extends DefaultTask {
 
+    @Input
     private final RockcraftOptions options;
 
     /**
