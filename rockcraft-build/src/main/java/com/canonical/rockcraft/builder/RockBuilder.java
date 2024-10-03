@@ -13,17 +13,18 @@
  */
 package com.canonical.rockcraft.builder;
 
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 
 /**
  * Utilities to build rock image
  */
 public class RockBuilder {
-
-    private static final String ROCK_DIR = "rock";
-
     /**
      * Creates RockBuilder
      */
@@ -46,13 +47,32 @@ public class RockBuilder {
     }
 
     /**
+     * Pushes rock image to the docker
+     *
+     * @param settings - rockcraft project settings
+     * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
+     * @throws InterruptedException - <i>rockcraft</i> process was aborted
+     */
+    @SuppressWarnings("unchecked")
+    public static void pushRock(RockProjectSettings settings, RockcraftOptions options) throws InterruptedException, IOException {
+        var yaml = new Yaml();
+        var rockcraft = (Map<String, Object>) yaml.load(new FileReader(settings.getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()));
+        String imageName = String.valueOf(rockcraft.get(IRockcraftNames.ROCKCRAFT_NAME));
+        String imageVersion = String.valueOf(rockcraft.get(IRockcraftNames.ROCKCRAFT_VERSION));
+        var rockDestPath = settings.getRockOutput().resolve(IRockcraftNames.ROCK_OUTPUT);
+        for (var file : rockDestPath.toFile().listFiles((dir, file) -> file.endsWith(".rock"))) {
+            copyInDocker(file, imageName);
+        }
+    }
+
+    /**
      * Builds the rock image
      *
      * @param settings - rockcraft project settings
      * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
-    public static void buildRock(RockProjectSettings settings) throws InterruptedException, IOException {
+    public static void buildRock(RockProjectSettings settings, RockcraftOptions options) throws InterruptedException, IOException {
         var pb = new ProcessBuilder("rockcraft", "pack")
                 .directory(settings.getRockOutput().toFile())
                 .inheritIO();
@@ -61,7 +81,7 @@ public class RockBuilder {
         if (result != 0)
             throw new UnsupportedOperationException("Failed to pack rock for " + settings.getName());
 
-        var rockDestPath = settings.getRockOutput().resolve(ROCK_DIR);
+        var rockDestPath = settings.getRockOutput().resolve(IRockcraftNames.ROCK_OUTPUT);
         var rockDest = rockDestPath.toFile();
         rockDest.mkdirs();
         for (var f : rockDest.listFiles((dir, file) -> file.endsWith(".rock"))) {
@@ -70,7 +90,21 @@ public class RockBuilder {
         // refresh rocks
         for (var f : settings.getRockOutput().toFile().listFiles((dir, file) -> file.endsWith(".rock"))) {
             var source = f.toPath();
-            Files.move(source, rockDestPath.resolve(source.getFileName()));
+            var destination = rockDestPath.resolve(source.getFileName());
+            Files.move(source, destination);
         }
+    }
+
+    private static void copyInDocker(File ociImage, String imageName) throws IOException, InterruptedException {
+        var pb = new ProcessBuilder("rockcraft.skopeo",
+                "copy",
+                String.format("oci-archive:%s", ociImage.getAbsolutePath()),
+                String.format("docker-daemon:%s:latest", imageName))
+                .directory(ociImage.getParentFile())
+                .inheritIO();
+        var process = pb.start();
+        int result = process.waitFor();
+        if (result != 0)
+            throw new UnsupportedOperationException("Failed to copy " + ociImage.getAbsolutePath() + " to docker image " + imageName);
     }
 }
