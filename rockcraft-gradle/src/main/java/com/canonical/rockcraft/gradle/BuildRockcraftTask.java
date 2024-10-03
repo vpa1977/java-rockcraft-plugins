@@ -14,7 +14,7 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockBuilder;
-import org.gradle.api.DefaultTask;
+import com.canonical.rockcraft.builder.RockcraftOptions;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
@@ -23,13 +23,16 @@ import java.io.IOException;
  * This task builds a ROCK image by calling <i>rockcraft pack</i>.
  * It removes all previous ROCK artifacts from the build directory.
  */
-public class BuildRockcraftTask extends DefaultTask {
+public class BuildRockcraftTask extends AbstractRockcraftTask {
+
 
     /**
-     * Constructs BuildRockcraft task
+     * Constructs BuildRockcraftTask
+     *
+     * @param options - rockcraft options
      */
-    public BuildRockcraftTask() {
-        super();
+    public BuildRockcraftTask(RockcraftOptions options) {
+        super(options);
     }
 
     /**
@@ -41,6 +44,6 @@ public class BuildRockcraftTask extends DefaultTask {
     @TaskAction
     public void packRock() throws IOException, InterruptedException {
         var settings = RockSettingsFactory.createRockProjectSettings(getProject());
-        RockBuilder.buildRock(settings);
+        RockBuilder.buildRock(settings, getOptions());
     }
 }

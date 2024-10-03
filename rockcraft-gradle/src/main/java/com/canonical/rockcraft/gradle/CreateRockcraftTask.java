@@ -15,10 +15,8 @@ package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockCrafter;
 import com.canonical.rockcraft.builder.RockcraftOptions;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,22 +25,15 @@ import java.util.HashSet;
 /**
  * This task writes <i>rockcraft.yaml</i> file for the application.
  */
-public abstract class CreateRockcraftTask extends DefaultTask {
-
-    private final RockcraftOptions options;
+public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
 
     /**
-     * Constructs the CreateRockcraft task
+     * Constructs CreateRockcraftTask
      *
-     * @param options - plugin options
+     * @param options - rockcraft options
      */
-    @Inject
     public CreateRockcraftTask(RockcraftOptions options) {
-        this.options = options;
-    }
-
-    private RockcraftOptions getOptions() {
-        return options;
+        super(options);
     }
 
     /**
