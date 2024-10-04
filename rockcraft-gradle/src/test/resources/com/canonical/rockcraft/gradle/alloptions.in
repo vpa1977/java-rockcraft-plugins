@@ -1,0 +1,18 @@
+plugins {
+    id('java')
+    id('io.rockcrafters.rockcraft')
+}
+
+version = 0.01
+
+rockcraft {
+    buildPackage = 'openjdk-17-jdk'
+    targetRelease = 17
+    summary = 'A ROCK summary'
+    description = 'README.md'
+    command = '/usr/bin/java -jar jars/application.jar'
+    source = 'http://github.com/canonical/chisel-releases'
+    branch = 'ubuntu-24.04'
+    slices = ['busybox_bins', 'ca-certificates_data-with-certs']
+    architectures = ['amd64', 'arm64']
+}
