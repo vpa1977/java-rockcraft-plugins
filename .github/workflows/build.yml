@@ -39,7 +39,7 @@ jobs:
 
       - name: Build and verify maven project
         run: |
-          mvn package
+          mvn install invoker:install invoker:run
 
       - name: Build and verify gradle project
         run: |

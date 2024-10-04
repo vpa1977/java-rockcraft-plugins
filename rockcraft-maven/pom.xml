@@ -7,35 +7,59 @@
 
     <packaging>maven-plugin</packaging>
     <properties>
+        <maven-invoker-plugin.version>3.8.0</maven-invoker-plugin.version>
         <maven-plugin-tools.version>3.13.1</maven-plugin-tools.version>
-        <maven-api.version>3.9.9</maven-api.version>
+        <mavenVersion>3.9.9</mavenVersion>
+        <mavenPluginVersion>3.15.0</mavenPluginVersion>
+        <guiceVersion>6.0.0</guiceVersion>
+        <mockitoVersion>5.12.0</mockitoVersion>
+        <mavenPluginTestingHarnessVersion>4.0.0-beta-1</mavenPluginTestingHarnessVersion>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rockcraft-maven-plugin</artifactId>
     <dependencies>
         <dependency>
-            <groupId>com.canonical</groupId>
-            <artifactId>rockcraft-build</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>${maven-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>${maven-api.version}</version>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${mavenPluginVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
-            <artifactId>maven-plugin-annotations</artifactId>
+            <artifactId>maven-plugin-tools-java</artifactId>
             <version>${maven-plugin-tools.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Maven -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${mavenVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>${mavenVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${mavenVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-shared-utils</artifactId>
+            <version>3.4.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.canonical</groupId>
+            <artifactId>rockcraft-build</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -54,6 +78,51 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <gpgArguments>
+                                    <arg>--pinentry-mode</arg>
+                                    <arg>loopback</arg>
+                                </gpgArguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>${maven-invoker-plugin.version}</version>
+                    <configuration>
+                        <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                        <settingsFile>src/it/settings.xml</settingsFile>
+                        <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                        <!---
+                        Don't use addTestClassPath as it interferes with the classpath -->
+                        <postBuildHookScript>verify</postBuildHookScript>
+                        <skipInvocation>${skipTests}</skipInvocation>
+                        <streamLogs>true</streamLogs>
+                        <!-- Silences repetitive "downloading" logs from the local repo.
+                        Note: this also silences logs about integration test runs! -->
+                        <mavenOpts>-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN</mavenOpts>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>integration-test</phase>
+                            <goals>
+                                <goal>install</goal>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-tools.version}</version>
@@ -65,6 +134,16 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <excludes>
+                            <exclude>unit/**</exclude>
+                        </excludes>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
