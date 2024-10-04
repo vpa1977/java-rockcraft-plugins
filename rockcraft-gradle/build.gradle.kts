@@ -24,8 +24,8 @@ dependencies {
 }
 
 gradlePlugin {
-    website = "https://github.com/canonical/rockcraft-gradle-plugin"
-    vcsUrl = "https://github.com/canonical/rockcraft-gradle-plugin"
+    website = "https://github.com/rockcrafters/java-rockcraft-plugins"
+    vcsUrl = "https://github.com/rockcrafters/java-rockcraft-plugins"
 
     plugins {
         create("rockcraftPlugin") {
