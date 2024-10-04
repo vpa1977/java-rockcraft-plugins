@@ -58,14 +58,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft')
+                    id('io.rockcrafters.rockcraft')
                 }
-                
+
                 rockcraft {
                     buildPackage = "openjdk-11-jdk"
                     targetRelease = 11
                 }
-                
+
                 """);
         var result = runBuild("build-rock");
         assertTrue(true); // the build needs to succeed
@@ -76,14 +76,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft')
+                    id('io.rockcrafters.rockcraft')
                 }
-                
+
                 rockcraft {
                     summary = "Foobar"
                     description = "readme.txt"
                 }
-                
+
                 """);
         writeString(new File(getProjectDir(), "readme.txt"), """
                 This is a multiline description
@@ -102,14 +102,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft')
+                    id('io.rockcrafters.rockcraft')
                 }
-                
+
                 rockcraft {
                     summary = "Foobar"
                     architectures = [ "amd64", "arm64" ]
                 }
-                
+
                 """);
         runBuild("jar", "create-rock");
 
@@ -127,14 +127,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft')
+                    id('io.rockcrafters.rockcraft')
                 }
-                
+
                 version = 0.01
-                
+
                 rockcraft {
                 }
-                
+
                 """);
         runBuild("build-rock");
         File output = Path.of(getProjectDir().getAbsolutePath(), "build", "rock").toFile();
@@ -143,14 +143,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft')
+                    id('io.rockcrafters.rockcraft')
                 }
-                
+
                 version = '0.02updated'
-                
+
                 rockcraft {
                 }
-                
+
                 """);
         runBuild("build-rock");
         String[] rocks = output.list((dir, name) -> name.endsWith("rock"));
@@ -164,11 +164,11 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(getBuildFile(), """
                 plugins {
                     id('java')
-                    id('com.canonical.rockcraft')
+                    id('io.rockcrafters.rockcraft')
                 }
-                
+
                 version = 0.01
-                
+
                 rockcraft {
                     buildPackage = 'openjdk-17-jdk'
                     targetRelease = 17

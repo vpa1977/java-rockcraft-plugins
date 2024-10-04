@@ -3,7 +3,7 @@ plugins {
     id("com.gradle.plugin-publish") version "1.3.0"
 }
 
-group = "com.canonical"
+group = "io.rockcrafters"
 version = "0.1.1"
 
 repositories {
@@ -29,7 +29,7 @@ gradlePlugin {
 
     plugins {
         create("rockcraftPlugin") {
-            id = "com.canonical.rockcraft"
+            id = "io.rockcrafters.rockcraft"
             displayName = "Rockcraft plugin"
             description = "Plugin for rock image generation"
             implementationClass = "com.canonical.rockcraft.gradle.RockcraftPlugin"
