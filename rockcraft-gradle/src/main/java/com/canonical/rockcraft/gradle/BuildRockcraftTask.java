@@ -14,34 +14,38 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockBuilder;
-import com.canonical.rockcraft.builder.RockProjectSettings;
-import org.gradle.api.DefaultTask;
+import com.canonical.rockcraft.builder.RockcraftOptions;
 import org.gradle.api.tasks.TaskAction;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 /**
  * This task builds a ROCK image by calling <i>rockcraft pack</i>.
  * It removes all previous ROCK artifacts from the build directory.
  */
-public class BuildRockcraftTask extends DefaultTask {
+public class BuildRockcraftTask extends AbstractRockcraftTask {
+
 
     /**
-     * Constructs BuildRockcraft task
+     * Constructs BuildRockcraftTask
+     *
+     * @param options - rockcraft options
      */
-    public BuildRockcraftTask() {
-        super();
+    @Inject
+    public BuildRockcraftTask(RockcraftOptions options) {
+        super(options);
     }
 
     /**
      * The task action
-     * @throws IOException - IO error while writing <i>rockcraft.yaml</i>
+     *
+     * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
     @TaskAction
     public void packRock() throws IOException, InterruptedException {
-        var buildDir = getProject().getLayout().getBuildDirectory().getAsFile().get();
-        var settings = new RockProjectSettings(getProject().getName(), String.valueOf(getProject().getVersion()), getProject().getProjectDir().toPath());
-        RockBuilder.buildRock(settings, buildDir);
+        var settings = RockSettingsFactory.createRockProjectSettings(getProject());
+        RockBuilder.buildRock(settings, getOptions());
     }
 }

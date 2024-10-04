@@ -13,6 +13,7 @@
  */
 package com.canonical.rockcraft.builder;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedWriter;
@@ -31,41 +32,39 @@ import java.util.Map;
  */
 public class RockCrafter {
 
-    private static final String ROCKCRAFT_YAML = "rockcraft.yaml";
-
     private final RockProjectSettings settings;
     private final RockcraftOptions options;
-    private final File output;
     private final List<File> artifacts;
 
     /**
      * Creates RockCrafter
-     * @param settings - Rockcraft project settins
-     * @param options - Rockcraft creation options
-     * @param output - output directory for rockcraft.yaml
+     *
+     * @param settings  - Rockcraft project settins
+     * @param options   - Rockcraft creation options
      * @param artifacts - list of artifacts to package
      */
-    public RockCrafter(RockProjectSettings settings, RockcraftOptions options, File output, List<File> artifacts) {
+    public RockCrafter(RockProjectSettings settings, RockcraftOptions options, List<File> artifacts) {
         this.settings = settings;
         this.options = options;
-        this.output = output;
         this.artifacts = artifacts;
     }
 
     /**
      * Writes a rockcraft.yaml file to the output directory
+     *
      * @throws IOException - the method fails to write rockcraft.yaml
      */
     public void writeRockcraft() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(output, ROCKCRAFT_YAML)))) {
-            String rockcraft = createRockcraft(output.toPath(), artifacts);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(settings.getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
+            String rockcraft = createRockcraft(settings.getRockOutput(), artifacts);
             writer.write(rockcraft);
         }
     }
 
     /**
      * Generate content of the <i>rockcraft.yaml</i>
-     * @param root - location of build directory
+     *
+     * @param root  - location of build directory
      * @param files - list of .jar file artifacts
      * @return content of the <i>rockcraft.yaml</i>
      * @throws IOException - IO error writing <i>rockcraft.yaml</i>
@@ -76,10 +75,13 @@ public class RockCrafter {
         List<String> relativeJars = new ArrayList<String>();
         for (var file : files)
             relativeJars.add(root.relativize(file.toPath()).toString());
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        var yaml = new Yaml(options);
 
         var rockcraft = new HashMap<String, Object>();
-        rockcraft.put("name", settings.getName());
-        rockcraft.put("version", String.valueOf(settings.getVersion()));
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, settings.getName());
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_VERSION, String.valueOf(settings.getVersion()));
         rockcraft.put("summary", getOptions().getSummary());
         var description = getOptions().getDescription();
         if (description != null) {
@@ -94,9 +96,15 @@ public class RockCrafter {
         rockcraft.put("platforms", getPlatforms());
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
+
         rockcraft.put("services", getProjectService(relativeJars));
+
         rockcraft.put("parts", getProjectParts(files, relativeJars));
-        return new Yaml().dump(rockcraft);
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
+        return yamlOutput.toString();
     }
 
     private Map<String, Object> getPlatforms() {
@@ -141,9 +149,14 @@ public class RockCrafter {
     private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
         IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
         var parts = new HashMap<String, Object>();
-        parts.put("gradle/rockcraft/dump", getDumpPart(relativeJars));
-        parts.put("gradle/rockcraft/runtime", provider.getRuntimePart(files));
-        parts.put("gradle/rockcraft/deps", getDepsPart());
+        parts.put(settings.getGeneratorName() + "/rockcraft/dump", getDumpPart(relativeJars));
+        var runtimePart = provider.getRuntimePart(files);
+        runtimePart.put("after", new String[]{
+                settings.getGeneratorName() + "/rockcraft/dump",
+                settings.getGeneratorName() + "/rockcraft/deps"
+        });
+        parts.put(settings.getGeneratorName() + "/rockcraft/runtime", runtimePart);
+        parts.put(settings.getGeneratorName() + "/rockcraft/deps", getDepsPart());
         return parts;
     }
 
