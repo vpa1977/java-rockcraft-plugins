@@ -3,7 +3,7 @@
 Builds [Ubuntu ROCK](https://documentation.ubuntu.com/rockcraft/en/latest/explanation/rocks/) image for your application.
 The plugin requires [rockcraft](https://github/canonical/rockcraft) installed.
 
-![Github Actions](https://github.com/canonical/rockcraft-gradle-plugin/actions/workflows/build.yml/badge.svg)
+![Github Actions](https://github.com/rockcrafters/java-rockcraft-plugins/actions/workflows/build.yml/badge.svg)
 [![GNU GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.html#license-text)
 
 # Getting started
@@ -19,13 +19,13 @@ To use the plugin, apply the following two steps:
 **Groovy**
 
     plugins {
-        id 'com.canonical.rockcraft' version '0.1.1'
+        id 'io.rockcrafters.rockcraft' version '0.1.1'
     }
 
 **Kotlin**
 
     plugins {
-        id("com.canonical.rockcraft") version "0.1.1"
+        id("io.rockcrafters.rockcraft") version "0.1.1"
     }
 
 ##### Alternatively, you can use the `buildscript` DSL:
@@ -39,10 +39,10 @@ To use the plugin, apply the following two steps:
             }
         }
         dependencies {
-            classpath 'com.canonical.rockcraft:0..1'
+            classpath 'io.rockcrafters.rockcraft:0.1.1'
         }
     }
-    apply plugin: 'com.canonical.rockcraft-plugin'
+    apply plugin: 'io.rockcrafters.rockcraft-plugin'
 
 **Kotlin**
 
@@ -53,10 +53,10 @@ To use the plugin, apply the following two steps:
             }
         }
         dependencies {
-            classpath("com.canonical.rockcraft:0.1.1")
+            classpath("io.rockcrafters.rockcraft:0.1.1")
         }
     }
-    apply(plugin = "com.canonical.rockcraft")
+    apply(plugin = "io.rockcrafters.rockcraft")
 
 ### 2. Configure ROCK container
 
