@@ -19,8 +19,12 @@ import com.google.gradle.osdetector.OsDetector;
 import com.google.gradle.osdetector.OsDetectorPlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.tasks.TaskProvider;
 
 import java.io.IOException;
+
+import java.util.Set;
 
 /**
  * Gradle plugin for Rockcraft.
@@ -44,14 +48,14 @@ public class RockcraftPlugin implements Plugin<Project> {
 
         project.getPlugins().apply(OsDetectorPlugin.class);
 
-        var options = project.getExtensions().create("rockcraft", RockcraftOptions.class);
+        RockcraftOptions options = project.getExtensions().create("rockcraft", RockcraftOptions.class);
 
-        var detector = project.getExtensions().getByType(OsDetector.class);
+        OsDetector detector = project.getExtensions().getByType(OsDetector.class);
 
         if (!"linux".equals(detector.getOs()))
             throw new UnsupportedOperationException("Rockcraft is only supported on linux systems");
 
-        var checkTask = project.getTasks().register("checkRockcraft", s -> {
+        TaskProvider<Task> checkTask = project.getTasks().register("checkRockcraft", s -> {
             s.doFirst(x -> {
                 try {
                     RockBuilder.checkRockcraft();
@@ -61,21 +65,21 @@ public class RockcraftPlugin implements Plugin<Project> {
             });
         });
 
-        var buildTasks = project.getTasksByName("build", false);
+        Set<Task> buildTasks = project.getTasksByName("build", false);
         if (buildTasks.isEmpty())
             throw new UnsupportedOperationException("Rockcraft plugin requires build task");
 
-        for (var t : buildTasks)
+        for (Task t : buildTasks)
             t.finalizedBy(checkTask);
 
-        var tasks = project.getTasksByName("bootJar", false);
+        Set<Task> tasks = project.getTasksByName("bootJar", false);
         if (tasks.isEmpty())
             tasks = project.getTasksByName("jar", false);
         if (tasks.isEmpty())
             throw new UnsupportedOperationException("Rockcraft plugin requires bootJar or jar task");
 
         project.getTasks().register("build-rock", BuildRockcraftTask.class, options);
-        var create = project.getTasks().register("create-rock", CreateRockcraftTask.class, options);
+        TaskProvider<CreateRockcraftTask> create = project.getTasks().register("create-rock", CreateRockcraftTask.class, options);
 
         project.getTasks().getByName("build-rock")
                 .dependsOn(create);

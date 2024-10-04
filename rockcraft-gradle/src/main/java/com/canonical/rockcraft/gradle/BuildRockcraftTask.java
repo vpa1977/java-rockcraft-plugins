@@ -45,7 +45,6 @@ public class BuildRockcraftTask extends AbstractRockcraftTask {
      */
     @TaskAction
     public void packRock() throws IOException, InterruptedException {
-        var settings = RockSettingsFactory.createRockProjectSettings(getProject());
-        RockBuilder.buildRock(settings, getOptions());
+        RockBuilder.buildRock(RockSettingsFactory.createRockProjectSettings(getProject()), getOptions());
     }
 }

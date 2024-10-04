@@ -20,8 +20,8 @@ public class RockSettingsFactory {
      * @return RockProjectSettings
      */
     public static final RockProjectSettings createRockProjectSettings(Project project) {
-        var output = project.getLayout().getBuildDirectory().getAsFile().get().toPath();
-        return new RockProjectSettings("gradle", project.getName(), String.valueOf(project.getVersion()), project.getProjectDir().toPath(),
-                output);
+        return new RockProjectSettings("gradle", project.getName(),
+            String.valueOf(project.getVersion()), project.getProjectDir().toPath(),
+            project.getLayout().getBuildDirectory().getAsFile().get().toPath());
     }
 }

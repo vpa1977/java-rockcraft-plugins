@@ -14,6 +14,7 @@
 package com.canonical.rockcraft.builder;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,7 +147,7 @@ public class RockcraftOptions {
      */
     public void setDescription(String description) {
         if (description != null){
-            this.description = Path.of(description);
+            this.description = Paths.get(description);
         }
     }
 

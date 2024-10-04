@@ -15,7 +15,9 @@ package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockCrafter;
 import com.canonical.rockcraft.builder.RockcraftOptions;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.TaskAction;
+
 
 import javax.inject.Inject;
 import java.io.File;
@@ -44,13 +46,16 @@ public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
     @TaskAction
     public void writeRockcraft() {
         HashSet<File> artifacts = new HashSet<File>();
-        for (var conf : getProject().getConfigurations()) {
-            artifacts.addAll(conf.getArtifacts().getFiles().getFiles().stream().filter(x -> x.getName().endsWith("jar")).toList());
+        for (Configuration conf : getProject().getConfigurations()) {
+            for (File f : conf.getArtifacts().getFiles().getFiles()){
+                if (f.getName().endsWith("jar"))
+                    artifacts.add(f);
+            }
         }
 
         try {
-            var settings = RockSettingsFactory.createRockProjectSettings(getProject());
-            RockCrafter crafter = new RockCrafter(settings, getOptions(), new ArrayList<File>(artifacts));
+            RockCrafter crafter = new RockCrafter(RockSettingsFactory.createRockProjectSettings(getProject()),
+                 getOptions(), new ArrayList<File>(artifacts));
             crafter.writeRockcraft();
         } catch (IOException e) {
             throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());

@@ -41,11 +41,11 @@ public class JLinkRuntimePart implements IRuntimeProvider {
      */
     @Override
     public Map<String, Object> getRuntimePart(List<File> files) {
-        var relativeJars = new ArrayList<String>();
-        for (var jar : files) {
+        ArrayList<String> relativeJars = new ArrayList<String>();
+        for (File jar : files) {
             relativeJars.add(String.format("jars/%s", jar.getName()));
         }
-        var part = new HashMap<String, Object>();
+        HashMap<String, Object> part = new HashMap<String, Object>();
         part.put("build-packages", new String[]{options.getBuildPackage()});
         part.put("multi-release", options.getTargetRelease());
         part.put("after", new String[]{"gradle/rockcraft/dump", "gradle/rockcraft/deps"});
