@@ -14,7 +14,6 @@
 package com.canonical.rockcraft.gradle;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -34,7 +33,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     @Test
     void buildRockTest() throws IOException {
         BuildResult result = runBuild("build-rock");
-        assertEquals(TaskOutcome.SUCCESS, getLastTask(result)); // the build needs to succeed
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
     @Test
@@ -59,7 +58,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     void buildRockJava11Test() throws IOException {
         writeString(getBuildFile(), getResource("build-rock-java-11.in"));
         BuildResult result = runBuild("build-rock");
-        assertEquals(TaskOutcome.SUCCESS, getLastTask(result)); // the build needs to succeed
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
     @Test
@@ -107,6 +106,6 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         writeString(new File(getProjectDir(), "README.md"), "test");
         writeString(getBuildFile(), getResource("alloptions.in"));
         BuildResult result = runBuild("build-rock", "--stacktrace");
-        assertEquals(TaskOutcome.SUCCESS, getLastTask(result)); // the build needs to succeed
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 }

@@ -14,7 +14,6 @@
 package com.canonical.rockcraft.gradle;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +44,6 @@ public class SpringBootTest extends BaseRockcraftTest {
     @Test
     public void springBootHelloWorld() throws IOException {
         BuildResult result = runBuild("build-rock", "--stacktrace");
-        assertEquals(TaskOutcome.SUCCESS, getLastTask(result)); // the build needs to succeed
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 }

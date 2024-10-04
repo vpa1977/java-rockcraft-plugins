@@ -63,7 +63,7 @@ public abstract class BaseRockcraftTest {
         }
     }
 
-    TaskOutcome getLastTask(BuildResult r){
+    TaskOutcome getLastTaskOutcome(BuildResult r){
         if (r.getTasks().isEmpty())
             return null;
         return r.getTasks().get(r.getTasks().size() -1).getOutcome();
