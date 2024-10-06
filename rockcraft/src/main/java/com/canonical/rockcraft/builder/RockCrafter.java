@@ -101,11 +101,26 @@ public class RockCrafter {
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
 
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        Yaml yaml = new Yaml(options);
+
+        StringBuilder yamlOutput = new StringBuilder();
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
         rockcraft.put("services", getProjectService(relativeJars));
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
 
         rockcraft.put("parts", getProjectParts(filtered, relativeJars));
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
 
-        return new Yaml().dump(rockcraft);
+        return yamlOutput.toString();
     }
 
     private Map<String, Object> getPlatforms() {
