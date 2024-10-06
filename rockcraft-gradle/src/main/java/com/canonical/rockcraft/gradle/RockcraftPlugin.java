@@ -42,6 +42,7 @@ public class RockcraftPlugin implements Plugin<Project> {
 
     /**
      * Applies the plugin
+     *
      * @param project The target object
      */
     public void apply(Project project) {
@@ -78,8 +79,12 @@ public class RockcraftPlugin implements Plugin<Project> {
         if (tasks.isEmpty())
             throw new UnsupportedOperationException("Rockcraft plugin requires bootJar or jar task");
 
-        project.getTasks().register("build-rock", BuildRockcraftTask.class, options);
+        TaskProvider<PushRockcraftTask> push = project.getTasks().register("push-rock", PushRockcraftTask.class, options);
+        TaskProvider<BuildRockcraftTask> build = project.getTasks().register("build-rock", BuildRockcraftTask.class, options);
         TaskProvider<CreateRockcraftTask> create = project.getTasks().register("create-rock", CreateRockcraftTask.class, options);
+
+        project.getTasks().getByName("push-rock")
+                .dependsOn(build);
 
         project.getTasks().getByName("build-rock")
                 .dependsOn(create);
