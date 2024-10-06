@@ -15,14 +15,12 @@ package com.canonical.rockcraft.gradle;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
+import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,7 +30,7 @@ public abstract class BaseRockcraftTest {
     protected File projectDir;
 
     protected File getJavaSource() {
-        return Path.of(projectDir.getAbsolutePath(), "src", "main", "java", "Test.java").toFile();
+        return Paths.get(projectDir.getAbsolutePath(), "src", "main", "java", "Test.java").toFile();
     }
 
     protected File getProjectDir() {
@@ -53,25 +51,30 @@ public abstract class BaseRockcraftTest {
         }
     }
 
+    protected String getResource(String file) throws IOException {
+        try (BufferedReader r = new BufferedReader( new InputStreamReader(getClass().getResourceAsStream(file)))) {
+            StringBuilder builder = new StringBuilder();
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                builder.append(line);
+                builder.append("\n");
+            }
+            return builder.toString();
+        }
+    }
+
+    TaskOutcome getLastTaskOutcome(BuildResult r){
+        if (r.getTasks().isEmpty())
+            return null;
+        return r.getTasks().get(r.getTasks().size() -1).getOutcome();
+    }
+
     @BeforeEach
     protected void setUp() throws IOException {
-        assertTrue(Path.of(projectDir.getAbsolutePath(), "src", "main", "java").toFile().mkdirs());
-        writeString(getJavaSource(),
-                """
-                        public class Test {
-                            public static void main(String[] args) {
-                                System.out.println("Hello!");
-                            }
-                        }
-                        """);
+        assertTrue(Paths.get(projectDir.getAbsolutePath(), "src", "main", "java").toFile().mkdirs());
+        writeString(getJavaSource(), getResource("default-test.in"));
         writeString(getSettingsFile(), "");
-        writeString(getBuildFile(),
-                """
-                        plugins {
-                            id('application')
-                            id('io.rockcrafters.rockcraft')
-                        }
-                        """);
+        writeString(getBuildFile(), getResource("default-build.in"));
     }
 
     public BuildResult runBuild(String... target) {

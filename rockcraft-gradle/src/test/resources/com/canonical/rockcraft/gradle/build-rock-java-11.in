@@ -1,0 +1,9 @@
+plugins {
+    id('java')
+    id('io.rockcrafters.rockcraft')
+}
+
+rockcraft {
+    buildPackage = "openjdk-11-jdk"
+    targetRelease = 11
+}

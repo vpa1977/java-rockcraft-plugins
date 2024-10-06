@@ -14,10 +14,10 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockCrafter;
-import com.canonical.rockcraft.builder.RockProjectSettings;
 import com.canonical.rockcraft.builder.RockcraftOptions;
-import org.gradle.api.DefaultTask;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.TaskAction;
+
 
 import javax.inject.Inject;
 import java.io.File;
@@ -28,21 +28,16 @@ import java.util.HashSet;
 /**
  * This task writes <i>rockcraft.yaml</i> file for the application.
  */
-public abstract class CreateRockcraftTask extends DefaultTask {
-
-    private final RockcraftOptions options;
+public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
 
     /**
-     * Constructs the CreateRockcraft task
-     * @param options - plugin options
+     * Constructs CreateRockcraftTask
+     *
+     * @param options - rockcraft options
      */
     @Inject
     public CreateRockcraftTask(RockcraftOptions options) {
-        this.options = options;
-    }
-
-    private RockcraftOptions getOptions() {
-        return options;
+        super(options);
     }
 
     /**
@@ -51,14 +46,16 @@ public abstract class CreateRockcraftTask extends DefaultTask {
     @TaskAction
     public void writeRockcraft() {
         HashSet<File> artifacts = new HashSet<File>();
-        for (var conf : getProject().getConfigurations()) {
-            artifacts.addAll(conf.getArtifacts().getFiles().getFiles().stream().filter(x -> x.getName().endsWith("jar")).toList());
+        for (Configuration conf : getProject().getConfigurations()) {
+            for (File f : conf.getArtifacts().getFiles().getFiles()){
+                if (f.getName().endsWith("jar"))
+                    artifacts.add(f);
+            }
         }
 
         try {
-            var buildDir = getProject().getLayout().getBuildDirectory();
-            var settings = new RockProjectSettings(getProject().getName(), String.valueOf(getProject().getVersion()), getProject().getProjectDir().toPath());
-            RockCrafter crafter = new RockCrafter(settings, getOptions(), buildDir.getAsFile().get(), new ArrayList<File>(artifacts));
+            RockCrafter crafter = new RockCrafter(RockSettingsFactory.createRockProjectSettings(getProject()),
+                 getOptions(), new ArrayList<File>(artifacts));
             crafter.writeRockcraft();
         } catch (IOException e) {
             throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());

@@ -13,18 +13,19 @@
  */
 package com.canonical.rockcraft.builder;
 
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Utilities to build rock image
  */
 public class RockBuilder {
-
-    private static final String ROCK_DIR = "rock";
-
     /**
      * Creates RockBuilder
      */
@@ -33,13 +34,14 @@ public class RockBuilder {
 
     /**
      * Checks that rockcraft is installed
+     *
      * @throws InterruptedException - unable to start rockcraft
-     * @throws IOException - unable to start rockcraft
+     * @throws IOException          - unable to start rockcraft
      */
     public static void checkRockcraft() throws InterruptedException, IOException {
-        var pb = new ProcessBuilder("rockcraft", "--version");
+        ProcessBuilder pb = new ProcessBuilder("rockcraft", "--version");
         pb.inheritIO();
-        var versionProcess = pb.start();
+        Process versionProcess = pb.start();
         int ret = versionProcess.waitFor();
         if (ret != 0)
             throw new UnsupportedOperationException("Please install rockcraft 'snap install rockcraft'.");
@@ -47,30 +49,31 @@ public class RockBuilder {
 
     /**
      * Builds the rock image
-     * @param  settings - rockcraft project settings
-     * @param output - output directory
-     * @throws IOException - IO error while writing <i>rockcraft.yaml</i>
+     *
+     * @param settings - rockcraft project settings
+     * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
-    public static void buildRock(RockProjectSettings settings, File output) throws InterruptedException, IOException {
-        var pb = new ProcessBuilder("rockcraft", "pack")
-                .directory(output)
+    public static void buildRock(RockProjectSettings settings, RockcraftOptions options) throws InterruptedException, IOException {
+        ProcessBuilder pb = new ProcessBuilder("rockcraft", "pack")
+                .directory(settings.getRockOutput().toFile())
                 .inheritIO();
-        var process = pb.start();
+        Process process = pb.start();
         int result = process.waitFor();
         if (result != 0)
             throw new UnsupportedOperationException("Failed to pack rock for " + settings.getName());
 
-        var rockDest = new File(output, ROCK_DIR);
+        Path rockDestPath = settings.getRockOutput().resolve(IRockcraftNames.ROCK_OUTPUT);
+        File rockDest = rockDestPath.toFile();
         rockDest.mkdirs();
-        for (var f : rockDest.listFiles((dir, file) -> file.endsWith(".rock"))) {
+        for (File f : rockDest.listFiles((dir, file) -> file.endsWith(".rock"))) {
             f.delete();
         }
         // refresh rocks
-        for (var f : output.listFiles((dir, file) -> file.endsWith(".rock"))) {
-            var source = f.toPath();
-            var dest = new File(output, ROCK_DIR).toPath();
-            Files.move(source, dest.resolve(source.getFileName()));
+        for (File f : settings.getRockOutput().toFile().listFiles((dir, file) -> file.endsWith(".rock"))) {
+            Path source = f.toPath();
+            Path destination = rockDestPath.resolve(source.getFileName());
+            Files.move(source, destination);
         }
     }
 }

@@ -13,6 +13,7 @@
  */
 package com.canonical.rockcraft.gradle;
 
+import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -20,7 +21,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,15 +32,15 @@ class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
     void buildRockTest() throws IOException {
-        var result = runBuild("build-rock");
-        assertEquals(TaskOutcome.SUCCESS, result.getTasks().getLast().getOutcome()); // the build needs to succeed
+        BuildResult result = runBuild("build-rock");
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
     @Test
     void validRockcraftYaml() throws IOException {
         runBuild("create-rock");
-        try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
-            var yaml = new Yaml();
+        try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
+            Yaml yaml = new Yaml();
             Map<String, Map<String, Object>> parsed = yaml.load(is);
             assertEquals("ubuntu@24.04", parsed.get("build-base"));
             Map<String, Object> parts = parsed.get("parts");
@@ -55,43 +56,18 @@ class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
     void buildRockJava11Test() throws IOException {
-        writeString(getBuildFile(), """
-                plugins {
-                    id('java')
-                    id('io.rockcrafters.rockcraft')
-                }
-
-                rockcraft {
-                    buildPackage = "openjdk-11-jdk"
-                    targetRelease = 11
-                }
-
-                """);
-        var result = runBuild("build-rock");
-        assertTrue(true); // the build needs to succeed
+        writeString(getBuildFile(), getResource("build-rock-java-11.in"));
+        BuildResult result = runBuild("build-rock");
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
     @Test
     void rockcraftPluginOptions() throws IOException {
-        writeString(getBuildFile(), """
-                plugins {
-                    id('java')
-                    id('io.rockcrafters.rockcraft')
-                }
-
-                rockcraft {
-                    summary = "Foobar"
-                    description = "readme.txt"
-                }
-
-                """);
-        writeString(new File(getProjectDir(), "readme.txt"), """
-                This is a multiline description
-                of the rock file
-                """);
+        writeString(getBuildFile(), getResource("rockcraft-plugin-options.in"));
+        writeString(new File(getProjectDir(), "readme.txt"), getResource("readme.txt"));
         runBuild("create-rock", "--stacktrace");
-        try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
-            var yaml = new Yaml();
+        try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
+            Yaml yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
             assertEquals("Foobar", parsed.get("summary"));
         }
@@ -99,22 +75,11 @@ class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
     void testArchitecture() throws IOException {
-        writeString(getBuildFile(), """
-                plugins {
-                    id('java')
-                    id('io.rockcrafters.rockcraft')
-                }
-
-                rockcraft {
-                    summary = "Foobar"
-                    architectures = [ "amd64", "arm64" ]
-                }
-
-                """);
+        writeString(getBuildFile(), getResource("architecture.in"));
         runBuild("jar", "create-rock");
 
-        try (var is = new FileInputStream(Path.of(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
-            var yaml = new Yaml();
+        try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
+            Yaml yaml = new Yaml();
             Map<String, Map<String, Object>> parsed = yaml.load(is);
             Map<String, Object> platforms = parsed.get("platforms");
             assertTrue(platforms.containsKey("amd64"));
@@ -124,34 +89,12 @@ class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
     void onlySingleRockExists() throws IOException {
-        writeString(getBuildFile(), """
-                plugins {
-                    id('java')
-                    id('io.rockcrafters.rockcraft')
-                }
-
-                version = 0.01
-
-                rockcraft {
-                }
-
-                """);
+        writeString(getBuildFile(), getResource("single-rock1.in"));
         runBuild("build-rock");
-        File output = Path.of(getProjectDir().getAbsolutePath(), "build", "rock").toFile();
+        File output = Paths.get(getProjectDir().getAbsolutePath(), "build", "rock").toFile();
         assertEquals(1, output.list((dir, name) -> name.endsWith("rock")).length);
 
-        writeString(getBuildFile(), """
-                plugins {
-                    id('java')
-                    id('io.rockcrafters.rockcraft')
-                }
-
-                version = '0.02updated'
-
-                rockcraft {
-                }
-
-                """);
+        writeString(getBuildFile(), getResource("single-rock2.in"));
         runBuild("build-rock");
         String[] rocks = output.list((dir, name) -> name.endsWith("rock"));
         assertEquals(1, rocks.length);
@@ -161,27 +104,8 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     @Test
     void testAllOptions() throws IOException {
         writeString(new File(getProjectDir(), "README.md"), "test");
-        writeString(getBuildFile(), """
-                plugins {
-                    id('java')
-                    id('io.rockcrafters.rockcraft')
-                }
-
-                version = 0.01
-
-                rockcraft {
-                    buildPackage = 'openjdk-17-jdk'
-                    targetRelease = 17
-                    summary = 'A ROCK summary'
-                    description = 'README.md'
-                    command = '/usr/bin/java -jar jars/application.jar'
-                    source = 'http://github.com/canonical/chisel-releases'
-                    branch = 'ubuntu-24.04'
-                    slices = ['busybox_bins', 'ca-certificates_data-with-certs']
-                    architectures = ['amd64', 'arm64']
-                }
-                """);
-        var result = runBuild("build-rock", "--stacktrace");
-        assertEquals(TaskOutcome.SUCCESS, result.getTasks().getLast().getOutcome()); // the build needs to succeed
+        writeString(getBuildFile(), getResource("alloptions.in"));
+        BuildResult result = runBuild("build-rock", "--stacktrace");
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 }

@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '8'
 
       - name: Setup LXD
         uses: canonical/setup-lxd@main

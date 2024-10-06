@@ -33,7 +33,7 @@ public class RawRuntimePart implements IRuntimeProvider {
         this.options = options;
     }
 
-    private void append(StringBuffer buffer, String str) {
+    private void append(StringBuilder buffer, String str) {
         buffer.append(str);
         buffer.append("\n");
     }
@@ -45,18 +45,18 @@ public class RawRuntimePart implements IRuntimeProvider {
      */
     @Override
     public Map<String, Object> getRuntimePart(List<File> files) {
-        var part = new HashMap<String, Object>();
+        HashMap<String, Object> part = new HashMap<String, Object>();
         part.put("plugin", "nil");
         part.put("build-packages", new String[]{options.getBuildPackage()});
 
-        var jarList = new StringBuffer();
-        for (var jar : files) {
-            if (!jarList.isEmpty())
+        StringBuilder jarList = new StringBuilder();
+        for (File jar : files) {
+            if (jarList.length() > 0)
                 jarList.append(" ");
             jarList.append(String.format("${CRAFT_STAGE}/jars/%s", jar.getName()));
         }
 
-        var commands = new StringBuffer();
+        StringBuilder commands = new StringBuilder();
         append(commands, "JAVA_HOME=$(dirname $(dirname $(readlink -f /usr/bin/java)))");
         append(commands, "JAVA_HOME=${JAVA_HOME:1}");
         append(commands, "PROCESS_JARS=\"" + jarList + "\"");
@@ -67,11 +67,9 @@ public class RawRuntimePart implements IRuntimeProvider {
         append(commands, "CPATH=$(find ${CRAFT_PART_BUILD}/tmp -type f -name *.jar)");
         append(commands, "CPATH=$(echo ${CPATH}:. | sed s'/[[:space:]]/:/'g)");
         append(commands, "echo ${CPATH}");
-        append(commands, String.format("""
-                if [ "x${PROCESS_JARS}" != "x" ]; then
-                deps=$(jdeps --class-path=${CPATH} -q --recursive  --ignore-missing-deps \
-                    --print-module-deps --multi-release %d ${PROCESS_JARS}); else deps=java.base; fi
-                """, options.getTargetRelease()));
+        append(commands, "if [ \"x${PROCESS_JARS}\" != \"x\" ]; then");
+        append(commands, "  deps=$(jdeps --class-path=${CPATH} -q --recursive  --ignore-missing-deps \\");
+        append(commands, String.format("  --print-module-deps --multi-release %d ${PROCESS_JARS}); else deps=java.base; fi", options.getTargetRelease()));
         append(commands, "INSTALL_ROOT=${CRAFT_PART_INSTALL}/${JAVA_HOME}");
         append(commands,
                 "rm -rf ${INSTALL_ROOT} && jlink --add-modules ${deps} --output ${INSTALL_ROOT}"
