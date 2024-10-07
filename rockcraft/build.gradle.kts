@@ -1,5 +1,6 @@
 plugins {
-    `java`
+    `java-library`
+    `maven-publish`
 }
 
 repositories {
@@ -20,4 +21,12 @@ dependencies {
 tasks.named<Test>("test") {
     // Use JUnit Jupiter for unit tests.
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>(project.name) {
+            from(components["java"])
+        }
+    }
 }
