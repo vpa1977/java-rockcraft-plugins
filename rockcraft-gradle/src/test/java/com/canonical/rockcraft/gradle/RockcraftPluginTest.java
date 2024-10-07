@@ -36,6 +36,17 @@ class RockcraftPluginTest extends BaseRockcraftTest {
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
+    /**
+     * Make a separate test for pushing, so that it could be excluded in docker-less
+     * scenarios
+     * @throws IOException
+     */
+    @Test
+    void pushRockTest() throws IOException {
+        BuildResult result = runBuild("push-rock");
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
+    }
+
     @Test
     void validRockcraftYaml() throws IOException {
         runBuild("create-rock");
