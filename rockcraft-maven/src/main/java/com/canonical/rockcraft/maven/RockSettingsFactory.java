@@ -35,6 +35,7 @@ public class RockSettingsFactory {
     public static final RockProjectSettings createRockProjectSettings(MavenProject project) {
         return new RockProjectSettings("maven", project.getName(),
                 project.getVersion(), project.getBasedir().getAbsoluteFile().toPath(),
-                project.getArtifact().getFile().getParentFile().toPath());
+                project.getArtifact().getFile().getParentFile().toPath(),
+                false);
     }
 }
