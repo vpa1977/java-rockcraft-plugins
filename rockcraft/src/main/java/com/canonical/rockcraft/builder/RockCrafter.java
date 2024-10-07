@@ -97,15 +97,36 @@ public class RockCrafter {
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
 
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        Yaml yaml = new Yaml(options);
+
+        StringBuilder yamlOutput = new StringBuilder();
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
         if (settings.getBeryxJLink()) {
             rockcraft.put("services", getImageProjectService(root, filtered));
-            rockcraft.put("parts", getImageProjectParts(relativeOutputs));
         } else {
             rockcraft.put("services", getProjectService(relativeOutputs));
+        }
+
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
+        if (settings.getBeryxJLink()) {
+            rockcraft.put("parts", getImageProjectParts(relativeOutputs));
+        } else {
             rockcraft.put("parts", getProjectParts(filtered, relativeOutputs));
         }
 
-        return new Yaml().dump(rockcraft);
+        yamlOutput.append(yaml.dump(rockcraft));
+        yamlOutput.append("\n");
+        rockcraft.clear();
+
+        return yamlOutput.toString();
     }
 
     private Map<String,Object> getImageProjectParts(List<String> images) {
