@@ -62,7 +62,7 @@ public class RockBuilder {
         String imageVersion = String.valueOf(rockcraft.get(IRockcraftNames.ROCKCRAFT_VERSION));
         Path rockDestPath = settings.getRockOutput().resolve(IRockcraftNames.ROCK_OUTPUT);
         for (File file : rockDestPath.toFile().listFiles((dir, file) -> file.endsWith(".rock"))) {
-            copyInDocker(file, imageName);
+            copyInDocker(file, imageName, imageVersion);
         }
     }
 
@@ -96,7 +96,7 @@ public class RockBuilder {
         }
     }
 
-    private static void copyInDocker(File ociImage, String imageName) throws IOException, InterruptedException {
+    private static void copyInDocker(File ociImage, String imageName, String imageVersion) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder("rockcraft.skopeo",
                 "copy",
                 String.format("oci-archive:%s", ociImage.getAbsolutePath()),
@@ -106,6 +106,15 @@ public class RockBuilder {
         Process process = pb.start();
         int result = process.waitFor();
         if (result != 0)
-            throw new UnsupportedOperationException("Failed to copy " + ociImage.getAbsolutePath() + " to docker image " + imageName);
+            throw new UnsupportedOperationException("Failed to copy " + ociImage.getAbsolutePath() + " to docker image " + String.format("%s:latest", imageName));
+
+        pb = new ProcessBuilder("docker", "tag", imageName,
+                String.format("%s:%s", imageName, imageVersion))
+                .directory(ociImage.getParentFile())
+                .inheritIO();
+        process = pb.start();
+        result = process.waitFor();
+        if (result != 0)
+            throw new UnsupportedOperationException("Failed to tag " + String.format("%s:%s", imageName, imageVersion));
     }
 }
