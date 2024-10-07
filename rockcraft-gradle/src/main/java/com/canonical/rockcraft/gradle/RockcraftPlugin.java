@@ -72,7 +72,9 @@ public class RockcraftPlugin implements Plugin<Project> {
         for (Task t : buildTasks)
             t.finalizedBy(checkTask);
 
-        Set<Task> tasks = project.getTasksByName("bootJar", false);
+        Set<Task> tasks = project.getTasksByName("jlink", false);
+        if (tasks.isEmpty())
+            tasks = project.getTasksByName("bootJar", false);
         if (tasks.isEmpty())
             tasks = project.getTasksByName("jar", false);
         if (tasks.isEmpty())

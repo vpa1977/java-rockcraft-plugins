@@ -44,3 +44,4 @@ tasks.withType<JavaCompile> {
     val compilerArgs = options.compilerArgs
     compilerArgs.add("-Xlint:all")
 }
+

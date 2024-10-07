@@ -1,0 +1,28 @@
+plugins {
+    id('java')
+    id('org.beryx.jlink') version "2.24.1"
+    id('io.rockcrafters.rockcraft')
+}
+version = 0.01
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'beryxtest.Test'
+    }
+}
+
+jlink {
+    mainClass = 'beryxtest.Test'
+    mergedModule {
+        requires 'java.naming'
+        requires 'java.xml'
+    }
+    launcher {
+        name = 'hello'
+    }
+}
+
+rockcraft {
+}
+
+

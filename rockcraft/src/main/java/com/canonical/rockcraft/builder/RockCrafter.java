@@ -16,10 +16,7 @@ package com.canonical.rockcraft.builder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,11 +74,10 @@ public class RockCrafter {
                 continue;
             filtered.add(file);
         }
-        List<String> relativeJars = new ArrayList<String>();
+        List<String> relativeOutputs = new ArrayList<String>();
         for (File file : filtered) {
-            relativeJars.add(root.relativize(file.toPath()).toString());
+            relativeOutputs.add(root.relativize(file.toPath()).toString());
         }
-
 
         HashMap<String, Object> rockcraft = new HashMap<String, Object>();
         rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, settings.getName());
@@ -101,11 +97,57 @@ public class RockCrafter {
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
 
-        rockcraft.put("services", getProjectService(relativeJars));
-
-        rockcraft.put("parts", getProjectParts(filtered, relativeJars));
+        if (settings.getBeryxJLink()) {
+            rockcraft.put("services", getImageProjectService(root, filtered));
+            rockcraft.put("parts", getImageProjectParts(relativeOutputs));
+        } else {
+            rockcraft.put("services", getProjectService(relativeOutputs));
+            rockcraft.put("parts", getProjectParts(filtered, relativeOutputs));
+        }
 
         return new Yaml().dump(rockcraft);
+    }
+
+    private Map<String,Object> getImageProjectParts(List<String> images) {
+        HashMap<String, Object> parts = new HashMap<String, Object>();
+        int id = 0;
+        for (String image : images) {
+            parts.put(settings.getGeneratorName() + "/rockcraft/dump"+id, getImageDumpPart(image));
+            ++id;
+        }
+        parts.put(settings.getGeneratorName() + "/rockcraft/deps", getDepsPart());
+        return parts;
+    }
+
+    private Map<String,Object> getImageDumpPart(String image) {
+        Map<String,Object> part = new HashMap<String, Object>();
+        part.put("source", ".");
+        part.put("plugin", "nil");
+        part.put("override-build", "cp  --archive --link --no-dereference " + image + " /");
+        return part;
+    }
+
+    private Map<String,Object> getImageProjectService(Path root, List<File> images) {
+        Map<String,Object> services = new HashMap<String,Object>();
+        for (File image : images) {
+            // workaround - read names of the .bat files to discover available launchers
+            File[] launchers = new File(image, "bin").listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File file, String name) {
+                    return name.endsWith(".bat");
+                }
+            });
+            for (File launcher : launchers) {
+                String serviceName = launcher.getName().split("\\.")[0];
+                Path relativeImage = root.relativize(Paths.get(image.getAbsolutePath()));
+                Map<String, Object> serviceDefinition = new HashMap<String, Object>();
+                serviceDefinition.put("override", "replace");
+                serviceDefinition.put("summary", serviceName);
+                serviceDefinition.put("command", "/" + relativeImage + "/bin/" + serviceName);
+                services.put(serviceName, serviceDefinition);
+            }
+        }
+        return services;
     }
 
     private Map<String, Object> getPlatforms() {

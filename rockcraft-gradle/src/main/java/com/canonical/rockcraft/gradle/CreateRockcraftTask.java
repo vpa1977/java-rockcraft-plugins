@@ -15,6 +15,7 @@ package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.RockCrafter;
 import com.canonical.rockcraft.builder.RockcraftOptions;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.TaskAction;
 
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This task writes <i>rockcraft.yaml</i> file for the application.
@@ -43,12 +45,15 @@ public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
     /**
      * Task action to write <i>rockcraft.yaml</i>
      */
+    @SuppressWarnings("unchecked")
     @TaskAction
     public void writeRockcraft() {
         HashSet<File> artifacts = new HashSet<File>();
-        for (Configuration conf : getProject().getConfigurations()) {
-            for (File f : conf.getArtifacts().getFiles().getFiles()){
-                if (f.getName().endsWith("jar"))
+        Set<Object> dependsOn = getDependsOn();
+        for (Object entry : dependsOn) {
+            HashSet<Task> tasks = (HashSet<Task>) entry;
+            for (Task task : tasks) {
+                for (File f : task.getOutputs().getFiles().getFiles())
                     artifacts.add(f);
             }
         }

@@ -22,6 +22,7 @@ public class RockSettingsFactory {
     public static final RockProjectSettings createRockProjectSettings(Project project) {
         return new RockProjectSettings("gradle", project.getName(),
             String.valueOf(project.getVersion()), project.getProjectDir().toPath(),
-            project.getLayout().getBuildDirectory().getAsFile().get().toPath());
+            project.getLayout().getBuildDirectory().getAsFile().get().toPath(),
+                !project.getTasksByName("jlink", false).isEmpty());
     }
 }
