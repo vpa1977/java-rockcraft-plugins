@@ -5,6 +5,8 @@ plugins {
 }
 version = 0.01
 
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 jar {
     manifest {
         attributes 'Main-Class': 'beryxtest.Test'
@@ -24,5 +26,3 @@ jlink {
 
 rockcraft {
 }
-
-
