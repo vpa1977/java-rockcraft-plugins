@@ -18,9 +18,7 @@ import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -42,9 +40,14 @@ class RockcraftPluginTest extends BaseRockcraftTest {
      * @throws IOException
      */
     @Test
-    void pushRockTest() throws IOException {
+    void pushRockTest() throws IOException, InterruptedException {
         BuildResult result = runBuild("push-rock");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
+        String containerName = projectDir.getName();
+        ProcessBuilder pb = new ProcessBuilder("docker", "image", "rm", containerName);
+        Process docker = pb.start();
+        int wait = docker.waitFor();
+        assertEquals(0, wait); // image should be found!
     }
 
     @Test

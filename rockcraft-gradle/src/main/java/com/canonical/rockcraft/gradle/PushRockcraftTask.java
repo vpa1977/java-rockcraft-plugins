@@ -30,6 +30,6 @@ public class PushRockcraftTask extends AbstractRockcraftTask {
      */
     @TaskAction
     public void pushRock() throws IOException, InterruptedException {
-        RockBuilder.buildRock(RockSettingsFactory.createRockProjectSettings(getProject()), getOptions());
+        RockBuilder.pushRock(RockSettingsFactory.createRockProjectSettings(getProject()), getOptions());
     }
 }
