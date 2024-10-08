@@ -133,10 +133,10 @@ public class RockCrafter {
         HashMap<String, Object> parts = new HashMap<String, Object>();
         int id = 0;
         for (String image : images) {
-            parts.put(settings.getGeneratorName() + "/rockcraft/dump"+id, getImageDumpPart(image));
+            parts.put(String.format("%s/rockcraft/dump%d",settings.getGeneratorName(), id), getImageDumpPart(image));
             ++id;
         }
-        parts.put(settings.getGeneratorName() + "/rockcraft/deps", getDepsPart());
+        parts.put(String.format("%s/rockcraft/deps", settings.getGeneratorName()) , getDepsPart());
         return parts;
     }
 
@@ -144,7 +144,7 @@ public class RockCrafter {
         Map<String,Object> part = new HashMap<String, Object>();
         part.put("source", ".");
         part.put("plugin", "nil");
-        part.put("override-build", "cp  --archive --link --no-dereference " + image + " /");
+        part.put("override-build", String.format("cp  --archive --link --no-dereference %s /", image));
         return part;
     }
 
@@ -164,7 +164,7 @@ public class RockCrafter {
                 Map<String, Object> serviceDefinition = new HashMap<String, Object>();
                 serviceDefinition.put("override", "replace");
                 serviceDefinition.put("summary", serviceName);
-                serviceDefinition.put("command", "/" + relativeImage + "/bin/" + serviceName);
+                serviceDefinition.put("command", String.format("/%s/bin/%s", relativeImage, serviceName));
                 services.put(serviceName, serviceDefinition);
             }
         }
