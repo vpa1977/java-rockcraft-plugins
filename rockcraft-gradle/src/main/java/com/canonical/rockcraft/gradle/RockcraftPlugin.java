@@ -72,11 +72,11 @@ public class RockcraftPlugin implements Plugin<Project> {
         for (Task t : buildTasks)
             t.finalizedBy(checkTask);
 
-        Set<Task> tasks = project.getTasksByName("jlink", false);
+        Set<Task> tasks = project.getTasksByName(ITaskNames.JLINK, false);
         if (tasks.isEmpty())
-            tasks = project.getTasksByName("bootJar", false);
+            tasks = project.getTasksByName(ITaskNames.BOOT_JAR, false);
         if (tasks.isEmpty())
-            tasks = project.getTasksByName("jar", false);
+            tasks = project.getTasksByName(ITaskNames.JAR, false);
         if (tasks.isEmpty())
             throw new UnsupportedOperationException("Rockcraft plugin requires bootJar or jar task");
 
