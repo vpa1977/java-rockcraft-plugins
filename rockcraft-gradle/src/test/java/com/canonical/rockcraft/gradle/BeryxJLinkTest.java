@@ -36,14 +36,14 @@ public class BeryxJLinkTest extends BaseRockcraftTest {
      * @throws IOException
      */
     @Test
-    public void testBeryxJlink() throws IOException  {
+    public void testBeryxJlinkBuild() throws IOException  {
         BuildResult result = runBuild("build-rock", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testBeryxDump() throws IOException {
+    public void testBeryxJlinkRockcraft() throws IOException {
         BuildResult result = runBuild("create-rock", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
@@ -53,6 +53,11 @@ public class BeryxJLinkTest extends BaseRockcraftTest {
             assertTrue(services.containsKey("hello"));
             Map<String, Object>  helloService =(Map<String, Object>)services.get("hello");
             assertEquals("/image/bin/hello", helloService.get("command"));
+
+            Map<String, Object> parts = (Map<String, Object>)parsed.get("parts");
+            Map<String, Object> dump0 = (Map<String, Object>)parts.get("gradle/rockcraft/dump0");
+            String overrideBuild = (String) dump0.get("override-build");
+            assertEquals("cp  --archive --link --no-dereference image /", overrideBuild);
         }
     }
 }
