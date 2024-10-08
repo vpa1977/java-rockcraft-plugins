@@ -71,7 +71,7 @@ public abstract class BaseRockcraftTest {
 
     @BeforeEach
     protected void setUp() throws IOException {
-        assertTrue(Paths.get(projectDir.getAbsolutePath(), "src", "main", "java").toFile().mkdirs());
+        assertTrue(getJavaSource().getParentFile().mkdirs());
         writeString(getJavaSource(), getResource("default-test.in"));
         writeString(getSettingsFile(), "");
         writeString(getBuildFile(), getResource("default-build.in"));

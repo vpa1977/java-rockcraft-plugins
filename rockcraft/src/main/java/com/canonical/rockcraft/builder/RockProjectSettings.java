@@ -11,6 +11,7 @@ public class RockProjectSettings {
     private final Path projectPath;
     private final String generatorName;
     private final Path rockOutput;
+    private final boolean beryxJlink;
 
     /**
      * Constructs the rock project settings
@@ -21,12 +22,13 @@ public class RockProjectSettings {
      * @param projectPath   path to the rockcraft project
      * @param rockOutput    path to where to generate rockcraft.yaml
      */
-    public RockProjectSettings(String generatorName, String name, String version, Path projectPath, Path rockOutput) {
+    public RockProjectSettings(String generatorName, String name, String version, Path projectPath, Path rockOutput, boolean beryxJlink) {
         this.generatorName = generatorName;
         this.name = name;
         this.version = version;
         this.projectPath = projectPath;
         this.rockOutput = rockOutput;
+        this.beryxJlink = beryxJlink;
     }
 
     /**
@@ -72,4 +74,10 @@ public class RockProjectSettings {
         return rockOutput;
     }
 
+    /**
+     * Get Beryx jlink plugin
+     *
+     * @return use Beryx Jlink plugin
+     */
+    public boolean getBeryxJLink() { return beryxJlink; }
 }
