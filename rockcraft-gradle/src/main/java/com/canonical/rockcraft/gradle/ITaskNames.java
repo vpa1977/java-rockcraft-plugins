@@ -19,7 +19,7 @@ public interface ITaskNames {
      */
     String JAR = "jar";
     /**
-     * bootJar - used o package String Boot jar by spring boot plugin
+     * bootJar - used to package String Boot jar by spring boot plugin
      */
     String BOOT_JAR = "bootJar";
     /**
