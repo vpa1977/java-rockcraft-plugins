@@ -75,11 +75,13 @@ public class RockcraftPlugin implements Plugin<Project> {
 
         Set<Task> tasks = project.getTasksByName(ITaskNames.JLINK, false);
         if (tasks.isEmpty())
+            tasks = project.getTasksByName(ITaskNames.RUNTIME, false);
+        if (tasks.isEmpty())
             tasks = project.getTasksByName(ITaskNames.BOOT_JAR, false);
         if (tasks.isEmpty())
             tasks = project.getTasksByName(ITaskNames.JAR, false);
         if (tasks.isEmpty())
-            throw new UnsupportedOperationException("Rockcraft plugin requires bootJar or jar task");
+            throw new UnsupportedOperationException("Rockcraft plugin requires jlink, runtime, bootJar or jar task");
 
         TaskProvider<PushRockcraftTask> push = project.getTasks().register("push-rock", PushRockcraftTask.class, options);
         TaskProvider<BuildRockcraftTask> build = project.getTasks().register("build-rock", BuildRockcraftTask.class, options);
