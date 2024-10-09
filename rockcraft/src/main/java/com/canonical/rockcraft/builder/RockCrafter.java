@@ -70,7 +70,9 @@ public class RockCrafter {
     protected String createRockcraft(Path root, List<File> files) throws IOException {
         ArrayList<File> filtered = new ArrayList<File>();
         for (File file : files) {
-            if (file.getName().endsWith("-plain.jar"))
+            if (file.getName().endsWith("-plain.jar")) // ignore plain jar created by Spring Boot
+                continue;
+            if (file.getName().equals("jre")) // ignore jre output created by runtime plugin
                 continue;
             filtered.add(file);
         }
