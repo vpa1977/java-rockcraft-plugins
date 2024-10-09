@@ -20,6 +20,7 @@
                         <goals>
                             <goal>create-rock</goal>
                             <goal>build-rock</goal>
+                            <goal>push-rock</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -30,8 +31,8 @@
                     <jlink>false</jlink>
                     <summary>foo</summary>
                     <description>readme.txt</description>
-                    <source>https://github.com/vpa1977/chisel-releases</source>
-                    <branch>24.04-openjdk-17</branch>
+                    <source>https://github.com/canonical/chisel-releases</source>
+                    <branch>ubuntu-24.04</branch>
                     <architectures>
                         <architecture>amd64</architecture>
                         <architecture>arm64</architecture>
