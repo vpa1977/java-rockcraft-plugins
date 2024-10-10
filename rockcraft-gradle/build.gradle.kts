@@ -26,7 +26,7 @@ gradlePlugin {
 
     plugins {
         create("rockcraftPlugin") {
-            id = "io.rockcrafters.rockcraft"
+            id = "io.github.rockcrafters.rockcraft"
             displayName = "Rockcraft plugin"
             description = "Plugin for rock image generation"
             implementationClass = "com.canonical.rockcraft.gradle.RockcraftPlugin"
