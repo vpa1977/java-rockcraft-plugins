@@ -39,11 +39,15 @@ jobs:
 
       - name: Build and verify maven project
         run: |
-          mvn install invoker:install invoker:run
+          mvn -B install invoker:install invoker:run
 
       - name: Build and verify gradle project
         run: |
           ./gradlew clean build -i
+
+      - name: Remove rockcraft
+        run: |
+          snap remove rockcraft
 
       - name: Publish Snapshots
         if: github.ref == 'refs/heads/master'
