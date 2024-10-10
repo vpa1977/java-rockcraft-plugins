@@ -1,7 +1,7 @@
 plugins {
     id('java')
     id('org.beryx.jlink') version "2.24.1"
-    id('io.rockcrafters.rockcraft')
+    id('io.github.rockcrafters.rockcraft')
 }
 version = 0.01
 

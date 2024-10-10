@@ -19,13 +19,13 @@ To use the plugin, apply the following two steps:
 **Groovy**
 
     plugins {
-        id 'io.rockcrafters.rockcraft' version '0.1.1'
+        id 'io.github.rockcrafters.rockcraft' version '0.2.1'
     }
 
 **Kotlin**
 
     plugins {
-        id("io.rockcrafters.rockcraft") version "0.1.1"
+        id("io.github.rockcrafters.rockcraft") version "0.2.1"
     }
 
 ##### Alternatively, you can use the `buildscript` DSL:
@@ -39,10 +39,10 @@ To use the plugin, apply the following two steps:
             }
         }
         dependencies {
-            classpath 'io.rockcrafters.rockcraft:0.1.1'
+            classpath 'io.github.rockcrafters.rockcraft:0.2.1'
         }
     }
-    apply plugin: 'io.rockcrafters.rockcraft-plugin'
+    apply plugin: 'io.github.rockcrafters.rockcraft-plugin'
 
 **Kotlin**
 
@@ -53,10 +53,10 @@ To use the plugin, apply the following two steps:
             }
         }
         dependencies {
-            classpath("io.rockcrafters.rockcraft:0.1.1")
+            classpath("io.github.rockcrafters.rockcraft:0.2.1")
         }
     }
-    apply(plugin = "io.rockcrafters.rockcraft")
+    apply(plugin = "io.github.rockcrafters.rockcraft")
 
 ### 2. Configure ROCK container
 
