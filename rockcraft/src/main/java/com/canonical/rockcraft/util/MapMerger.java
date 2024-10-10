@@ -31,6 +31,9 @@ public class MapMerger {
      */
     public static Map<String, Object> merge(Map<String, Object> m1, Map<String, Object> m2) {
         Map<String, Object> ret = new HashMap<String, Object>(m1);
+        if (m2 == null) {
+            return ret;
+        }
         for (String key : ret.keySet()) {
             Object m2Value = m2.get(key);
             if (m2Value == null)

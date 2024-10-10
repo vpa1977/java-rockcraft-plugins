@@ -21,7 +21,20 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("unchecked")
 public class MapMergerTest {
+
+    @Test
+    public void testNullMerge() {
+        // given map1 (a->b) and map2 null
+        HashMap<String, Object> map1 = new HashMap<String, Object>();
+        map1.put("a", "b");
+        // when maps are merged
+        Map<String, Object> ret = MapMerger.merge(map1, null);
+        // then the result is (a->b)
+        assertEquals(1, ret.keySet().size());
+        assertEquals("b", ret.get("a"));
+    }
 
     @Test
     public void testSimpleMerge() {
