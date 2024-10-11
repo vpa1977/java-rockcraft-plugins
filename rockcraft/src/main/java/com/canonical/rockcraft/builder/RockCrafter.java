@@ -167,6 +167,7 @@ public class RockCrafter {
                 Map<String, Object> serviceDefinition = new HashMap<String, Object>();
                 serviceDefinition.put("override", "replace");
                 serviceDefinition.put("summary", serviceName);
+                serviceDefinition.put("startup", "enabled");
                 serviceDefinition.put("command", String.format("/%s/bin/%s", relativeImage, serviceName));
                 services.put(serviceName, serviceDefinition);
             }
