@@ -147,6 +147,7 @@ public class RockCrafter {
         part.put("source", ".");
         part.put("plugin", "nil");
         part.put("override-build", String.format("cp  --archive --link --no-dereference %s ${CRAFT_PART_INSTALL}/", image));
+        part.put("stage-packages", new String[]{"coreutils_bins", "dash_bins"});
         return part;
     }
 
