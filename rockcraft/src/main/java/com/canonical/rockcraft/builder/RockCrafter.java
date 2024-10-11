@@ -146,7 +146,7 @@ public class RockCrafter {
         Map<String,Object> part = new HashMap<String, Object>();
         part.put("source", ".");
         part.put("plugin", "nil");
-        part.put("override-build", String.format("cp  --archive --link --no-dereference %s /", image));
+        part.put("override-build", String.format("cp  --archive --link --no-dereference %s ${CRAFT_PART_INSTALL}/", image));
         return part;
     }
 
