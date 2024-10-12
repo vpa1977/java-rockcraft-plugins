@@ -51,6 +51,7 @@ public class MapMergerTest {
         assertEquals("c", ret.get("b"));
     }
 
+    @Test
     public void testReplaceMerge() {
         // given map1 (a->c) and map2 (a->d)
         HashMap<String, Object> map1 = new HashMap<String, Object>();
@@ -64,6 +65,7 @@ public class MapMergerTest {
         assertEquals("d", ret.get("a"));
     }
 
+    @Test
     public void testSubmapMerge() {
         // given map1 (a->(a->a, b->b, f->f) ) and map2 (a->(a->b, b-c, d->e))
         HashMap<String, Object> map1 = new HashMap<String, Object>();
@@ -77,7 +79,7 @@ public class MapMergerTest {
         inner.put("a", "b");
         inner.put("b", "c");
         inner.put("d", "e");
-        map1.put("a", inner);
+        map2.put("a", inner);
         // when maps are merged
         Map<String, Object> ret = MapMerger.merge(map1, map2);
         // then the result is (a->(a->b, b->c, d->e, f->f) )
