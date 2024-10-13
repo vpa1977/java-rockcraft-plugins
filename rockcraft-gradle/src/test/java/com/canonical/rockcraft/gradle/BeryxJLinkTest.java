@@ -57,7 +57,7 @@ public class BeryxJLinkTest extends BaseRockcraftTest {
             Map<String, Object> parts = (Map<String, Object>)parsed.get("parts");
             Map<String, Object> dump0 = (Map<String, Object>)parts.get("gradle/rockcraft/dump0");
             String overrideBuild = (String) dump0.get("override-build");
-            assertEquals("cp  --archive --link --no-dereference image /", overrideBuild);
+            assertEquals("cp  --archive --link --no-dereference image ${CRAFT_PART_INSTALL}/", overrideBuild);
         }
     }
 }
