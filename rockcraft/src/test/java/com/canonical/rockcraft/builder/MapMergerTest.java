@@ -87,7 +87,6 @@ public class MapMergerTest {
         ret = (Map<String, Object>) ret.get("a");
         assertEquals(4, ret.keySet().size());
         assertEquals("b", ret.get("a"));
-        assertEquals("b", ret.get("a"));
         assertEquals("c", ret.get("b"));
         assertEquals("e", ret.get("d"));
         assertEquals("f", ret.get("f"));
