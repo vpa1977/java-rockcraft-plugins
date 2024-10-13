@@ -166,7 +166,8 @@ public class RockCrafter {
         Map<String,Object> part = new HashMap<String, Object>();
         part.put("source", ".");
         part.put("plugin", "nil");
-        part.put("override-build", String.format("cp  --archive --link --no-dereference %s /", image));
+        part.put("override-build", String.format("cp  --archive --link --no-dereference %s ${CRAFT_PART_INSTALL}/", image));
+        part.put("stage-packages", new String[]{"coreutils_bins", "dash_bins"});
         return part;
     }
 
@@ -186,6 +187,7 @@ public class RockCrafter {
                 Map<String, Object> serviceDefinition = new HashMap<String, Object>();
                 serviceDefinition.put("override", "replace");
                 serviceDefinition.put("summary", serviceName);
+                serviceDefinition.put("startup", "enabled");
                 serviceDefinition.put("command", String.format("/%s/bin/%s", relativeImage, serviceName));
                 services.put(serviceName, serviceDefinition);
             }

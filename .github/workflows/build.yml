@@ -14,6 +14,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: gradle/actions/wrapper-validation@v4
+  validateSample:
+    name: Validate samples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build and verify Gradle sample projects
+        run: |
+          ./gradlew publishToMavenLocal
+          cd examples/gradle
+          for x in $(find . -maxdepth 1 -type d -not -name '.' -print); do
+            (cd $x && ./gradlew -i create-rock)
+          done
 
   build-maven:
     name: Build Maven
@@ -59,8 +79,6 @@ jobs:
 
       - name: Setup rockcraft
         run: |
-          rm -rf /home/runner/.local/state/rockcraft/log/*
-          sudo snap remove rockcraft || true
           sudo snap install rockcraft --classic
 
       - name: Build and verify gradle project
