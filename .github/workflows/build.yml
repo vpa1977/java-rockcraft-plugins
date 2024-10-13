@@ -14,6 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: gradle/actions/wrapper-validation@v4
+
   validateSample:
     name: Validate samples
     runs-on: ubuntu-latest
