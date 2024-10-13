@@ -1,0 +1,23 @@
+plugins {
+    id('org.beryx.jlink') version "2.24.1"
+    id('io.github.rockcrafters.rockcraft') version "0.2.1"
+}
+version = 0.01
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(11)
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.example.app.App'
+    }
+}
+
+jlink {
+    mainClass = 'com.example.app.App'
+    launcher {
+        name = 'app'
+    }
+}
+
+rockcraft {
+}
