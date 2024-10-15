@@ -1,8 +1,8 @@
 <project>
     <parent>
-        <groupId>com.canonical</groupId>
+        <groupId>io.github.rockcrafters</groupId>
         <artifactId>rockcraft-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.2.1</version>
     </parent>
 
     <packaging>maven-plugin</packaging>
@@ -57,7 +57,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.canonical</groupId>
+            <groupId>io.github.rockcrafters</groupId>
             <artifactId>rockcraft</artifactId>
             <version>${project.version}</version>
         </dependency>

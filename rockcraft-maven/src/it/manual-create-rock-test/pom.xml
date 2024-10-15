@@ -13,7 +13,7 @@
         <testOutputDirectory>${project.basedir}/target/test-classes</testOutputDirectory>
         <plugins>
             <plugin>
-                <groupId>com.canonical</groupId>
+                <groupId>io.github.rockcrafters</groupId>
                 <artifactId>rockcraft-maven-plugin</artifactId>
                 <executions>
                     <execution>
