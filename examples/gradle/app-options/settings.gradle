@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        mavenCentral {}
         gradlePluginPortal {}
         maven {
             url System.getProperty('user.home') + '/.m2/repository'
@@ -9,4 +8,3 @@ pluginManagement {
 }
 
 rootProject.name = 'app-options'
-
