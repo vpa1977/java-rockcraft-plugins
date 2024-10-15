@@ -105,6 +105,9 @@
                 <version>0.2.1</version>
                 <executions>
                     <execution>
+                        <configuration>
+                            <createService>false</createService>
+                        </configuration>
                         <goals>
                             <goal>create-rock</goal>
                             <goal>build-rock</goal>

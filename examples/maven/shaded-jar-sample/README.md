@@ -1,6 +1,6 @@
 # Introduction
 
-This sample deploys a shaded jar into the rock container.
+This sample deploys a shaded jar into the rock container. It uses the default configuration of `rockcraft-maven-plugin` and overrides `createService` property to disable the startup service.
 
 # Building
 
