@@ -1,6 +1,6 @@
 <project>
     <parent>
-        <groupId>com.canonical</groupId>
+        <groupId>io.github.rockcrafters</groupId>
         <artifactId>rockcraft-parent</artifactId>
         <version>0.0.1</version>
     </parent>
@@ -57,7 +57,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.canonical</groupId>
+            <groupId>io.github.rockcrafters</groupId>
             <artifactId>rockcraft</artifactId>
             <version>${project.version}</version>
         </dependency>
