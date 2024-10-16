@@ -65,6 +65,7 @@ public class RawRuntimePart implements IRuntimeProvider {
                 "(cd ${CRAFT_PART_BUILD}/tmp && for jar in ${PROCESS_JARS}; do jar xvf ${jar}; done;)"
         );
         append(commands, "CPATH=$(find ${CRAFT_PART_BUILD}/tmp -type f -name *.jar)");
+        append(commands, "CPATH=$(CPATH):$(find ${CRAFT_STAGE} -type f -name *.jar)");
         append(commands, "CPATH=$(echo ${CPATH}:. | sed s'/[[:space:]]/:/'g)");
         append(commands, "echo ${CPATH}");
         append(commands, "if [ \"x${PROCESS_JARS}\" != \"x\" ]; then");
