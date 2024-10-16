@@ -54,7 +54,7 @@ jobs:
           mvn install
           cd examples/maven
           for x in $(find . -maxdepth 1 -type d -not -name '.' -print); do
-            (cd $x && mvn install)
+            (cd $x && mvn package)
           done
 
   build-maven:
