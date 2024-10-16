@@ -22,6 +22,12 @@ import java.util.function.BiFunction;
  * It is used to combine Yaml files
  */
 public class MapMerger {
+
+    /**
+     * No specific initialization
+     */
+    public MapMerger(){}
+
     /**
      * Recursively merges two map of maps
      *

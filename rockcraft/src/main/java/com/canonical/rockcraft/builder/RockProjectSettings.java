@@ -21,6 +21,7 @@ public class RockProjectSettings {
      * @param version       rockcraft project version
      * @param projectPath   path to the rockcraft project
      * @param rockOutput    path to where to generate rockcraft.yaml
+     * @param beryxJlink    whether to copy Beryx jlink image to the rock
      */
     public RockProjectSettings(String generatorName, String name, String version, Path projectPath, Path rockOutput, boolean beryxJlink) {
         this.generatorName = generatorName;
@@ -33,6 +34,8 @@ public class RockProjectSettings {
 
     /**
      * Get the generator name
+     *
+     * @return generator name
      */
     public String getGeneratorName() {
         return generatorName;

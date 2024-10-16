@@ -238,7 +238,7 @@ public class RockcraftOptions {
     /**
      * Sets the path to rockcraft.yaml file
      *
-     * @param description - description file
+     * @param rockcraftYaml - rockcraft yaml file
      */
     public void setRockcraftYaml(String rockcraftYaml) {
         if (rockcraftYaml != null) {
