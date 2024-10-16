@@ -56,8 +56,12 @@ public class AbstractRockMojo extends AbstractMojo {
     @Parameter(property = "slices")
     private List<String> slices = new ArrayList<String>();
 
-    @Parameter(property = "docker")
-    private boolean docker = false;
+    @Parameter(property = "rockcraftYaml")
+    private String rockcraftYaml;
+
+    @Parameter(property = "service")
+    private boolean createService = true;
+
 
     private RockcraftOptions options = new RockcraftOptions();
 
@@ -81,5 +85,7 @@ public class AbstractRockMojo extends AbstractMojo {
         options.setBranch(branch);
         options.setArchitectures(architectures);
         options.setSlices(slices);
+        options.setRockcraftYaml(rockcraftYaml);
+        options.setCreateService(createService);
     }
 }
