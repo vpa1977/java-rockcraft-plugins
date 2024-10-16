@@ -48,7 +48,7 @@ jobs:
       - name: Publish to Maven central
         id: deploy-maven
         run: |
-          mvn deploy -B
+          mvn deploy -B -Prelease
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_TOKEN_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN_PASSWORD }}
