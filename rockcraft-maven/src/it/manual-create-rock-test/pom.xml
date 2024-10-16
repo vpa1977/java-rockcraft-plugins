@@ -25,7 +25,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <docker>true</docker>
                     <buildPackage>openjdk-17-jdk-headless</buildPackage>
                     <targetRelease>17</targetRelease>
                     <jlink>false</jlink>

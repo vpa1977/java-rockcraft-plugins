@@ -1,0 +1,12 @@
+
+parts:
+  deploy-dependencies:
+    plugin: dump
+    source: dependencies
+    source-type: local
+
+  maven/rockcraft/runtime:
+    after:
+      - deploy-dependencies
+      - maven/rockcraft/dump
+      - maven/rockcraft/deps
