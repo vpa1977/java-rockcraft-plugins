@@ -51,6 +51,7 @@ public class RockBuilder {
      * Pushes rock image to the docker
      *
      * @param settings - rockcraft project settings
+     * @param options = rockcraft options
      * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
@@ -70,6 +71,7 @@ public class RockBuilder {
      * Builds the rock image
      *
      * @param settings - rockcraft project settings
+     * @param options - rockcraft options
      * @throws IOException          - IO error while writing <i>rockcraft.yaml</i>
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */

@@ -22,7 +22,17 @@ import org.apache.maven.project.MavenProject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractRockMojo extends AbstractMojo {
+/**
+ * A base class for all rock mojos that initializes
+ * RockcraftOptions
+ */
+public abstract class AbstractRockMojo extends AbstractMojo {
+
+    /**
+     * No specific initialization
+     */
+    public AbstractRockMojo() {}
+
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
@@ -61,14 +71,28 @@ public class AbstractRockMojo extends AbstractMojo {
 
     private RockcraftOptions options = new RockcraftOptions();
 
+    /**
+     * Returns RockCraftOptions initialized using plugin options
+     *
+     * @return initialized plugin options
+     */
     protected RockcraftOptions getOptions() {
         return options;
     }
 
+    /**
+     * Returns current Maven project
+     *
+     * @return Maven Project object
+     */
     protected MavenProject getProject() {
         return project;
     }
 
+    /**
+     * Executes mojo. Initializes RockcraftOptions using plugin
+     * configuration
+     */
     @Override
     public void execute() throws MojoExecutionException {
         options.setBuildPackage(buildPackage);

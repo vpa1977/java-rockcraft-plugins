@@ -20,8 +20,20 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
 
+/**
+ * Pushes rock image to the local docker daemon
+ */
 @Mojo(name = "push-rock", threadSafe = false, requiresProject = true, defaultPhase = LifecyclePhase.INSTALL)
 public class PushRockMojo extends AbstractRockMojo {
+
+    /**
+     * No specific initialization
+     */
+    public PushRockMojo(){}
+
+    /**
+     * Executes mojo: pushes existing rock file to the docker daemon
+     */
     public void execute() throws MojoExecutionException {
         super.execute();
         try {

@@ -20,9 +20,20 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
 
+/**
+ * Builds rock image
+ */
 @Mojo(name = "build-rock", threadSafe = false, requiresProject = true, defaultPhase = LifecyclePhase.INSTALL)
 public class BuildRockMojo extends AbstractRockMojo {
 
+    /**
+     * No specific initialization
+     */
+    public BuildRockMojo(){}
+
+    /**
+     * Executes mojo to build the rock image
+     */
     public void execute() throws MojoExecutionException {
         super.execute();
         try {

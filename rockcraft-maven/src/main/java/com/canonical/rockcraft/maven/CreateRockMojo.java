@@ -22,9 +22,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Writes rockcraft file to the output directory
+ */
 @Mojo(name = "create-rock", threadSafe = false, requiresProject = true, defaultPhase = LifecyclePhase.PACKAGE)
 public class CreateRockMojo extends AbstractRockMojo {
 
+    /**
+     * No specific initialization
+     */
+    public CreateRockMojo(){}
+
+    /**
+     * Executes mojo: writes rockcraft file to the output directory
+     */
     @Override
     public void execute() throws MojoExecutionException {
         super.execute();
