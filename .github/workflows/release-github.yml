@@ -40,4 +40,4 @@ jobs:
         env:
           GHP_USERNAME: ${{ secrets.GHP_USERNAME }}
           GHP_TOKEN: ${{ secrets.GHP_TOKEN }}
-          GHP_REPO: $${ secrets.GHP_REPO }}
+          GHP_REPO: $${{ secrets.GHP_REPO }}
