@@ -1,13 +1,10 @@
-name: Release
+name: Release Gradle
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - '*'
 
 jobs:
   build:
-    name: release
+    name: release-gradle
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,18 +42,3 @@ jobs:
         env:
           PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
           PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
-
-#      - name: Publish to Maven central
-#        id: deploy-maven
-#        run: |
-#          mvn deploy -B -Prelease
-#        env:
-#          MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_TOKEN_USERNAME }}
-#          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN_PASSWORD }}
-#          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_PASSPHRASE }}
-
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
