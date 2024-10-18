@@ -1,0 +1,40 @@
+name: Release Gradle
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: release-maven
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+
+      - name: Setup LXD
+        uses: canonical/setup-lxd@main
+        with:
+          channel: 5.21/candidate
+
+
+      - name: Publish to Maven central
+        id: deploy-maven
+        run: |
+          mvn deploy -B -Prelease
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_TOKEN_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_PASSPHRASE }}
