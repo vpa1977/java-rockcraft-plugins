@@ -7,7 +7,7 @@ allprojects {
             repositories {
                 maven {
                     name = "GitHubPackages"
-                    url = uri(System.getenv("GHP_REPO") ?: "")
+                    url = uri("https://github.com/"+ System.getenv("GHP_REPO") ?: "")
                     credentials {
                         username = project.findProperty("gpr.user") as String? ?: System.getenv("GHP_USERNAME")
                         password = project.findProperty("gpr.key") as String? ?: System.getenv("GHP_TOKEN")
