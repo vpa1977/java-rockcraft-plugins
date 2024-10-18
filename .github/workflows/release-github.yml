@@ -23,15 +23,6 @@ jobs:
           gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-      - name: Setup LXD
-        uses: canonical/setup-lxd@main
-        with:
-          channel: 5.21/candidate
-
-      - name: Install rockcraft
-        run: |
-          sudo snap install rockcraft --classic
-
       - name: Publish to Github Packages
         id: deploy
         run: |
@@ -39,5 +30,5 @@ jobs:
         shell: bash
         env:
           GHP_USERNAME: ${{ secrets.GHP_USERNAME }}
-          GHP_TOKEN: ${{ secrets.GHP_TOKEN }}
+          GHP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHP_REPO: $${{ secrets.GHP_REPO }}
