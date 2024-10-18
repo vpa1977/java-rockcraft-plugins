@@ -6,6 +6,42 @@ The plugin requires [rockcraft](https://github.com/canonical/rockcraft) installe
 ![Github Actions](https://github.com/rockcrafters/java-rockcraft-plugins/actions/workflows/build.yml/badge.svg)
 [![GNU GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.html#license-text)
 
+The plugins are published to Github Packages.
+
+#### Enable Github Packages repository for Gradle:
+
+**settings.gradle**
+
+    pluginManagement {
+        repositories {
+            gradlePluginPortal {}
+            maven {
+                url "https://maven.pkg.github.com/rockcrafters/java-rockcraft-plugins"
+            }
+        }
+    }
+
+**settings.gradle.kts**
+
+    pluginManagement {
+        repositories {
+            gradlePluginPortal()
+            maven(url="https://maven.pkg.github.com/rockcrafters/java-rockcraft-plugins")
+        }
+    }
+
+#### Enable Github Packages repository for Maven:
+
+**pom.xml**
+
+    <repositories>
+        <repository>
+            <id>rockcrafters-github</id>
+            <name>Rockcrafters Github Packages</name>
+            <url>https://maven.pkg.github.com/rockcrafters/java-rockcraft-plugins</url>
+            </repository>
+    </repositories>
+
 # How it works
 
 The build plugins generate `rockcraft.yaml` in the output directory and build a [rock](https://documentation.ubuntu.com/rockcraft/en/latest/explanation/rocks/) image for your application.

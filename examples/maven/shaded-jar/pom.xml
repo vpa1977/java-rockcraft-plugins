@@ -17,6 +17,14 @@
         <maven.compiler.release>17</maven.compiler.release>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>rockcrafters-github</id>
+            <name>Rockcrafters Github Packages</name>
+            <url>https://maven.pkg.github.com/rockcrafters/java-rockcraft-plugins</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
