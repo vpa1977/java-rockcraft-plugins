@@ -9,6 +9,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>2023-01-01T00:00:00Z</project.build.outputTimestamp>
+        <gpr.repo>https://maven.pkg.github.com/rockcrafters/java-rockcraft-plugins</gpr.repo>
     </properties>
 
 
@@ -57,6 +58,16 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>github</id>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>${gpr.repo}</url>
+                </repository>
+            </distributionManagement>
+        </profile>
         <profile>
             <id>release</id>
             <build>
