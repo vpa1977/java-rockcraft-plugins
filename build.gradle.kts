@@ -7,10 +7,10 @@ allprojects {
             repositories {
                 maven {
                     name = "GitHubPackages"
-                    url = uri(System.getenv("GITHUB_REPO") ?: "")
+                    url = uri(System.getenv("GHP_REPO") ?: "")
                     credentials {
-                        username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
-                        password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+                        username = project.findProperty("gpr.user") as String? ?: System.getenv("GHP_USERNAME")
+                        password = project.findProperty("gpr.key") as String? ?: System.getenv("GHP_TOKEN")
                     }
                 }
             }

@@ -35,9 +35,9 @@ jobs:
       - name: Publish to Github Packages
         id: deploy
         run: |
-          ./gradlew publish
+          ./gradlew publish -i
         shell: bash
         env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: $${ secrets.GITHUB_REPO }}
+          GITHUB_USERNAME: ${{ secrets.GHP_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
+          GITHUB_REPO: $${ secrets.GHP_REPO }}
