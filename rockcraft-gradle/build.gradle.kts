@@ -1,4 +1,5 @@
 plugins {
+    id("com.gradleup.shadow") version "8.3.3"
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") version "1.3.0"
     id ("org.gradlex.reproducible-builds") version "1.0"
@@ -7,6 +8,10 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+}
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+   archiveClassifier.set("")
 }
 
 dependencies {
