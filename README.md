@@ -13,27 +13,27 @@ The build plugins generate `rockcraft.yaml` in the output directory and build a 
 The plugins provide tasks/goals to build and deploy [rock](https://documentation.ubuntu.com/rockcraft/en/latest/explanation/rocks/) image.
 
 The parts generated are prefixed with a build system name, e.g. `gradle` or `maven`.
-The plugins create following parts in `rockcraft.yaml`:
-* `<build-system>/rockcraft/runtime`: e.g. `maven/rockcraft/runtime` or `gradle/rockcraft/runtime`. This part generates Java runtime image for the application using `jlink`. The part finds all jar files in the target image `/jars` directory and generates a runtime image deployed in `/usr/jvm/java-<version>-openjdk-<arch>/` directory. It creates a symlink to `java` executable in `/usr/bin/java`.
+The plugins create the following parts in `rockcraft.yaml`:
+* `<build-system>/rockcraft/runtime`: e.g. `maven/rockcraft/runtime` or `gradle/rockcraft/runtime`. This part generates a Java runtime image for the application using `jlink`. The part finds all jar files in the target image `/jars` directory and generates a runtime image deployed in the `/usr/jvm/java-<version>-openjdk-<arch>/` directory. It creates a symlink to `java` executable in `/usr/bin/java`.
 * `<build-system>/rockcraft/deps`: deploys openjdk runtime dependencies.
 * `<build-system>/rockcraft/dump`: copies build artifact into target image's `/jars` directory.
 
 The rock is built using the base `bare` image.
 
-The generated `rockraft.yaml` can be overriden by providing `rockcraftYaml` configuration property to the plugin. The plugin merges the generated `rockcraft.yaml` and the override one.
+The generated `rockraft.yaml` can be overridden by providing `rockcraftYaml` configuration property to the plugin. The plugin merges the generated `rockcraft.yaml` and the override one.
 
 # Configuration Options
 
 |Name|Description|
 |----|-----------|
-|buildPackage| OpenJDK Ubuntu package used to create runtime image, e.g. `openjdk-21-jdk-headless`|
+|buildPackage| OpenJDK Ubuntu package used to create a runtime image, e.g. `openjdk-21-jdk-headless`|
 |targetRelease| `--multi-release` option passed to `jlink` |
 |summary| rock image summary, e.g. `Spring Boot Application` |
 |description| path to the description file, e.g. `README.md` |
 |command| command used for the startup service |
 |source | Git URL of `chisel-releases` repository |
 |branch| Git branch of `chisel-releases` repository
-|architectures| list of the supported architectures , e.g. `amd64, arm64` |
+|architectures| list of the supported architectures, e.g. `amd64, arm64` |
 |slices| list of additional [chisel](https://github.com/canonical/chisel) slices to install |
 |rockcraftYaml| path to `rockcraft.yaml` with the overrides for the generated `rockraft.yaml`
 |createService| create startup service (default true) |

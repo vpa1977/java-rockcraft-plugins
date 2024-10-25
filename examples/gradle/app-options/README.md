@@ -1,8 +1,8 @@
-# Introduction 
+# Introduction
 
-This example demonstrates use of plugin options to customize the image.
+This example demonstrates the use of plugin options to customize the image.
 
-# Building 
+# Building
 
 Install the plugin if needed:
 

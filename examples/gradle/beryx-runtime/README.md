@@ -1,8 +1,8 @@
-# Introduction 
+# Introduction
 
-This example builds a rock image for non-modular Java application using an application image provided by [Beryx Runtime](https://badass-runtime-plugin.beryx.org/releases/latest/) plugin.
+This example builds a rock image for a non-modular Java application using an application image provided by [Beryx Runtime](https://badass-runtime-plugin.beryx.org/releases/latest/) plugin.
 
-# Building 
+# Building
 
 Install the plugin if needed:
 
