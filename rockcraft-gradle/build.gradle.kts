@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradleup.shadow") version "8.3.3"
+    id("com.gradleup.shadow") version "8.3.4"
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") version "1.3.0"
     id ("org.gradlex.reproducible-builds") version "1.0"
