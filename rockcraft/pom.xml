@@ -4,6 +4,31 @@
         <artifactId>rockcraft-parent</artifactId>
         <version>0.2.2</version>
     </parent>
+    <name>Rockcraft common library</name>
+    <description>
+        Contains common library to create deploy a Java application
+        in a rock container.
+    </description>
+    <url>https://github.com/rockcrafters/java-rockcraft-plugins</url>
+    <developers>
+        <developer>
+            <name>Vladimir Petko</name>
+            <email>vladimir.petko@canonical.com</email>
+            <organization>Canonical</organization>
+            <organizationUrl>https://canonical.com/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Pushkar Kulkarni</name>
+            <email>pushkar.kulkarni@canonical.com</email>
+            <organization>Canonical</organization>
+            <organizationUrl>https://canonical.com/</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/rockcrafters/java-rockcraft-plugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:rockcrafters/java-rockcraft-plugin.git</developerConnection>
+        <url>http://github.com/rockcrafters/java-rockcraft-plugin/tree/main</url>
+    </scm>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rockcraft-common</artifactId>
