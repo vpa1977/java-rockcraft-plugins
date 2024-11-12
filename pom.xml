@@ -12,6 +12,36 @@
         <gpr.repo>https://maven.pkg.github.com/rockcrafters/java-rockcraft-plugins</gpr.repo>
     </properties>
 
+    <licenses>
+        <license>
+            <name>GPL-3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+        </license>
+    </licenses>
+    <name>Rockcraft support for Maven</name>
+    <description>
+        Parent pom for rockcraft Maven rockcraft support.
+    </description>
+    <url>https://github.com/rockcrafters/java-rockcraft-plugins</url>
+    <developers>
+        <developer>
+            <name>Vladimir Petko</name>
+            <email>vladimir.petko@canonical.com</email>
+            <organization>Canonical</organization>
+            <organizationUrl>https://canonical.com/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Pushkar Kulkarni</name>
+            <email>pushkar.kulkarni@canonical.com</email>
+            <organization>Canonical</organization>
+            <organizationUrl>https://canonical.com/</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/rockcrafters/java-rockcraft-plugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:rockcrafters/java-rockcraft-plugin.git</developerConnection>
+        <url>http://github.com/rockcrafters/java-rockcraft-plugin/tree/main</url>
+    </scm>
 
     <modules>
         <module>rockcraft</module>
