@@ -1,5 +1,5 @@
 allprojects {
-    version = "0.2.2"
+    version = "0.2.3"
     group = "io.github.rockcrafters"
     apply(plugin = "maven-publish")
     plugins.withType<MavenPublishPlugin>().configureEach {
