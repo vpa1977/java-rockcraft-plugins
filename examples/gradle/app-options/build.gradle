@@ -1,6 +1,6 @@
 plugins {
     id('application')
-    id('io.github.rockcrafters.rockcraft') version "0.2.2"
+    id('io.github.rockcrafters.rockcraft') version "0.2.3"
 }
 version = 0.01
 
@@ -23,4 +23,3 @@ rockcraft {
     branch = "ubuntu-24.04" // specify chisel-releases branch
     source = "https://github.com/canonical/chisel-releases" // specify chisel-releases options
 }
-
