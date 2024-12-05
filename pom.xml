@@ -38,9 +38,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/rockcrafters/java-rockcraft-plugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:rockcrafters/java-rockcraft-plugin.git</developerConnection>
-        <url>http://github.com/rockcrafters/java-rockcraft-plugin/tree/main</url>
+        <connection>scm:git:git://github.com/rockcrafters/java-rockcraft-plugins.git</connection>
+        <developerConnection>scm:git:ssh://github.com:rockcrafters/java-rockcraft-plugins.git</developerConnection>
+        <url>http://github.com/rockcrafters/java-rockcraft-plugins/tree/main</url>
     </scm>
 
     <modules>
