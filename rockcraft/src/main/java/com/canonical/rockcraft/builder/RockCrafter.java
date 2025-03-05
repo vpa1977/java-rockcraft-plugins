@@ -29,15 +29,8 @@ import java.util.Map;
 /**
  * Creates a rockcraft.yaml based on RockOptions
  */
-public class RockCrafter {
+public class RockCrafter extends AbstractRockCrafter {
 
-    private final RockProjectSettings settings;
-    private final RockcraftOptions options;
-    private final List<File> artifacts;
-
-
-    protected List<File> getArtifacts() { return artifacts; }
-    protected RockProjectSettings getSettings() { return settings; }
 
     /**
      * Creates RockCrafter
@@ -47,9 +40,7 @@ public class RockCrafter {
      * @param artifacts - list of artifacts to package
      */
     public RockCrafter(RockProjectSettings settings, RockcraftOptions options, List<File> artifacts) {
-        this.settings = settings;
-        this.options = options;
-        this.artifacts = artifacts;
+        super(settings, options, artifacts);
     }
 
     /**
@@ -57,6 +48,7 @@ public class RockCrafter {
      *
      * @throws IOException - the method fails to write rockcraft.yaml
      */
+    @Override
     public void writeRockcraft() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(getSettings().getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
             String rockcraft = createRockcraft(getSettings().getRockOutput(), getArtifacts());
@@ -198,16 +190,6 @@ public class RockCrafter {
         }
         return services;
     }
-
-    protected Map<String, Object> getPlatforms() {
-        HashMap<String, Object> archs = new HashMap<String, Object>();
-        for (RockArchitecture a : getOptions().getArchitectures())
-            archs.put(String.valueOf(a), "");
-        if (archs.isEmpty())
-            archs.put("amd64", "");
-        return archs;
-    }
-
     /**
      * Return list of the chisel slices
      */
@@ -315,7 +297,4 @@ public class RockCrafter {
         return services;
     }
 
-    protected RockcraftOptions getOptions() {
-        return options;
-    }
 }
