@@ -199,7 +199,7 @@ public class RockCrafter {
         return services;
     }
 
-    private Map<String, Object> getPlatforms() {
+    protected Map<String, Object> getPlatforms() {
         HashMap<String, Object> archs = new HashMap<String, Object>();
         for (RockArchitecture a : getOptions().getArchitectures())
             archs.put(String.valueOf(a), "");
@@ -211,7 +211,7 @@ public class RockCrafter {
     /**
      * Return list of the chisel slices
      */
-    private String getProjectDeps() {
+    protected String getProjectDeps() {
         StringBuilder buffer = new StringBuilder();
         for (String dep : getOptions().getSlices()) {
             if (buffer.length() > 0)
@@ -260,7 +260,7 @@ public class RockCrafter {
         return part;
     }
 
-    private Map<String, Object> getDepsPart() {
+    protected Map<String, Object> getDepsPart() {
         HashMap<String, Object> part = new HashMap<String, Object>();
         part.put("plugin", "nil");
         if (getOptions().getSource() != null) {
