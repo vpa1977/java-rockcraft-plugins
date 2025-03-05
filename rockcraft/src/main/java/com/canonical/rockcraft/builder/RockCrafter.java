@@ -199,7 +199,7 @@ public class RockCrafter {
         return services;
     }
 
-    private Map<String, Object> getPlatforms() {
+    protected Map<String, Object> getPlatforms() {
         HashMap<String, Object> archs = new HashMap<String, Object>();
         for (RockArchitecture a : getOptions().getArchitectures())
             archs.put(String.valueOf(a), "");
