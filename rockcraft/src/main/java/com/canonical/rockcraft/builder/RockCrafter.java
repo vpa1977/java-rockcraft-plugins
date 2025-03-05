@@ -29,15 +29,8 @@ import java.util.Map;
 /**
  * Creates a rockcraft.yaml based on RockOptions
  */
-public class RockCrafter {
+public class RockCrafter extends AbstractRockCrafter {
 
-    private final RockProjectSettings settings;
-    private final RockcraftOptions options;
-    private final List<File> artifacts;
-
-
-    protected List<File> getArtifacts() { return artifacts; }
-    protected RockProjectSettings getSettings() { return settings; }
 
     /**
      * Creates RockCrafter
@@ -47,9 +40,7 @@ public class RockCrafter {
      * @param artifacts - list of artifacts to package
      */
     public RockCrafter(RockProjectSettings settings, RockcraftOptions options, List<File> artifacts) {
-        this.settings = settings;
-        this.options = options;
-        this.artifacts = artifacts;
+        super(settings, options, artifacts);
     }
 
     /**
@@ -57,6 +48,7 @@ public class RockCrafter {
      *
      * @throws IOException - the method fails to write rockcraft.yaml
      */
+    @Override
     public void writeRockcraft() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(getSettings().getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
             String rockcraft = createRockcraft(getSettings().getRockOutput(), getArtifacts());
@@ -199,28 +191,6 @@ public class RockCrafter {
         return services;
     }
 
-    protected Map<String, Object> getPlatforms() {
-        HashMap<String, Object> archs = new HashMap<String, Object>();
-        for (RockArchitecture a : getOptions().getArchitectures())
-            archs.put(String.valueOf(a), "");
-        if (archs.isEmpty())
-            archs.put("amd64", "");
-        return archs;
-    }
-
-    /**
-     * Return list of the chisel slices
-     */
-    protected String getProjectDeps() {
-        StringBuilder buffer = new StringBuilder();
-        for (String dep : getOptions().getSlices()) {
-            if (buffer.length() > 0)
-                buffer.append(" ");
-            buffer.append(dep);
-        }
-        return buffer.toString();
-    }
-
     /**
      * Get copy commands for the project output
      * cp foo.jar ${CRAFT_PART_INSTALL}/jars
@@ -260,35 +230,6 @@ public class RockCrafter {
         return part;
     }
 
-    protected Map<String, Object> getDepsPart() {
-        HashMap<String, Object> part = new HashMap<String, Object>();
-        part.put("plugin", "nil");
-        if (getOptions().getSource() != null) {
-            part.put("source", getOptions().getSource());
-            part.put("source-type", "git");
-        }
-        if (getOptions().getBranch() != null) {
-            part.put("source-branch", getOptions().getBranch());
-        }
-
-        String overrideCommands = "chisel cut ";
-        if (getOptions().getSource() != null) {
-            overrideCommands += "--release ./ ";
-        }
-        overrideCommands += " --root ${CRAFT_PART_INSTALL}/ libc6_libs \\\n";
-        overrideCommands += " libgcc-s1_libs \\\n";
-        overrideCommands += " libstdc++6_libs \\\n";
-        overrideCommands += " zlib1g_libs base-files_base \\\n";
-        overrideCommands += " libnss3_libs ";
-
-        if (getProjectDeps() != null) {
-            overrideCommands += " " + getProjectDeps();
-        }
-        overrideCommands += "\ncraftctl default\n";
-        part.put("override-build", overrideCommands);
-        return part;
-    }
-
     private Map<String, Object> getProjectService(List<String> relativeJars) {
         String command = getOptions().getCommand();
         if (command == null || command.trim().isEmpty()) {
@@ -315,7 +256,4 @@ public class RockCrafter {
         return services;
     }
 
-    protected RockcraftOptions getOptions() {
-        return options;
-    }
 }
