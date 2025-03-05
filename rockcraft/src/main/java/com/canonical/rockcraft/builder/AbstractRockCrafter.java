@@ -13,8 +13,11 @@
  */
 package com.canonical.rockcraft.builder;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,5 +87,18 @@ public abstract class AbstractRockCrafter {
         rockcraft.put("base", "bare");
         rockcraft.put("build-base", "ubuntu@24.04");
         return rockcraft;
+    }
+
+    protected Map<String, Object> loadRockcraftSnippet(Yaml yaml) throws IOException {
+        Map<String, Object> rockcraftYaml = new HashMap<String, Object>();
+        if (getOptions().getRockcraftYaml() != null) {
+            File rockcraftFile = getSettings().getProjectPath().resolve(getOptions().getRockcraftYaml()).toFile();
+            if (!rockcraftFile.exists())
+                throw new UnsupportedOperationException("Rockcraft file does not exist.");
+            try (FileInputStream is = new FileInputStream(rockcraftFile)) {
+                rockcraftYaml = yaml.load(is);
+            }
+        }
+        return rockcraftYaml;
     }
 }

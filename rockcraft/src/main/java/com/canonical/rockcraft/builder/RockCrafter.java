@@ -72,15 +72,7 @@ public class RockCrafter extends AbstractRockCrafter {
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Yaml yaml = new Yaml(dumperOptions);
 
-        Map<String, Object> rockcraftYaml = new HashMap<String, Object>();
-        if (getOptions().getRockcraftYaml() != null) {
-            File rockcraftFile = getSettings().getProjectPath().resolve(getOptions().getRockcraftYaml()).toFile();
-            if (!rockcraftFile.exists())
-                throw new UnsupportedOperationException("Rockcraft file does not exist.");
-            try (FileInputStream is = new FileInputStream(rockcraftFile)) {
-                rockcraftYaml = yaml.load(is);
-            }
-        }
+        Map<String, Object> rockcraftYaml = loadRockcraftSnippet(yaml);
 
         Map<String, Object> rockParts = (Map<String, Object>) rockcraftYaml.get("parts");
         Map<String, Object> rockServices = (Map<String, Object>) rockcraftYaml.get("services");
