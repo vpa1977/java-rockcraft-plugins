@@ -13,8 +13,12 @@
  */
 package com.canonical.rockcraft.builder;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +38,6 @@ public abstract class AbstractRockCrafter {
 
     protected RockProjectSettings getSettings() { return settings; }
 
-    public abstract void writeRockcraft() throws IOException;
-
     protected Map<String, Object> getPlatforms() {
         HashMap<String, Object> arches = new HashMap<String, Object>();
         for (RockArchitecture a : getOptions().getArchitectures())
@@ -47,5 +49,40 @@ public abstract class AbstractRockCrafter {
 
     protected CommonRockcraftOptions getOptions() {
         return options;
+    }
+
+    /**
+     * Writes a rockcraft.yaml file to the output directory
+     *
+     * @throws IOException - the method fails to write rockcraft.yaml
+     */
+    public void writeRockcraft() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getSettings().getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
+            String rockcraft = createRockcraft(getSettings().getRockOutput(), getArtifacts());
+            writer.write(rockcraft);
+        }
+    }
+
+    protected abstract String createRockcraft(Path root, List<File> files) throws IOException;
+
+    protected Map<String, Object> createCommonSection() throws IOException {
+        Map<String, Object> rockcraft = new HashMap<String, Object>();
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, getSettings().getName());
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_VERSION, String.valueOf(getSettings().getVersion()));
+        rockcraft.put("summary", getOptions().getSummary());
+        Path description = getOptions().getDescription();
+        if (description != null) {
+            File descriptionFile = getSettings().getProjectPath().resolve(description).toFile();
+            if (!descriptionFile.exists())
+                throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
+            rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
+        } else {
+            rockcraft.put("description", "");
+        }
+
+        rockcraft.put("platforms", getPlatforms());
+        rockcraft.put("base", "bare");
+        rockcraft.put("build-base", "ubuntu@24.04");
+        return rockcraft;
     }
 }
