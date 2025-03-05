@@ -65,6 +65,7 @@ public class RockCrafter extends AbstractRockCrafter {
      * @throws IOException - IO error writing <i>rockcraft.yaml</i>
      */
     protected String createRockcraft(Path root, List<File> files) throws IOException {
+        RockcraftOptions options = (RockcraftOptions)getOptions();
         ArrayList<File> filtered = new ArrayList<File>();
         for (File file : files) {
             if (file.getName().endsWith("-plain.jar")) // ignore plain jar created by Spring Boot
@@ -122,7 +123,7 @@ public class RockCrafter extends AbstractRockCrafter {
         yamlOutput.append("\n");
         rockcraft.clear();
 
-        if (getOptions().isCreateService()) {
+        if (options.isCreateService()) {
             if (getSettings().getBeryxJLink()) {
                 rockcraft.put("services", MapMerger.merge(getImageProjectService(root, filtered), rockServices));
             } else {
@@ -221,7 +222,8 @@ public class RockCrafter extends AbstractRockCrafter {
     }
 
     private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
-        IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
+        RockcraftOptions options = (RockcraftOptions) getOptions();
+        IRuntimeProvider provider = options.getJlink() ? new JLinkRuntimePart(options) : new RawRuntimePart(options);
         HashMap<String, Object> parts = new HashMap<String, Object>();
         parts.put(getSettings().getGeneratorName() + "/rockcraft/dump", getDumpPart(relativeJars));
         Map<java.lang.String,java.lang.Object> runtimePart = provider.getRuntimePart(files);
@@ -272,7 +274,7 @@ public class RockCrafter extends AbstractRockCrafter {
     }
 
     private Map<String, Object> getProjectService(List<String> relativeJars) {
-        String command = getOptions().getCommand();
+        String command = ((RockcraftOptions)getOptions()).getCommand();
         if (command == null || command.trim().isEmpty()) {
             if (relativeJars.size() == 1) {
                 command = String.format("/usr/bin/java -jar /jars/%s", Paths.get(relativeJars.iterator().next()).getFileName().toString());

@@ -21,10 +21,10 @@ import java.util.Map;
 
 public abstract class AbstractRockCrafter {
     protected final RockProjectSettings settings;
-    protected final RockcraftOptions options;
+    protected final CommonRockcraftOptions options;
     protected final List<File> artifacts;
 
-    public AbstractRockCrafter(RockProjectSettings settings, RockcraftOptions options, List<File> artifacts) {
+    public AbstractRockCrafter(RockProjectSettings settings, CommonRockcraftOptions options, List<File> artifacts) {
         this.settings = settings;
         this.options = options;
         this.artifacts = artifacts;
@@ -45,7 +45,7 @@ public abstract class AbstractRockCrafter {
         return arches;
     }
 
-    protected RockcraftOptions getOptions() {
+    protected CommonRockcraftOptions getOptions() {
         return options;
     }
 }
