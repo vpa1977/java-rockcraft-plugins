@@ -197,7 +197,7 @@ public class RockCrafter {
 
     private Map<String, Object> getPlatforms() {
         HashMap<String, Object> archs = new HashMap<String, Object>();
-        for (RockcraftOptions.RockArchitecture a : getOptions().getArchitectures())
+        for (RockArchitecture a : getOptions().getArchitectures())
             archs.put(String.valueOf(a), "");
         if (archs.isEmpty())
             archs.put("amd64", "");
