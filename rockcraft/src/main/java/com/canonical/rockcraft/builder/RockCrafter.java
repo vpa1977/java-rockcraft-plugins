@@ -35,6 +35,10 @@ public class RockCrafter {
     private final RockcraftOptions options;
     private final List<File> artifacts;
 
+
+    protected List<File> getArtifacts() { return artifacts; }
+    protected RockProjectSettings getSettings() { return settings; }
+
     /**
      * Creates RockCrafter
      *
@@ -54,8 +58,8 @@ public class RockCrafter {
      * @throws IOException - the method fails to write rockcraft.yaml
      */
     public void writeRockcraft() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(settings.getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
-            String rockcraft = createRockcraft(settings.getRockOutput(), artifacts);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getSettings().getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
+            String rockcraft = createRockcraft(getSettings().getRockOutput(), getArtifacts());
             writer.write(rockcraft);
         }
     }
@@ -83,12 +87,12 @@ public class RockCrafter {
         }
 
         Map<String, Object> rockcraft = new HashMap<String, Object>();
-        rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, settings.getName());
-        rockcraft.put(IRockcraftNames.ROCKCRAFT_VERSION, String.valueOf(settings.getVersion()));
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, getSettings().getName());
+        rockcraft.put(IRockcraftNames.ROCKCRAFT_VERSION, String.valueOf(getSettings().getVersion()));
         rockcraft.put("summary", getOptions().getSummary());
         Path description = getOptions().getDescription();
         if (description != null) {
-            File descriptionFile = settings.getProjectPath().resolve(description).toFile();
+            File descriptionFile = getSettings().getProjectPath().resolve(description).toFile();
             if (!descriptionFile.exists())
                 throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
             rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
@@ -105,8 +109,8 @@ public class RockCrafter {
         Yaml yaml = new Yaml(dumperOptions);
 
         Map<String, Object> rockcraftYaml = new HashMap<String, Object>();
-        if (options.getRockcraftYaml() != null) {
-            File rockcraftFile = settings.getProjectPath().resolve(options.getRockcraftYaml()).toFile();
+        if (getOptions().getRockcraftYaml() != null) {
+            File rockcraftFile = getSettings().getProjectPath().resolve(getOptions().getRockcraftYaml()).toFile();
             if (!rockcraftFile.exists())
                 throw new UnsupportedOperationException("Rockcraft file does not exist.");
             try (FileInputStream is = new FileInputStream(rockcraftFile)) {
@@ -126,8 +130,8 @@ public class RockCrafter {
         yamlOutput.append("\n");
         rockcraft.clear();
 
-        if (options.isCreateService()) {
-            if (settings.getBeryxJLink()) {
+        if (getOptions().isCreateService()) {
+            if (getSettings().getBeryxJLink()) {
                 rockcraft.put("services", MapMerger.merge(getImageProjectService(root, filtered), rockServices));
             } else {
                 rockcraft.put("services", MapMerger.merge(getProjectService(relativeOutputs), rockServices));
@@ -138,7 +142,7 @@ public class RockCrafter {
             rockcraft.clear();
         }
 
-        if (settings.getBeryxJLink()) {
+        if (getSettings().getBeryxJLink()) {
             rockcraft.put("parts", MapMerger.merge(getImageProjectParts(relativeOutputs), rockParts));
         } else {
             rockcraft.put("parts", MapMerger.merge(getProjectParts(filtered, relativeOutputs), rockParts));
@@ -155,10 +159,10 @@ public class RockCrafter {
         HashMap<String, Object> parts = new HashMap<String, Object>();
         int id = 0;
         for (String image : images) {
-            parts.put(String.format("%s/rockcraft/dump%d",settings.getGeneratorName(), id), getImageDumpPart(image));
+            parts.put(String.format("%s/rockcraft/dump%d",getSettings().getGeneratorName(), id), getImageDumpPart(image));
             ++id;
         }
-        parts.put(String.format("%s/rockcraft/deps", settings.getGeneratorName()) , getDepsPart());
+        parts.put(String.format("%s/rockcraft/deps", getSettings().getGeneratorName()) , getDepsPart());
         return parts;
     }
 
@@ -237,14 +241,14 @@ public class RockCrafter {
     private Map<String, Object> getProjectParts(List<File> files, List<String> relativeJars) {
         IRuntimeProvider provider = getOptions().getJlink() ? new JLinkRuntimePart(getOptions()) : new RawRuntimePart(getOptions());
         HashMap<String, Object> parts = new HashMap<String, Object>();
-        parts.put(settings.getGeneratorName() + "/rockcraft/dump", getDumpPart(relativeJars));
+        parts.put(getSettings().getGeneratorName() + "/rockcraft/dump", getDumpPart(relativeJars));
         Map<java.lang.String,java.lang.Object> runtimePart = provider.getRuntimePart(files);
         runtimePart.put("after", new String[]{
-                settings.getGeneratorName() + "/rockcraft/dump",
-                settings.getGeneratorName() + "/rockcraft/deps"
+                getSettings().getGeneratorName() + "/rockcraft/dump",
+                getSettings().getGeneratorName() + "/rockcraft/deps"
         });
-        parts.put(settings.getGeneratorName() + "/rockcraft/runtime", runtimePart);
-        parts.put(settings.getGeneratorName() + "/rockcraft/deps", getDepsPart());
+        parts.put(getSettings().getGeneratorName() + "/rockcraft/runtime", runtimePart);
+        parts.put(getSettings().getGeneratorName() + "/rockcraft/deps", getDepsPart());
         return parts;
     }
 
@@ -307,11 +311,11 @@ public class RockCrafter {
         serviceData.put("startup", "enabled");
         serviceData.put("command", command);
         HashMap<String, Object> services = new HashMap<String, Object>();
-        services.put(settings.getName(), serviceData);
+        services.put(getSettings().getName(), serviceData);
         return services;
     }
 
-    private RockcraftOptions getOptions() {
+    protected RockcraftOptions getOptions() {
         return options;
     }
 }
