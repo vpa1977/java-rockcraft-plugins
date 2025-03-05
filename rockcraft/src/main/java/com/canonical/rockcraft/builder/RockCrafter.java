@@ -18,7 +18,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -44,19 +43,6 @@ public class RockCrafter extends AbstractRockCrafter {
     }
 
     /**
-     * Writes a rockcraft.yaml file to the output directory
-     *
-     * @throws IOException - the method fails to write rockcraft.yaml
-     */
-    @Override
-    public void writeRockcraft() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getSettings().getRockOutput().resolve(IRockcraftNames.ROCKCRAFT_YAML).toFile()))) {
-            String rockcraft = createRockcraft(getSettings().getRockOutput(), getArtifacts());
-            writer.write(rockcraft);
-        }
-    }
-
-    /**
      * Generate content of the <i>rockcraft.yaml</i>
      *
      * @param root  - location of build directory
@@ -64,6 +50,7 @@ public class RockCrafter extends AbstractRockCrafter {
      * @return content of the <i>rockcraft.yaml</i>
      * @throws IOException - IO error writing <i>rockcraft.yaml</i>
      */
+    @Override
     protected String createRockcraft(Path root, List<File> files) throws IOException {
         RockcraftOptions options = (RockcraftOptions)getOptions();
         ArrayList<File> filtered = new ArrayList<File>();
@@ -79,23 +66,7 @@ public class RockCrafter extends AbstractRockCrafter {
             relativeOutputs.add(root.relativize(file.toPath()).toString());
         }
 
-        Map<String, Object> rockcraft = new HashMap<String, Object>();
-        rockcraft.put(IRockcraftNames.ROCKCRAFT_NAME, getSettings().getName());
-        rockcraft.put(IRockcraftNames.ROCKCRAFT_VERSION, String.valueOf(getSettings().getVersion()));
-        rockcraft.put("summary", getOptions().getSummary());
-        Path description = getOptions().getDescription();
-        if (description != null) {
-            File descriptionFile = getSettings().getProjectPath().resolve(description).toFile();
-            if (!descriptionFile.exists())
-                throw new UnsupportedOperationException("Rockcraft plugin description file does not exist.");
-            rockcraft.put("description", new String(Files.readAllBytes(descriptionFile.toPath())));
-        } else {
-            rockcraft.put("description", "");
-        }
-
-        rockcraft.put("platforms", getPlatforms());
-        rockcraft.put("base", "bare");
-        rockcraft.put("build-base", "ubuntu@24.04");
+        Map<String, Object> rockcraft = createCommonSection();
 
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
