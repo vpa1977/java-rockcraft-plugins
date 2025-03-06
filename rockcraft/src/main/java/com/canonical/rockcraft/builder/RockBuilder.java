@@ -87,11 +87,13 @@ public class RockBuilder {
         Process process = pb.start();
         int result = process.waitFor();
         if (result != 0) {
-            pb = new ProcessBuilder("cat", "/home/runner/.local/state/rockcraft/log/*.log")
-                    .directory(settings.getRockOutput().toFile())
-                    .inheritIO();
-            process = pb.start();
-            process.waitFor();
+            for (File f : new File("/home/runner/.local/state/rockcraft/log/").listFiles()) {
+                pb = new ProcessBuilder("cat", f.getAbsolutePath())
+                        .directory(settings.getRockOutput().toFile())
+                        .inheritIO();
+                process = pb.start();
+                process.waitFor();
+            }
             throw new UnsupportedOperationException("Failed to pack rock for " + settings.getName());
         }
 
