@@ -69,7 +69,7 @@ public class DependencyExportTask extends DefaultTask {
         HashSet<Artifact> resolvedArtifacts = new HashSet();
 
         while(!this.workQueue.isEmpty()) {
-            Artifact art = (Artifact)this.workQueue.removeFirst();
+            Artifact art = this.workQueue.remove(0);
             if (!resolvedArtifacts.contains(art)) {
                 resolvedArtifacts.add(art);
                 this.processDependencies(project, modelResolver, art.group, art.name, art.version, builder);
