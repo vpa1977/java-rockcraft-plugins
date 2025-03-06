@@ -76,6 +76,11 @@ public class RockBuilder {
      * @throws InterruptedException - <i>rockcraft</i> process was aborted
      */
     public static void buildRock(RockProjectSettings settings, RockcraftOptions options) throws InterruptedException, IOException {
+        System.err.println("!!! Dest file "+ settings.getRockOutput().toFile().getAbsolutePath());
+        for (File f : settings.getRockOutput().toFile().listFiles()) {
+            System.err.println("!!! Child "+ f.getAbsolutePath());
+        }
+
         ProcessBuilder pb = new ProcessBuilder("rockcraft", "pack")
                 .directory(settings.getRockOutput().toFile())
                 .inheritIO();
