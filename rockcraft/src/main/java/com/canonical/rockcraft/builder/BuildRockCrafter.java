@@ -85,7 +85,7 @@ public class BuildRockCrafter extends AbstractRockCrafter {
         Map<String,Object> part = new HashMap<>();
         part.put("plugin", "dump");
         String source = settings.getProjectPath().relativize(files.get(0).toPath()).toString();
-        part.put("source", source);
+        part.put("source", String.format("./%s",source));
         part.put("source-type", "local");
         return part;
     }
