@@ -86,8 +86,14 @@ public class RockBuilder {
                 .inheritIO();
         Process process = pb.start();
         int result = process.waitFor();
-        if (result != 0)
+        if (result != 0) {
+            pb = new ProcessBuilder("cat", "/home/runner/.local/state/rockcraft/log/*.log")
+                    .directory(settings.getRockOutput().toFile())
+                    .inheritIO();
+            process = pb.start();
+            process.waitFor();
             throw new UnsupportedOperationException("Failed to pack rock for " + settings.getName());
+        }
 
         Path rockDestPath = settings.getRockOutput().resolve(IRockcraftNames.ROCK_OUTPUT);
         File rockDest = rockDestPath.toFile();
