@@ -41,6 +41,13 @@ public class BuildRockCrafterTest {
 
         File output = tempDir.toPath().resolve("output").toFile();
         output.mkdirs();
+        File content = new File(output, "content.txt");
+        ProcessBuilder pb = new ProcessBuilder("echo", "1", ">", content.getAbsolutePath())
+                .directory(settings.getRockOutput().toFile())
+                .inheritIO();
+        Process process = pb.start();
+        int result = process.waitFor();
+
         List<File> artifacts = new ArrayList<>();
         artifacts.add(output);
         BuildRockCrafter rockCrafter = new BuildRockCrafter(settings, options, artifacts);
