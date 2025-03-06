@@ -81,7 +81,7 @@ public class RockBuilder {
             System.err.println("!!! Child "+ f.getAbsolutePath());
         }
 
-        ProcessBuilder pb = new ProcessBuilder("rockcraft", "pack")
+        ProcessBuilder pb = new ProcessBuilder("rockcraft", "--verbosity", "trace", "pack")
                 .directory(settings.getRockOutput().toFile())
                 .inheritIO();
         Process process = pb.start();
