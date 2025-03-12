@@ -13,15 +13,18 @@
  */
 package com.canonical.rockcraft.gradle;
 
+import com.canonical.rockcraft.builder.DependencyOptions;
 import com.canonical.rockcraft.builder.RockBuilder;
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import com.google.gradle.osdetector.OsDetector;
 import com.google.gradle.osdetector.OsDetectorPlugin;
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.tasks.TaskProvider;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.util.Set;
@@ -56,6 +59,28 @@ public class RockcraftPlugin implements Plugin<Project> {
         if (!"linux".equals(detector.getOs()))
             throw new UnsupportedOperationException("Rockcraft is only supported on linux systems");
 
+        DependencyOptions dependencyOptions = project.getExtensions().create("dependenciesExport", DependencyOptions.class);
+        if (dependencyOptions.getConfigurations() == null) {
+            dependencyOptions.setConfigurations(new String[]{
+                    "runtimeClasspath",
+                    "testRuntimeClasspath",
+            });
+        }
+        TaskProvider<DependencyExportTask> exportTask = project.getTasks()
+                .register("dependencies-export", DependencyExportTask.class, dependencyOptions);
+        exportTask.configure(new Action<DependencyExportTask>() {
+            @Override
+            public void execute(DependencyExportTask dependencyExportTask) {
+                File buildDirectory = dependencyExportTask
+                        .getProject()
+                        .getLayout()
+                        .getBuildDirectory()
+                        .getAsFile().get();
+                dependencyExportTask.getOutputDirectory()
+                        .set(new File(buildDirectory, "dependencies"));
+            }
+        });
+
         TaskProvider<Task> checkTask = project.getTasks().register("checkRockcraft", s -> {
             s.doFirst(x -> {
                 try {
@@ -83,7 +108,8 @@ public class RockcraftPlugin implements Plugin<Project> {
         if (tasks.isEmpty())
             throw new UnsupportedOperationException("Rockcraft plugin requires jlink, runtime, bootJar or jar task");
 
-        TaskProvider<PushRockcraftTask> push = project.getTasks().register("push-rock", PushRockcraftTask.class, options);
+        project.getTasks().register("push-rock", PushRockcraftTask.class, options);
+
         TaskProvider<BuildRockcraftTask> build = project.getTasks().register("build-rock", BuildRockcraftTask.class, options);
         TaskProvider<CreateRockcraftTask> create = project.getTasks().register("create-rock", CreateRockcraftTask.class, options);
 
