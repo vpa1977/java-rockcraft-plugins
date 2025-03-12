@@ -27,11 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DependencyExportTest extends BaseRockcraftTest {
 
-    @BeforeEach
-    protected void setUp() throws IOException {
-        super.setUp();
-    }
-
     @Test
     public void testDefaultExport() {
         // The project should export dependencies without any dependant libraries
