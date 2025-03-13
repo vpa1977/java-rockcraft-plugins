@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2025 Canonical Ltd.
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -37,19 +37,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * DependencyExportTask writes the project build dependencies to the output
+ * directory.
+ */
 public abstract class DependencyExportTask extends DefaultTask {
     private final Logger logger = Logging.getLogger(DependencyExportTask.class);
     private final ArrayList<ModuleVersionIdentifier> workQueue = new ArrayList<>();
     private final DependencyOptions dependencyOptions;
 
+    /**
+     * Constructs DependencyExportTask
+     * @param options - dependency export options
+     */
     @Inject
     public DependencyExportTask(DependencyOptions options) {
         dependencyOptions = options;
     }
 
+    /**
+     * Output directory for the dependency export
+     * @return DirectoryProperty
+     */
     @OutputDirectory
     public abstract DirectoryProperty getOutputDirectory();
 
+    /**
+     * Task action to write dependencies
+     * @throws IOException - failed to write project dependencies
+     */
     @TaskAction
     public void export() throws IOException {
         for (String configName : dependencyOptions.getConfigurations()) {
@@ -96,10 +112,19 @@ public abstract class DependencyExportTask extends DefaultTask {
         File componentLocation = f.getParentFile().getParentFile();
         String relativePath = resolvedArtifact.getId().getComponentIdentifier().getDisplayName().replace(':', File.separatorChar);
         Path outputLocation = outputLocationRoot.resolve(relativePath);
-        for (File component : componentLocation.listFiles()) {
-            Optional<File> file = Arrays.stream(component.listFiles()).findFirst();
-            if (file.isEmpty())
+        File[] components = componentLocation.listFiles();
+        if (components == null) {
+            return;
+        }
+        for (File component : components) {
+            File[] files = component.listFiles();
+            if (files == null) {
                 continue;
+            }
+            Optional<File> file = Arrays.stream(files).findFirst();
+            if (file.isEmpty()) {
+                continue;
+            }
             outputLocation.toFile().mkdirs();
             Path output = outputLocation.resolve(file.get().getName());
             Files.copy(file.get().toPath(), output, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
