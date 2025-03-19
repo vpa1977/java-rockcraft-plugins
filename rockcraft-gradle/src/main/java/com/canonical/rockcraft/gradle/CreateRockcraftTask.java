@@ -16,7 +16,6 @@ package com.canonical.rockcraft.gradle;
 import com.canonical.rockcraft.builder.RockCrafter;
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import org.gradle.api.Task;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.TaskAction;
 
 
