@@ -37,6 +37,14 @@ public class DependencyExportTest extends BaseRockcraftTest {
     }
 
     @Test
+    public void testExportWithOptions() throws IOException {
+        writeString(getBuildFile(), getResource("dependencies-options.in"));
+        BuildResult result = runBuild("dependencies-export", "--stacktrace");
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
+
+    }
+
+    @Test
     public void testExportParent() throws IOException {
         // tests that parent pom for the artifact and
         // parent pom for the used bom are downloaded
@@ -57,9 +65,9 @@ public class DependencyExportTest extends BaseRockcraftTest {
     @Test
     public void testExport() throws IOException {
         // assert that leaf jar file is downloaded, pom file is downloaded
-        // bom pom file is downloaded
-        // parent pom file is downloaded
-        // import POM is downloaded
+        // unused bom is not downloaded
+        // plugins are downloaded
+
         writeString(getBuildFile(), getResource("dependencies-build.in"));
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed

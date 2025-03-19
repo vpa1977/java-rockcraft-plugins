@@ -1,6 +1,7 @@
 plugins {
     id('application')
     id('io.github.rockcrafters.rockcraft')
+    id("org.springframework.cloud.contract") version "4.2.0"
 }
 
 repositories {
