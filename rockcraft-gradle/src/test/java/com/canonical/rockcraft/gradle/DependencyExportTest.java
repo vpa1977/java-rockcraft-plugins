@@ -33,20 +33,52 @@ public class DependencyExportTest extends BaseRockcraftTest {
         // The project should export dependencies without any dependant libraries
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
-        Path dependencies = projectDir.toPath().resolve("build/dependencies/");
+        Path dependencies = projectDir.toPath().resolve("build/"+ IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT);
         assertEquals(0, dependencies.toFile().list().length);
     }
 
     @Test
+    public void testExportParent() throws IOException {
+        // tests that parent pom for the artifact and
+        // parent pom for the used bom are downloaded
+        writeString(getBuildFile(), getResource("dependencies-parent.in"));
+        BuildResult result = runBuild("dependencies-export", "--stacktrace");
+        assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
+
+        Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
+        assertTrue(springBootWsParent.toFile().exists(), "Parent POM is downloaded");
+
+        Path angus = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/eclipse/angus/jakarta.mail/1.0.0/jakarta.mail-1.0.0.pom");
+        assertTrue(angus.toFile().exists(), "BOM is resolved");
+
+        Path jacksonParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/com/fasterxml/jackson/jackson-parent/2.14/jackson-parent-2.14.pom");
+        assertTrue(jacksonParent.toFile().exists(), "parent pom for BOM is downloaded");
+    }
+
+    @Test
     public void testExport() throws IOException {
-        // export dependencies with implementation and testImplementation dependencies
+        // assert that leaf jar file is downloaded, pom file is downloaded
+        // bom pom file is downloaded
+        // parent pom file is downloaded
+        // import POM is downloaded
         writeString(getBuildFile(), getResource("dependencies-build.in"));
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
-        Path springBoot = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/dependencies/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.jar");
+        // leaf jar and pom are downloaded
+        Path springBoot = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.jar");
         assertTrue(springBoot.toFile().exists(), "Spring Boot Jar is downloaded");
-        Path springBootSha1 = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/dependencies/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.jar.sha1");
+        Path springBootSha1 = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.jar.sha1");
         String sha1 = Files.readString(springBootSha1);
         assertEquals("095ac2c7aa28fcdef587b2c4f554016f8b9af624", sha1);
+        Path springBootPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.pom");
+        assertTrue(springBootPom.toFile().exists(), "Spring Boot POM is downloaded");
+
+        // transitive boms are not downloaded
+        Path springSecurityBOM = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/security/spring-security-bom/6.0.2/spring-security-bom-6.0.2.pom");
+        assertTrue(!springSecurityBOM.toFile().exists(), "transitive boms are not downloaded");
+
+        // parent pom for unused bom is not downloaded
+        Path springWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
+        assertTrue(!springWsParent.toFile().exists(), "Parent bom of unused BOM is not downloaded");
     }
 }
