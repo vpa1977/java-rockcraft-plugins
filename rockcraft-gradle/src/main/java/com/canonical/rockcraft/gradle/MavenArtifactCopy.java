@@ -15,9 +15,12 @@ package com.canonical.rockcraft.gradle;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -66,10 +69,13 @@ public class MavenArtifactCopy {
         Files.copy(f.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
 
         try {
-            Path digestFile = Path.of(destinationFile + ".sha1");
+            Path digestFile = Paths.get(destinationFile + ".sha1");
             String hash = MavenArtifactCopy.computeHash(destinationFile, "sha1");
             String paddedSha1 = String.format("%40s", hash).replace(' ', '0');
-            Files.writeString(digestFile, paddedSha1);
+            Files.write(digestFile, paddedSha1.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

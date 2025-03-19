@@ -9,10 +9,10 @@ repositories {
 }
 
 dependencies {
-    implementation platform('org.springframework.boot:spring-boot-dependencies:3.0.6')
-    implementation 'org.springframework.ws:spring-ws-support:4.0.3'
-    implementation 'org.eclipse.angus:jakarta.mail'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-ion'
+    implementation platform('org.springframework.boot:spring-boot-dependencies:2.7.9')
+    implementation 'org.springframework.ws:spring-ws-support:2.4.7.RELEASE'
+    implementation 'commons-codec:commons-codec'
+//    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-ion'
 }
 
 jar {

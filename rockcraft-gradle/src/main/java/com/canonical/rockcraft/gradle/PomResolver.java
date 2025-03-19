@@ -19,14 +19,16 @@ import org.apache.maven.model.building.ModelSource;
 import org.apache.maven.model.resolution.InvalidRepositoryException;
 import org.apache.maven.model.resolution.ModelResolver;
 import org.apache.maven.model.resolution.UnresolvableModelException;
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
+
+import java.io.File;
 import java.io.InputStream;
 
 @SuppressWarnings("deprecation")

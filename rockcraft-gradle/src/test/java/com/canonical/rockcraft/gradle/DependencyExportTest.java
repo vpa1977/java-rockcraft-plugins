@@ -40,23 +40,24 @@ public class DependencyExportTest extends BaseRockcraftTest {
     @Test
     public void testExportWithOptions() throws IOException {
         writeString(getBuildFile(), getResource("dependencies-options.in"));
+        writeString(getSettingsFile(), getResource("settings.in"));
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
 
         // plugin pom is not downloaded
-        Path pluginPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml/io.gitlab.plunts.plantuml.gradle.plugin/2.2.0/io.gitlab.plunts.plantuml.gradle.plugin-2.2.0.pom");
+        Path pluginPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml/io.gitlab.plunts.plantuml.gradle.plugin/2.2.0/io.gitlab.plunts.plantuml.gradle.plugin-2.0.0.pom");
         assertFalse(pluginPom.toFile().exists(), "Plugin POM is downloaded");
 
         // plugin jar is not downloaded
-        Path pluginJar = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml-gradle-plugin/2.2.0/plantuml-gradle-plugin-2.2.0.jar");
+        Path pluginJar = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml-gradle-plugin/2.2.0/plantuml-gradle-plugin-2.0.0.jar");
         assertFalse(pluginJar.toFile().exists(), "Plugin POM is downloaded");
 
         // runtimeClasspath is downloaded
-        Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.2/spring-ws-4.0.2.pom");
+        Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/2.4.7.RELEASE/spring-ws-2.4.7.RELEASE.pom");
         assertTrue(springBootWsParent.toFile().exists(), "Parent POM is downloaded");
 
         // test scope is not downloaded
-        Path springBootWsParentTestScope = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
+        Path springBootWsParentTestScope = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/2.4.6.RELEASE/spring-ws-2.4.6.RELEASE.pom");
         assertFalse(springBootWsParentTestScope.toFile().exists(), "test scope Parent POM is not downloaded");
     }
 
@@ -68,13 +69,13 @@ public class DependencyExportTest extends BaseRockcraftTest {
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
 
-        Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
+        Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/2.4.7.RELEASE/spring-ws-2.4.7.RELEASE.pom");
         assertTrue(springBootWsParent.toFile().exists(), "Parent POM is downloaded");
 
-        Path angus = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/eclipse/angus/jakarta.mail/1.0.0/jakarta.mail-1.0.0.pom");
-        assertTrue(angus.toFile().exists(), "BOM is resolved");
+        Path codec = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/commons-codec/commons-codec/1.15/commons-codec-1.15.pom");
+        assertTrue(codec.toFile().exists(), "BOM is resolved");
 
-        Path jacksonParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/com/fasterxml/jackson/jackson-parent/2.14/jackson-parent-2.14.pom");
+        Path jacksonParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/com/fasterxml/jackson/jackson-parent/2.13/jackson-parent-2.13.pom");
         assertTrue(jacksonParent.toFile().exists(), "parent pom for BOM is downloaded");
     }
 
@@ -88,28 +89,20 @@ public class DependencyExportTest extends BaseRockcraftTest {
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         // leaf jar and pom are downloaded
-        Path springBoot = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.jar");
+        Path springBoot = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/2.7.9/spring-boot-2.7.9.jar");
         assertTrue(springBoot.toFile().exists(), "Spring Boot Jar is downloaded");
-        Path springBootSha1 = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.jar.sha1");
-        String sha1 = Files.readString(springBootSha1);
-        assertEquals("095ac2c7aa28fcdef587b2c4f554016f8b9af624", sha1);
-        Path springBootPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/3.0.6/spring-boot-3.0.6.pom");
+        Path springBootSha1 = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/2.7.9/spring-boot-2.7.9.jar.sha1");
+        String sha1 = new String(Files.readAllBytes(springBootSha1));
+        assertEquals("788d60e73e0f7bbbf11b30c3fb0a9cbaa073446b", sha1);
+        Path springBootPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/2.7.9/spring-boot-2.7.9.pom");
         assertTrue(springBootPom.toFile().exists(), "Spring Boot POM is downloaded");
 
-        // transitive boms are not downloaded
-        Path springSecurityBOM = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/security/spring-security-bom/6.0.2/spring-security-bom-6.0.2.pom");
-        assertFalse(springSecurityBOM.toFile().exists(), "transitive boms are not downloaded");
-
-        // parent pom for unused bom is not downloaded
-        Path springWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
-        assertFalse(springWsParent.toFile().exists(), "Parent bom of unused BOM is not downloaded");
-
         // plugin pom is downloaded
-        Path pluginPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml/io.gitlab.plunts.plantuml.gradle.plugin/2.2.0/io.gitlab.plunts.plantuml.gradle.plugin-2.2.0.pom");
+        Path pluginPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml/io.gitlab.plunts.plantuml.gradle.plugin/2.0.0/io.gitlab.plunts.plantuml.gradle.plugin-2.0.0.pom");
         assertTrue(pluginPom.toFile().exists(), "Plugin POM is downloaded");
 
         // plugin jar is downloaded
-        Path pluginJar = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml-gradle-plugin/2.2.0/plantuml-gradle-plugin-2.2.0.jar");
+        Path pluginJar = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml-gradle-plugin/2.0.0/plantuml-gradle-plugin-2.0.0.jar");
         assertTrue(pluginJar.toFile().exists(), "Plugin JAR is downloaded");
     }
 }

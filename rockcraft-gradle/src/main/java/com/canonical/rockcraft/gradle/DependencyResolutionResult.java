@@ -19,8 +19,15 @@ import java.util.Set;
 
 /**
  * Dependency lookup result for maven pom
- * @param dependencies - dependencies
- * @param dependencyManagement - BOMs
  */
-public record DependencyResolutionResult(Set<ComponentIdentifier> dependencies, Set<ComponentIdentifier> dependencyManagement) {
+public class DependencyResolutionResult {
+    private Set<ComponentIdentifier> dependencies;
+    private Set<ComponentIdentifier> dependencyManagement;
+    public DependencyResolutionResult(Set<ComponentIdentifier> dependencies, Set<ComponentIdentifier> dependencyManagement) {
+        this.dependencies = dependencies;
+        this.dependencyManagement = dependencyManagement;
+    }
+
+    public Set<ComponentIdentifier> getDependencies() { return this.dependencies; }
+    public Set<ComponentIdentifier> getDependencyManagement() { return this.dependencyManagement; }
 }

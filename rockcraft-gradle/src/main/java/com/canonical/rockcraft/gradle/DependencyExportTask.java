@@ -152,9 +152,17 @@ public abstract class DependencyExportTask extends DefaultTask {
                         artifactCopy.copyToMavenRepository(((ResolvedArtifactResult) artifact));
                         // resolve maven dependencies to fetch poms
                         DependencyResolutionResult dependencies = pomDependencyReader.read(((ResolvedArtifactResult) artifact).getFile(), scopes);
-                        workQueue.addAll(dependencies.dependencies().stream().filter(x -> !resolved.contains(x)).toList());
-                        copyBoms(handler,artifactCopy, new HashSet<>(dependencies.dependencyManagement().stream().filter( x -> !dependencyManagementResolved.contains(x)).toList()));
-                        dependencyManagementResolved.addAll(dependencies.dependencyManagement());
+                        // add unresolved modules to workQueue
+                        dependencies.getDependencies().stream()
+                                .filter(x -> !resolved.contains(x))
+                                .forEach(workQueue::add);
+                        // copy unresolved boms to maven cache
+                        HashSet<ComponentIdentifier> unresolvedBoms = new HashSet<>();
+                        dependencies.getDependencyManagement().stream()
+                                .filter( x -> !dependencyManagementResolved.contains(x))
+                                .forEach(unresolvedBoms::add);
+                        copyBoms(handler,artifactCopy, unresolvedBoms);
+                        dependencyManagementResolved.addAll(dependencies.getDependencyManagement());
                     }
                 }
             }
