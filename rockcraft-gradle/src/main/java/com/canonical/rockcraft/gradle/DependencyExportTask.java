@@ -77,26 +77,45 @@ public abstract class DependencyExportTask extends DefaultTask {
         Path outputLocationRoot = getOutputDirectory().getAsFile().get().toPath();
         ArtifactCopy artifactCopy = new ArtifactCopy(outputLocationRoot);
 
-
-        this.getProject().getConfigurations().all( config -> {
-            if (!config.isCanBeResolved()) {
-                logger.warn(String.format("Configuration %s can not be resolved. skipped.", config.getName()));
-                return;
+        if (dependencyOptions.getConfigurations() != null && dependencyOptions.getConfigurations().length > 0) {
+            for (String configName  : dependencyOptions.getConfigurations()) {
+                Configuration config = this.getProject().getConfigurations().findByName(configName);
+                if (config == null)
+                    throw new IllegalArgumentException(String.format("Configuration %s was not found", configName));
+                exportConfiguration(config, artifactCopy);
             }
-            PomDependencyReader pomDependencyReader = new PomDependencyReader(getProject().getDependencies(),
-                    getProject().getConfigurations(), artifactCopy);
-            copyConfiguration(pomDependencyReader, config, getProject().getDependencies(), artifactCopy);
-        });
+            if (dependencyOptions.isBuildScript()) {
+                exportBuildScript(artifactCopy);
+            }
+        }
+        else
+        {
+            for (Configuration config : this.getProject().getConfigurations()) {
+                exportConfiguration(config, artifactCopy);
+            }
+            exportBuildScript(artifactCopy);
+        }
+    }
 
-        // export build script dependencies
-        final PomDependencyReader pomDependencyReader = new PomDependencyReader(getProject().getBuildscript().getDependencies(),
+    private void exportBuildScript(ArtifactCopy artifactCopy) {
+        final PomDependencyReader buildScriptDependencyReader = new PomDependencyReader(getProject().getBuildscript().getDependencies(),
                 getProject().getBuildscript().getConfigurations(), artifactCopy);
 
         this.getProject()
                 .getBuildscript()
                 .getConfigurations()
                 .forEach( x ->
-                        copyConfiguration(pomDependencyReader, x, getProject().getBuildscript().getDependencies(), artifactCopy));
+                        copyConfiguration(buildScriptDependencyReader, x, getProject().getBuildscript().getDependencies(), artifactCopy));
+    }
+
+    private void exportConfiguration(Configuration config, ArtifactCopy artifactCopy) throws IOException {
+        if (!config.isCanBeResolved()) {
+            logger.warn(String.format("Configuration %s can not be resolved. skipped.", config.getName()));
+            return;
+        }
+        PomDependencyReader pomDependencyReader = new PomDependencyReader(getProject().getDependencies(),
+                getProject().getConfigurations(), artifactCopy);
+        copyConfiguration(pomDependencyReader, config, getProject().getDependencies(), artifactCopy);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
