@@ -48,7 +48,7 @@ public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
     @SuppressWarnings("unchecked")
     @TaskAction
     public void writeRockcraft() {
-        HashSet<File> artifacts = new HashSet<File>();
+        HashSet<File> artifacts = new HashSet<>();
         Set<Object> dependsOn = getDependsOn();
         for (Object entry : dependsOn) {
             HashSet<Task> tasks = (HashSet<Task>) entry;
@@ -60,7 +60,7 @@ public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
 
         try {
             RockCrafter crafter = new RockCrafter(RockSettingsFactory.createRockProjectSettings(getProject()),
-                 getOptions(), new ArrayList<File>(artifacts));
+                 getOptions(), new ArrayList<>(artifacts));
             crafter.writeRockcraft();
         } catch (IOException e) {
             throw new UnsupportedOperationException("Failed to write rockcraft.yaml: " + e.getMessage());
