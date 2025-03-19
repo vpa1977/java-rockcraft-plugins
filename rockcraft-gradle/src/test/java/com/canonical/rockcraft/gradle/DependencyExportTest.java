@@ -16,7 +16,6 @@ package com.canonical.rockcraft.gradle;
 import com.canonical.rockcraft.builder.IRockcraftNames;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
