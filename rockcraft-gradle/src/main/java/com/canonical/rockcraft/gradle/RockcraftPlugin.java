@@ -14,6 +14,7 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.DependencyOptions;
+import com.canonical.rockcraft.builder.IRockcraftNames;
 import com.canonical.rockcraft.builder.RockBuilder;
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import com.google.gradle.osdetector.OsDetector;
@@ -27,6 +28,7 @@ import org.gradle.api.tasks.TaskProvider;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 /**
@@ -76,8 +78,9 @@ public class RockcraftPlugin implements Plugin<Project> {
                         .getLayout()
                         .getBuildDirectory()
                         .getAsFile().get();
+                Path output = buildDirectory.toPath().resolve(String.format("%s%s%s", IRockcraftNames.BUILD_ROCK_OUTPUT, File.separator, IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT));
                 dependencyExportTask.getOutputDirectory()
-                        .set(new File(buildDirectory, "dependencies"));
+                        .set(output.toFile());
             }
         });
 
