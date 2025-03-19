@@ -43,6 +43,21 @@ public class DependencyExportTest extends BaseRockcraftTest {
         BuildResult result = runBuild("dependencies-export", "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
 
+        // plugin pom is not downloaded
+        Path pluginPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml/io.gitlab.plunts.plantuml.gradle.plugin/2.2.0/io.gitlab.plunts.plantuml.gradle.plugin-2.2.0.pom");
+        assertFalse(pluginPom.toFile().exists(), "Plugin POM is downloaded");
+
+        // plugin jar is not downloaded
+        Path pluginJar = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml-gradle-plugin/2.2.0/plantuml-gradle-plugin-2.2.0.jar");
+        assertFalse(pluginJar.toFile().exists(), "Plugin POM is downloaded");
+
+        // runtimeClasspath is downloaded
+        Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.2/spring-ws-4.0.2.pom");
+        assertTrue(springBootWsParent.toFile().exists(), "Parent POM is downloaded");
+
+        // test scope is not downloaded
+        Path springBootWsParentTestScope = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
+        assertFalse(springBootWsParentTestScope.toFile().exists(), "test scope Parent POM is not downloaded");
     }
 
     @Test
