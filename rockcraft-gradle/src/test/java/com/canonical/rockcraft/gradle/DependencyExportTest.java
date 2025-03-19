@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DependencyExportTest extends BaseRockcraftTest {
@@ -82,10 +83,18 @@ public class DependencyExportTest extends BaseRockcraftTest {
 
         // transitive boms are not downloaded
         Path springSecurityBOM = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/security/spring-security-bom/6.0.2/spring-security-bom-6.0.2.pom");
-        assertTrue(!springSecurityBOM.toFile().exists(), "transitive boms are not downloaded");
+        assertFalse(springSecurityBOM.toFile().exists(), "transitive boms are not downloaded");
 
         // parent pom for unused bom is not downloaded
         Path springWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/4.0.3/spring-ws-4.0.3.pom");
-        assertTrue(!springWsParent.toFile().exists(), "Parent bom of unused BOM is not downloaded");
+        assertFalse(springWsParent.toFile().exists(), "Parent bom of unused BOM is not downloaded");
+
+        // plugin pom is downloaded
+        Path pluginPom = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml/io.gitlab.plunts.plantuml.gradle.plugin/2.2.0/io.gitlab.plunts.plantuml.gradle.plugin-2.2.0.pom");
+        assertTrue(pluginPom.toFile().exists(), "Plugin POM is downloaded");
+
+        // plugin jar is downloaded
+        Path pluginJar = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/io/gitlab/plunts/plantuml-gradle-plugin/2.2.0/plantuml-gradle-plugin-2.2.0.jar");
+        assertTrue(pluginJar.toFile().exists(), "Plugin JAR is downloaded");
     }
 }
