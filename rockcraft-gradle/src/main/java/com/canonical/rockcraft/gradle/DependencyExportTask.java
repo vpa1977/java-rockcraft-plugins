@@ -15,10 +15,8 @@ package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.DependencyOptions;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.artifacts.ArtifactCollection;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.ModuleVersionIdentifier;
 import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
@@ -49,7 +47,6 @@ import java.util.Set;
  */
 public abstract class DependencyExportTask extends DefaultTask {
     private final Logger logger = Logging.getLogger(DependencyExportTask.class);
-    private final ArrayList<ModuleVersionIdentifier> workQueue = new ArrayList<>();
     private final DependencyOptions dependencyOptions;
 
     /**
@@ -97,15 +94,13 @@ public abstract class DependencyExportTask extends DefaultTask {
         }
     }
 
-    private void exportBuildScript(ArtifactCopy artifactCopy) {
+    private void exportBuildScript(ArtifactCopy artifactCopy) throws IOException {
         final PomDependencyReader buildScriptDependencyReader = new PomDependencyReader(getProject().getBuildscript().getDependencies(),
                 getProject().getBuildscript().getConfigurations(), artifactCopy);
 
-        this.getProject()
-                .getBuildscript()
-                .getConfigurations()
-                .forEach( x ->
-                        copyConfiguration(buildScriptDependencyReader, x, getProject().getBuildscript().getDependencies(), artifactCopy));
+        for (Configuration config : this.getProject().getBuildscript().getConfigurations()) {
+            copyConfiguration(buildScriptDependencyReader, config, getProject().getBuildscript().getDependencies(), artifactCopy);
+        }
     }
 
     private void exportConfiguration(Configuration config, ArtifactCopy artifactCopy) throws IOException {
@@ -119,55 +114,52 @@ public abstract class DependencyExportTask extends DefaultTask {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void copyConfiguration(PomDependencyReader pomDependencyReader, Configuration files, DependencyHandler handler, ArtifactCopy artifactCopy) {
-        try {
-
-            artifactCopy.copyArtifacts(files.getIncoming().getArtifacts());
-            // resolve and copy POM files
-            HashSet<ComponentIdentifier> workQueue = new HashSet<ComponentIdentifier>();
-            for (ResolvedArtifactResult result : files.getIncoming().getArtifacts()) {
-                ComponentIdentifier id = result.getVariant().getOwner();
+    private void copyConfiguration(PomDependencyReader pomDependencyReader,
+                                   Configuration files,
+                                   DependencyHandler handler,
+                                   ArtifactCopy artifactCopy) throws IOException {
+        artifactCopy.copyArtifacts(files.getIncoming().getArtifacts());
+        // resolve and copy POM files
+        HashSet<ComponentIdentifier> workQueue = new HashSet<>();
+        for (ResolvedArtifactResult result : files.getIncoming().getArtifacts()) {
+            ComponentIdentifier id = result.getVariant().getOwner();
+            workQueue.add(id);
+            logger.debug("Looking up POM from Incoming "+ id);
+        }
+        for (Dependency result : files.getAllDependencies()) {
+            if (result.getVersion() != null) {
+                ModuleComponentIdentifier id = DefaultModuleComponentIdentifier.newId(DefaultModuleIdentifier.newId(result.getGroup(), result.getName()), result.getVersion());
                 workQueue.add(id);
-                logger.debug("Looking up POM from Incoming "+ id);
+                logger.debug("Looking up POM from AllDeps "+ id);
             }
-            for (Dependency result : files.getAllDependencies()) {
-                if (result.getVersion() != null) {
-                    ModuleComponentIdentifier id = DefaultModuleComponentIdentifier.newId(DefaultModuleIdentifier.newId(result.getGroup(), result.getName()), result.getVersion());
-                    workQueue.add(id);
-                    logger.debug("Looking up POM from AllDeps "+ id);
-                }
-            }
-            Set<String> scopes = new HashSet<>();
-            scopes.add("compile");
-            scopes.add("import");
-            scopes.add("runtime");
-            HashSet<ComponentIdentifier> dependencyManagementResolved = new HashSet<>();
-            HashSet<ComponentIdentifier> resolved = new HashSet<>();
-            while (!workQueue.isEmpty()) {
-                ArtifactResolutionResult artifacts = handler
-                        .createArtifactResolutionQuery()
-                        .forComponents(workQueue)
-                        .withArtifacts(MavenModule.class, new Class[]{MavenPomArtifact.class})
-                        .execute();
-                resolved.addAll(workQueue);
-                workQueue.clear();
-                for (ComponentArtifactsResult component : artifacts.getResolvedComponents()) {
-                    if (component.getId() instanceof ModuleComponentIdentifier) {
-                        for (ArtifactResult artifact : component.getArtifacts(MavenPomArtifact.class)) {
-                            logger.debug("Found artifact " + artifact.getId());
-                            artifactCopy.copyToMavenRepository(((ResolvedArtifactResult) artifact));
-                            // resolve maven dependencies to fetch poms
-                            DependencyResolutionResult dependencies = pomDependencyReader.read(((ResolvedArtifactResult) artifact).getFile(), scopes);
-                            workQueue.addAll(dependencies.dependencies().stream().filter(x -> !resolved.contains(x)).toList());
-                            copyBoms(handler,artifactCopy, new HashSet<>(dependencies.dependencyManagement().stream().filter( x -> !dependencyManagementResolved.contains(x)).toList()));
-                            dependencyManagementResolved.addAll(dependencies.dependencyManagement());
-                        }
+        }
+        Set<String> scopes = new HashSet<>();
+        scopes.add("compile");
+        scopes.add("import");
+        scopes.add("runtime");
+        HashSet<ComponentIdentifier> dependencyManagementResolved = new HashSet<>();
+        HashSet<ComponentIdentifier> resolved = new HashSet<>();
+        while (!workQueue.isEmpty()) {
+            ArtifactResolutionResult artifacts = handler
+                    .createArtifactResolutionQuery()
+                    .forComponents(workQueue)
+                    .withArtifacts(MavenModule.class, new Class[]{MavenPomArtifact.class})
+                    .execute();
+            resolved.addAll(workQueue);
+            workQueue.clear();
+            for (ComponentArtifactsResult component : artifacts.getResolvedComponents()) {
+                if (component.getId() instanceof ModuleComponentIdentifier) {
+                    for (ArtifactResult artifact : component.getArtifacts(MavenPomArtifact.class)) {
+                        logger.debug("Found artifact " + artifact.getId());
+                        artifactCopy.copyToMavenRepository(((ResolvedArtifactResult) artifact));
+                        // resolve maven dependencies to fetch poms
+                        DependencyResolutionResult dependencies = pomDependencyReader.read(((ResolvedArtifactResult) artifact).getFile(), scopes);
+                        workQueue.addAll(dependencies.dependencies().stream().filter(x -> !resolved.contains(x)).toList());
+                        copyBoms(handler,artifactCopy, new HashSet<>(dependencies.dependencyManagement().stream().filter( x -> !dependencyManagementResolved.contains(x)).toList()));
+                        dependencyManagementResolved.addAll(dependencies.dependencyManagement());
                     }
                 }
             }
-        }
-        catch (IOException ex) {
-            throw new RuntimeException(ex);
         }
     }
 
