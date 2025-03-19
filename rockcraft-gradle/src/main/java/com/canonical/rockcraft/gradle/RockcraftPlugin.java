@@ -69,7 +69,7 @@ public class RockcraftPlugin implements Plugin<Project> {
             });
         }
         TaskProvider<DependencyExportTask> exportTask = project.getTasks()
-                .register("dependencies-export", DependencyExportTask.class, dependencyOptions);
+                .register(ITaskNames.DEPENDENCIES, DependencyExportTask.class, dependencyOptions);
         exportTask.configure(new Action<DependencyExportTask>() {
             @Override
             public void execute(DependencyExportTask dependencyExportTask) {
