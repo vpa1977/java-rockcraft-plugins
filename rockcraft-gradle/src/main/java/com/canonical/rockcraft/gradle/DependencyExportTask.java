@@ -127,11 +127,12 @@ public abstract class DependencyExportTask extends DefaultTask {
             logger.debug("Looking up POM from Incoming "+ id);
         }
         for (Dependency result : files.getAllDependencies()) {
-            if (result.getVersion() != null) {
-                ModuleComponentIdentifier id = DefaultModuleComponentIdentifier.newId(DefaultModuleIdentifier.newId(result.getGroup(), result.getName()), result.getVersion());
-                workQueue.add(id);
-                logger.debug("Looking up POM from AllDeps "+ id);
+            if (result.getVersion() == null) {
+                continue;
             }
+            ModuleComponentIdentifier id = DefaultModuleComponentIdentifier.newId(DefaultModuleIdentifier.newId(result.getGroup(), result.getName()), result.getVersion());
+            workQueue.add(id);
+            logger.debug("Looking up POM from AllDeps "+ id);
         }
         Set<String> scopes = new HashSet<>(Arrays.asList("compile", "import", "runtime"));
         HashSet<ComponentIdentifier> dependencyManagementResolved = new HashSet<>();
