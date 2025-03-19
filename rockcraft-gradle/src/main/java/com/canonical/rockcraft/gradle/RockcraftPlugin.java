@@ -64,29 +64,26 @@ public class RockcraftPlugin implements Plugin<Project> {
         DependencyOptions dependencyOptions = project.getExtensions().create("dependenciesExport", DependencyOptions.class);
         TaskProvider<DependencyExportTask> exportTask = project.getTasks()
                 .register(ITaskNames.DEPENDENCIES, DependencyExportTask.class, dependencyOptions);
-        exportTask.configure(new Action<DependencyExportTask>() {
-            @Override
-            public void execute(DependencyExportTask dependencyExportTask) {
-                File buildDirectory = dependencyExportTask
-                        .getProject()
-                        .getLayout()
-                        .getBuildDirectory()
-                        .getAsFile().get();
-                Path output = buildDirectory.toPath().resolve(String.format("%s%s%s", IRockcraftNames.BUILD_ROCK_OUTPUT, File.separator, IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT));
-                dependencyExportTask.getOutputDirectory()
-                        .set(output.toFile());
-            }
+        exportTask.configure( dependencyExportTask -> {
+            File buildDirectory = dependencyExportTask
+                    .getProject()
+                    .getLayout()
+                    .getBuildDirectory()
+                    .getAsFile().get();
+            Path output = buildDirectory.toPath().resolve(String.format("%s%s%s", IRockcraftNames.BUILD_ROCK_OUTPUT, File.separator, IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT));
+            dependencyExportTask.getOutputDirectory()
+                    .set(output.toFile());
         });
 
-        TaskProvider<Task> checkTask = project.getTasks().register("checkRockcraft", s -> {
+        TaskProvider<Task> checkTask = project.getTasks().register("checkRockcraft", s ->
             s.doFirst(x -> {
                 try {
                     RockBuilder.checkRockcraft();
                 } catch (IOException | InterruptedException e) {
                     throw new UnsupportedOperationException(e.getMessage());
                 }
-            });
-        });
+            }
+        ));
 
         Set<Task> buildTasks = project.getTasksByName("build", false);
         if (buildTasks.isEmpty())
