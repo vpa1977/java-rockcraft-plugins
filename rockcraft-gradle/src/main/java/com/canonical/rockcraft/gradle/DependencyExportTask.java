@@ -37,7 +37,7 @@ import org.gradle.maven.MavenPomArtifact;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -133,10 +133,7 @@ public abstract class DependencyExportTask extends DefaultTask {
                 logger.debug("Looking up POM from AllDeps "+ id);
             }
         }
-        Set<String> scopes = new HashSet<>();
-        scopes.add("compile");
-        scopes.add("import");
-        scopes.add("runtime");
+        Set<String> scopes = new HashSet<>(Arrays.asList("compile", "import", "runtime"));
         HashSet<ComponentIdentifier> dependencyManagementResolved = new HashSet<>();
         HashSet<ComponentIdentifier> resolved = new HashSet<>();
         while (!workQueue.isEmpty()) {
