@@ -62,12 +62,6 @@ public class RockcraftPlugin implements Plugin<Project> {
             throw new UnsupportedOperationException("Rockcraft is only supported on linux systems");
 
         DependencyOptions dependencyOptions = project.getExtensions().create("dependenciesExport", DependencyOptions.class);
-        if (dependencyOptions.getConfigurations() == null) {
-            dependencyOptions.setConfigurations(new String[]{
-                    "runtimeClasspath",
-                    "testRuntimeClasspath",
-            });
-        }
         TaskProvider<DependencyExportTask> exportTask = project.getTasks()
                 .register(ITaskNames.DEPENDENCIES, DependencyExportTask.class, dependencyOptions);
         exportTask.configure(new Action<DependencyExportTask>() {
