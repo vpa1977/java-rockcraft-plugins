@@ -53,8 +53,7 @@ public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
         for (Object entry : dependsOn) {
             HashSet<Task> tasks = (HashSet<Task>) entry;
             for (Task task : tasks) {
-                for (File f : task.getOutputs().getFiles().getFiles())
-                    artifacts.add(f);
+                artifacts.addAll(task.getOutputs().getFiles().getFiles());
             }
         }
 
