@@ -59,7 +59,7 @@ public class PomDependencyReader {
     /**
      * Read pom file and return dependencies
      * @param pom - POM file
-     * @return ComponentIdenfiers for dependencies
+     * @return ComponentIdentifiers for dependencies
      */
     DependencyResolutionResult read(File pom, Set<String> scopes) {
         HashSet<ComponentIdentifier> toLookup = new HashSet<>();
@@ -73,9 +73,6 @@ public class PomDependencyReader {
             req.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
             ModelBuildingResult builtModel = builder.build(req);
             processModel(scopes, builtModel.getEffectiveModel(), toLookup, bomLookup);
-            for (var x : toLookup) {
-                System.out.println("Workueue "+ x);
-            }
         } catch (ModelBuildingException mbe) {
             logger.warn("Unable to process " + pom, mbe);
             throw new RuntimeException(mbe);

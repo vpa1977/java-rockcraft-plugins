@@ -25,11 +25,14 @@ import java.security.NoSuchAlgorithmException;
  * Utility class to copy a file into Maven repository
  */
 public class MavenArtifactCopy {
+    /**
+     * Output location for the copy operation
+     */
     protected final Path outputLocationRoot;
 
     /**
      * Constructs a new MavenArtifactCopy
-     * @outputLocationRoot - output location
+     * @param outputLocationRoot - output location
      */
     public MavenArtifactCopy(Path outputLocationRoot) {
         this.outputLocationRoot = outputLocationRoot;
