@@ -14,6 +14,7 @@
 package com.canonical.rockcraft.gradle;
 
 import com.canonical.rockcraft.builder.DependencyOptions;
+import com.canonical.rockcraft.builder.IRockcraftNames;
 import com.canonical.rockcraft.builder.RockBuilder;
 import com.canonical.rockcraft.builder.RockcraftOptions;
 import com.google.gradle.osdetector.OsDetector;
@@ -27,6 +28,7 @@ import org.gradle.api.tasks.TaskProvider;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 /**
@@ -60,36 +62,28 @@ public class RockcraftPlugin implements Plugin<Project> {
             throw new UnsupportedOperationException("Rockcraft is only supported on linux systems");
 
         DependencyOptions dependencyOptions = project.getExtensions().create("dependenciesExport", DependencyOptions.class);
-        if (dependencyOptions.getConfigurations() == null) {
-            dependencyOptions.setConfigurations(new String[]{
-                    "runtimeClasspath",
-                    "testRuntimeClasspath",
-            });
-        }
         TaskProvider<DependencyExportTask> exportTask = project.getTasks()
-                .register("dependencies-export", DependencyExportTask.class, dependencyOptions);
-        exportTask.configure(new Action<DependencyExportTask>() {
-            @Override
-            public void execute(DependencyExportTask dependencyExportTask) {
-                File buildDirectory = dependencyExportTask
-                        .getProject()
-                        .getLayout()
-                        .getBuildDirectory()
-                        .getAsFile().get();
-                dependencyExportTask.getOutputDirectory()
-                        .set(new File(buildDirectory, "dependencies"));
-            }
+                .register(ITaskNames.DEPENDENCIES, DependencyExportTask.class, dependencyOptions);
+        exportTask.configure( dependencyExportTask -> {
+            File buildDirectory = dependencyExportTask
+                    .getProject()
+                    .getLayout()
+                    .getBuildDirectory()
+                    .getAsFile().get();
+            Path output = buildDirectory.toPath().resolve(String.format("%s%s%s", IRockcraftNames.BUILD_ROCK_OUTPUT, File.separator, IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT));
+            dependencyExportTask.getOutputDirectory()
+                    .set(output.toFile());
         });
 
-        TaskProvider<Task> checkTask = project.getTasks().register("checkRockcraft", s -> {
+        TaskProvider<Task> checkTask = project.getTasks().register("checkRockcraft", s ->
             s.doFirst(x -> {
                 try {
                     RockBuilder.checkRockcraft();
                 } catch (IOException | InterruptedException e) {
                     throw new UnsupportedOperationException(e.getMessage());
                 }
-            });
-        });
+            }
+        ));
 
         Set<Task> buildTasks = project.getTasksByName("build", false);
         if (buildTasks.isEmpty())

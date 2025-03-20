@@ -22,4 +22,15 @@ public interface IRockcraftNames {
      * Rockcraft project version
      */
     String ROCKCRAFT_VERSION = "version";
+
+    /**
+     * Rockcraft output for build rock
+     */
+    String BUILD_ROCK_OUTPUT = "build-rock";
+
+    /**
+     * Rockcraft output for the project dependencies
+     */
+    String DEPENDENCIES_ROCK_OUTPUT = "dependencies";
+
 }

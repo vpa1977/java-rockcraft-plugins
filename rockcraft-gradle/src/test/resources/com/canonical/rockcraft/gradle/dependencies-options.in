@@ -1,0 +1,27 @@
+plugins {
+    id('application')
+    id('io.github.rockcrafters.rockcraft')
+    id("io.gitlab.plunts.plantuml") version "2.0.0"
+
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependenciesExport {
+    buildScript = false
+    configurations = ["runtimeClasspath"]
+}
+
+dependencies {
+    implementation 'org.springframework.ws:spring-ws-support:2.4.7.RELEASE'
+    testImplementation 'org.springframework.ws:spring-ws-support:2.4.6.RELEASE'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Test'
+    }
+}

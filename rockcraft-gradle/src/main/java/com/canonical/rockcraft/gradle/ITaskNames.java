@@ -13,6 +13,9 @@
  */
 package com.canonical.rockcraft.gradle;
 
+/**
+ * Plugin task names
+ */
 public interface ITaskNames {
     /**
      * Jar task - used to package application jar by 'application' task
@@ -31,4 +34,9 @@ public interface ITaskNames {
      * runtime task is provided by Beryx Runtime plugin
      */
     String RUNTIME = "runtime";
+
+    /**
+     * dependencies-export - used to write dependencies of the project
+     */
+    String DEPENDENCIES = "dependencies-export";
 }

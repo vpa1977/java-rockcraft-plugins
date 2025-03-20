@@ -27,5 +27,14 @@ public class DependencyOptions  {
         this.configurations = configurations;
     }
 
-    private String[] configurations;
+    public boolean isBuildScript() {
+        return buildScript;
+    }
+
+    public void setBuildScript(boolean buildScript) {
+        this.buildScript = buildScript;
+    }
+
+    private String[] configurations = new String[0];
+    private boolean buildScript  = true;
 }
