@@ -14,13 +14,17 @@
 package com.canonical.rockcraft.maven;
 
 import com.canonical.rockcraft.builder.Generator;
+import com.canonical.rockcraft.builder.IRockcraftNames;
 import com.canonical.rockcraft.builder.RockProjectSettings;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
+
+import java.nio.file.Paths;
+
 /**
  * Creates RockProjectSettings from Maven project
  */
-public class RockSettingsFactory {
+public final class RockSettingsFactory {
 
     /**
      * Constructs RockSettingsFactory
@@ -33,10 +37,25 @@ public class RockSettingsFactory {
      * @param project - Maven project
      * @return RockProjectSettings
      */
-    public static final RockProjectSettings createRockProjectSettings(RuntimeInformation info, MavenProject project) {
+    public static RockProjectSettings createRockProjectSettings(RuntimeInformation info, MavenProject project) {
         return new RockProjectSettings(Generator.maven, info.getMavenVersion(), project.getName(),
                 project.getVersion(), project.getBasedir().getAbsoluteFile().toPath(),
-                project.getArtifact().getFile().getParentFile().toPath(),
+                Paths.get(project.getBuild().getDirectory()),
+                false);
+    }
+
+    /**
+     * Creates RockProjectSettings from Gradle project for the build rock
+     *
+     * @param project - gradle project
+     * @return RockProjectSettings
+     */
+    public static RockProjectSettings createBuildRockProjectSettings(RuntimeInformation info, MavenProject project) {
+
+        return new RockProjectSettings(Generator.maven, info.getMavenVersion(),
+                project.getName(), String.valueOf(project.getVersion()),
+                project.getBasedir().getAbsoluteFile().toPath(),
+                Paths.get(project.getBuild().getDirectory()).resolve(IRockcraftNames.BUILD_ROCK_OUTPUT),
                 false);
     }
 }
