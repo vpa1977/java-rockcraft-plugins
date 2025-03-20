@@ -129,6 +129,28 @@ target architectures and the startup service command line.
         rockcraftYaml =  "rockcraft.yaml"
     }
 
+### 3. Export Dependencies
+
+The plugin provides `dependencies-export` task that stores project dependencies into `build/build-rock/dependences`. 
+This is equivalent to [Maven dependency plugin](https://maven.apache.org/plugins/maven-dependency-plugin/)
+[go-offline](https://maven.apache.org/plugins/maven-dependency-plugin/go-offline-mojo.html) goal.
+By default, the task exports all resolvable configurations of the project and buildscript.
+The `dependenciesExport` configuration allows to customize the list of exported configurations.
+
+**Groovy**
+
+    dependenciesExport {
+        buildScript = true
+        configurations = ["runtimeClasspath", "testRuntimeClasspath"]
+    }
+
+**Kotlin**
+
+    dependenciesExport {
+        buildScript = true
+        configurations("runtimeClasspath", "testRuntimeClasspath")
+    }
+
 ## Examples
 
 Please see [examples](examples) to try the sample projects.
