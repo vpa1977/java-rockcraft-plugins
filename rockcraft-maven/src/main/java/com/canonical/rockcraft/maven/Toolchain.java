@@ -10,6 +10,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Arrays;
 
@@ -21,7 +24,7 @@ public final class Toolchain {
     private Toolchain() {
     }
 
-    private static String getToolchainJavacPath(ToolchainManager toolchainManager) {
+    private static String getToolchainJavacPath(ToolchainManager toolchainManager, MavenSession session) {
         if (toolchainManager == null) {
             return null;
         }
@@ -32,8 +35,8 @@ public final class Toolchain {
         return jdkToolchain.findTool("javac");
     }
 
-    private static String getJavacPath(ToolchainManager toolchainManager) {
-        String where = getToolchainJavacPath(toolchainManager);
+    private static String getJavacPath(ToolchainManager toolchainManager, MavenSession session, Log log) {
+        String where = getToolchainJavacPath(toolchainManager, session);
         if (where != null) {
             return where;
         }
@@ -43,12 +46,12 @@ public final class Toolchain {
             return null;
         }
         Path java9Path = Paths.get(javaHome, "bin", "javac");
-        Path java8Path = Paths.get(Paths.get(javaHome).getParent(), "bin", "javac");
+        Path java8Path = Paths.get(Paths.get(javaHome).getParent().toString(), "bin", "javac");
 
         if (Files.isExecutable(java9Path)) {
-            return java9Path;
+            return java9Path.toString();
         } else if (Files.isExecutable(java8Path)) {
-            return java8Path;
+            return java8Path.toString();
         }
         log.warn("java-rockcraft-plugin: please configure Maven toolchain or provide a valid Java Home: "+ javaHome);
         return null;
@@ -64,7 +67,7 @@ public final class Toolchain {
      */
     public static String getToolchainPackage(MavenSession session, ToolchainManager toolchainManager, Log log) {
         try {
-            String tool = getJavacPath(toolchainManager);
+            String tool = getJavacPath(toolchainManager, session, log);
             if (tool == null) {
                 return ToolchainHelper.DEFAULT_JDK;
             }
@@ -72,13 +75,13 @@ public final class Toolchain {
             ToolchainHelper.ToolchainPackage p = ToolchainHelper.getBuildPackage(tool);
             switch (p.getReason()) {
                 case JAVAC_ERROR:
-                    log.warn("java-rockcraft-plugin: Maven Toolchain - javac error {}, please set buildPackage configuration option: {}", tool, p.getRawOutput());
+                    log.warn("java-rockcraft-plugin: Maven Toolchain - javac error " + tool + ", please set buildPackage configuration option: " + p.getRawOutput());
                     break;
                 case JAVAC_VERSION_STRING:
-                    log.warn("java-rockcraft-plugin: Maven Toolchain - unable to parse javac version string, please set buildPackage configuration option: {}", p.getRawOutput());
+                    log.warn("java-rockcraft-plugin: Maven Toolchain - unable to parse javac version string, please set buildPackage configuration option: " + p.getRawOutput());
                     break;
                 case JAVAC_UNSUPPORTED_VERSION_STRING:
-                    log.warn("java-rockcraft-plugin: Maven Toolchain - unsupported version string, please set buildPackage configuration option. {}", p.getRawOutput());
+                    log.warn("java-rockcraft-plugin: Maven Toolchain - unsupported version string, please set buildPackage configuration option. " + p.getRawOutput());
                     break;
             }
             return p.getName();
