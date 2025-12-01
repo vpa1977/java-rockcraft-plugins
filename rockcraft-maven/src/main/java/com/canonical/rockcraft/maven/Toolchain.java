@@ -21,6 +21,39 @@ public final class Toolchain {
     private Toolchain() {
     }
 
+    private static String getToolchainJavacPath(ToolchainManager toolchainManager) {
+        if (toolchainManager == null) {
+            return null;
+        }
+        org.apache.maven.toolchain.Toolchain jdkToolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);
+        if (jdkToolchain == null) {
+            return null;
+        }
+        return jdkToolchain.findTool("javac");
+    }
+
+    private static String getJavacPath(ToolchainManager toolchainManager) {
+        String where = getToolchainJavacPath(toolchainManager);
+        if (where != null) {
+            return where;
+        }
+        String javaHome = System.getProperty("java.home");
+        if (javaHome == null || javaHome.isEmpty()) {
+            log.warn("java-rockcraft-plugin: please configure Maven toolchain or provide a valid Java Home.");
+            return null;
+        }
+        Path java9Path = Paths.get(javaHome, "bin", "javac");
+        Path java8Path = Paths.get(Paths.get(javaHome).getParent(), "bin", "javac");
+
+        if (Files.isExecutable(java9Path)) {
+            return java9Path;
+        } else if (Files.isExecutable(java8Path)) {
+            return java8Path;
+        }
+        log.warn("java-rockcraft-plugin: please configure Maven toolchain or provide a valid Java Home: "+ javaHome);
+        return null;
+    }
+
     /**
      * Gets the toolchain settings for the project
      *
@@ -31,21 +64,11 @@ public final class Toolchain {
      */
     public static String getToolchainPackage(MavenSession session, ToolchainManager toolchainManager, Log log) {
         try {
-            if (toolchainManager == null) {
-                log.warn("java-rockcraft-plugin: Maven Toolchain manager is not present.");
-                return ToolchainHelper.DEFAULT_JDK;
-            }
-            System.err.println("---- has toolchain manager --- ");
-            org.apache.maven.toolchain.Toolchain jdkToolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);
-            if (jdkToolchain == null) {
-                log.warn("java-rockcraft-plugin: Maven Toolchain is not configured. Please configure toolchain or use buildPackage configuration");
-                return ToolchainHelper.DEFAULT_JDK;
-            }
-            String tool = jdkToolchain.findTool("javac");
+            String tool = getJavacPath(toolchainManager);
             if (tool == null) {
-                log.warn("java-rockcraft-plugin: Maven Toolchain - javac tool is not found.");
                 return ToolchainHelper.DEFAULT_JDK;
             }
+
             ToolchainHelper.ToolchainPackage p = ToolchainHelper.getBuildPackage(tool);
             switch (p.getReason()) {
                 case JAVAC_ERROR:
