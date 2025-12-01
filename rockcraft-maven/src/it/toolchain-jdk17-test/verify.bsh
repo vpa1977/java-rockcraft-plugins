@@ -1,0 +1,33 @@
+import java.io.*;
+
+// Check that the rockcraft.yaml file was created
+File target = new File(basedir, "target");
+
+File[] files = target.listFiles(new FilenameFilter(){
+    public boolean accept(File dir, String name) {
+        return name.equals("rockcraft.yaml");
+    }
+});
+
+if (files == null || files.length == 0) {
+    throw new FileNotFoundException("Could not find generated rockcraft.yaml file in " + target);
+}
+
+// Read the file and check for openjdk-17-jdk
+File rockcraftYaml = files[0];
+BufferedReader reader = new BufferedReader(new FileReader(rockcraftYaml));
+String line;
+boolean foundJdk17 = false;
+while ((line = reader.readLine()) != null) {
+    if (line.contains("openjdk-17-jdk")) {
+        foundJdk17 = true;
+        break;
+    }
+}
+reader.close();
+
+if (!foundJdk17) {
+    throw new RuntimeException("Expected to find openjdk-17-jdk in rockcraft.yaml, but it was not found.");
+}
+
+System.out.println("SUCCESS: Toolchain correctly detected JDK 17 and set build-packages to openjdk-17-jdk");

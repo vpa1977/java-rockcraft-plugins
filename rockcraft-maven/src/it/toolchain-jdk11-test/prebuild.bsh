@@ -1,0 +1,21 @@
+import java.io.*;
+
+// Copy the toolchains.xml file to ~/.m2/ for this test
+File toolchainsSource = new File(basedir, "toolchains.xml");
+File toolchainsTarget = new File(System.getProperty("user.home") + "/.m2/toolchains.xml");
+
+// Ensure the directory exists
+toolchainsTarget.getParentFile().mkdirs();
+
+// Copy the file using streams
+FileInputStream fis = new FileInputStream(toolchainsSource);
+FileOutputStream fos = new FileOutputStream(toolchainsTarget);
+byte[] buffer = new byte[1024];
+int length;
+while ((length = fis.read(buffer)) > 0) {
+    fos.write(buffer, 0, length);
+}
+fis.close();
+fos.close();
+
+System.out.println("Copied toolchains.xml to " + toolchainsTarget);
