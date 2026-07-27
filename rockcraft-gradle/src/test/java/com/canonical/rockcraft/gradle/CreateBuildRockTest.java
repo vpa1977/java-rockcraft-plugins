@@ -41,7 +41,7 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
     @SuppressWarnings("unchecked")
     public void testExport() throws IOException {
         writeString(getBuildFile(), getResource("dependencies-build.in"));
-        BuildResult result = runBuild("build-build-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.BUILD_BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         // the task needs to run export dependencies
         Path springBoot = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/2.7.9/spring-boot-2.7.9.jar");
@@ -84,10 +84,10 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
     @Test
     public void testBuildrockcraftOptions() throws IOException {
         writeString(getBuildFile(), getResource("build-rockcraft-options.in"));
-        File buildRock = new File(getProjectDir(), "build-rock");
+        File buildRock = new File(getProjectDir(), IRockcraftNames.BUILD_ROCK_OUTPUT);
         buildRock.mkdirs();
         writeString(new File(buildRock, "rockcraft.yaml"), "name: the-rock");
-        BuildResult result = runBuild("create-build-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.CREATE_BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", IRockcraftNames.BUILD_ROCK_OUTPUT, IRockcraftNames.ROCKCRAFT_YAML).toFile())) {
             Yaml yaml = new Yaml();
@@ -99,10 +99,10 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
     @Test
     public void testBuildRockcraftPartMerge() throws IOException {
         writeString(getBuildFile(), getResource("build-rockcraft-options.in"));
-        File buildRock = new File(getProjectDir(), "build-rock");
+        File buildRock = new File(getProjectDir(), IRockcraftNames.BUILD_ROCK_OUTPUT);
         buildRock.mkdirs();
         writeString(new File(buildRock, "rockcraft.yaml"), getResource("build-rockcraft.in"));
-        BuildResult result = runBuild("create-build-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.CREATE_BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", IRockcraftNames.BUILD_ROCK_OUTPUT, IRockcraftNames.ROCKCRAFT_YAML).toFile())) {
             Yaml yaml = new Yaml();
@@ -119,7 +119,7 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
     @Test
     public void testToolchainOption() throws IOException {
         writeString(getBuildFile(), getResource("toolchain-options.in"));
-        BuildResult result = runBuild("create-build-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.CREATE_BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", IRockcraftNames.BUILD_ROCK_OUTPUT, IRockcraftNames.ROCKCRAFT_YAML).toFile())) {
             Yaml yaml = new Yaml();

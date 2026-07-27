@@ -68,4 +68,8 @@ public interface ITaskNames {
      * checkRockcraft - verifies that rockcraft is installed
      */
     String CHECK_ROCKCRAFT = "checkRockcraft";
+    /**
+     * nativeCompile - GraalVM native image task
+     */
+    String NATIVE_COMPILE = "nativeCompile";
 }

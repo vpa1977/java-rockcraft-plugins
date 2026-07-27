@@ -46,7 +46,7 @@ public class RockcraftFileTest extends BaseRockcraftTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testCreateRockWithoutService() throws IOException {
-        BuildResult result = runBuild("create-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.CREATE_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             Yaml yaml = new Yaml();
@@ -58,7 +58,7 @@ public class RockcraftFileTest extends BaseRockcraftTest {
             Map<String, Object> services = (Map<String, Object>)parsed.get("services");
             assertNull(services);
         }
-        result = runBuild("build-rock", "--stacktrace");
+        result = runBuild(ITaskNames.BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 }

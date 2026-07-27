@@ -33,7 +33,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
     void buildRockTest() {
-        BuildResult result = runBuild("build-rock");
+        BuildResult result = runBuild(ITaskNames.BUILD_ROCK);
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
@@ -45,7 +45,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
      */
     @Test
     void pushRockTest() throws IOException, InterruptedException {
-        BuildResult result = runBuild("push-rock");
+        BuildResult result = runBuild(ITaskNames.PUSH_ROCK);
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         String containerName = projectDir.getName();
         ProcessBuilder pb = new ProcessBuilder("docker", "image", "rm", containerName);
@@ -56,7 +56,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
 
     @Test
     void validRockcraftYaml() throws IOException {
-        runBuild("create-rock");
+        runBuild(ITaskNames.CREATE_ROCK);
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             Yaml yaml = new Yaml();
             Object parsedRaw = yaml.load(is);
@@ -76,7 +76,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     @Test
     void buildRockJava11Test() throws IOException {
         writeString(getBuildFile(), getResource("build-rock-java-11.in"));
-        BuildResult result = runBuild("build-rock");
+        BuildResult result = runBuild(ITaskNames.BUILD_ROCK);
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
@@ -84,7 +84,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     void rockcraftPluginOptions() throws IOException {
         writeString(getBuildFile(), getResource("rockcraft-plugin-options.in"));
         writeString(new File(getProjectDir(), "readme.txt"), getResource("readme.txt"));
-        runBuild("create-rock", "--stacktrace");
+        runBuild(ITaskNames.CREATE_ROCK, "--stacktrace");
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             Yaml yaml = new Yaml();
             Map<String, Object> parsed = yaml.load(is);
@@ -95,7 +95,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     @Test
     void testArchitecture() throws IOException {
         writeString(getBuildFile(), getResource("architecture.in"));
-        runBuild("jar", "create-rock");
+        runBuild(ITaskNames.JAR, ITaskNames.CREATE_ROCK);
 
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             Yaml yaml = new Yaml();
@@ -109,12 +109,12 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     @Test
     void onlySingleRockExists() throws IOException {
         writeString(getBuildFile(), getResource("single-rock1.in"));
-        runBuild("build-rock");
+        runBuild(ITaskNames.BUILD_ROCK);
         File output = Paths.get(getProjectDir().getAbsolutePath(), "build", "rock").toFile();
         assertEquals(1, output.list((dir, name) -> name.endsWith("rock")).length);
 
         writeString(getBuildFile(), getResource("single-rock2.in"));
-        runBuild("build-rock");
+        runBuild(ITaskNames.BUILD_ROCK);
         String[] rocks = output.list((dir, name) -> name.endsWith("rock"));
         assertEquals(1, rocks.length);
         assertTrue(rocks[0].contains("0.02updated"));
@@ -124,7 +124,7 @@ class RockcraftPluginTest extends BaseRockcraftTest {
     void testAllOptions() throws IOException {
         writeString(new File(getProjectDir(), "README.md"), "test");
         writeString(getBuildFile(), getResource("alloptions.in"));
-        BuildResult result = runBuild("build-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 }

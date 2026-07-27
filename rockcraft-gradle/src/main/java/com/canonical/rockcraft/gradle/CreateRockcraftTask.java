@@ -59,7 +59,7 @@ public abstract class CreateRockcraftTask extends AbstractRockcraftTask {
         HashSet<File> artifacts = new HashSet<>();
 
         if (getOptions().isNativeImage()) {
-            Task nativeCompileTask = getProject().getTasks().getByName("nativeCompile");
+            Task nativeCompileTask = getProject().getTasks().getByName(ITaskNames.NATIVE_COMPILE);
             File nativeDir = nativeCompileTask.getOutputs().
                     getFiles().getFiles().
                     stream().
