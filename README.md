@@ -20,7 +20,11 @@ The plugins create the following parts in `rockcraft.yaml`:
 
 The rock is built using the base `bare` image.
 
-The generated `rockraft.yaml` can be overridden by providing `rockcraftYaml` configuration property to the plugin. The plugin merges the generated `rockcraft.yaml` and the override one.
+To override the generated `rockcraft.yaml`, provide a `rockcraftYaml` plugin configuration property. The plugin will merge your custom configuration into the generated file.
+
+If `rockcraftYaml` isn't set, the plugin checks these default locations for an override file:
+* Application rock: `rock/rockcraft.yaml`
+* Build rock: `build-rock/rockcraft.yaml`
 
 # Configuration Options
 
