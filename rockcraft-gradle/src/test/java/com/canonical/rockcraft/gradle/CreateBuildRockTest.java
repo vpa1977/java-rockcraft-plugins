@@ -132,4 +132,11 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
             assertEquals("openjdk-17-jdk-headless", packages.get(0));
         }
     }
+
+    @Test
+    public void testBuildBuildRockSkippedWithoutRockcraftProperty() throws IOException {
+        writeString(getBuildFile(), getResource("build-build-rock-no-rockcraft.in"));
+        BuildResult result = runBuild(ITaskNames.BUILD_BUILD_ROCK, "--stacktrace");
+        assertEquals(TaskOutcome.SKIPPED, result.task(":" + ITaskNames.BUILD_BUILD_ROCK).getOutcome());
+    }
 }
