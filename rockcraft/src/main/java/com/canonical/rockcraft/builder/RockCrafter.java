@@ -72,7 +72,7 @@ public class RockCrafter extends AbstractRockCrafter {
 
         Yaml yaml = YamlFactory.createYaml();
 
-        Map<String, Object> rockcraftYaml = loadRockcraftSnippet(yaml);
+        Map<String, Object> rockcraftYaml = loadRockcraftSnippet(yaml, "rock/rockcraft.yaml");
 
         Map<String, Object> rockParts = (Map<String, Object>) rockcraftYaml.get(PARTS);
         Map<String, Object> rockServices = (Map<String, Object>) rockcraftYaml.get("services");
