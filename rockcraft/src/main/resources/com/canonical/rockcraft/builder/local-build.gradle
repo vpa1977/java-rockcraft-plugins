@@ -6,6 +6,12 @@ gradle.beforeSettings { settings ->
         maven {
             url=localRepo
         }
+        whenObjectAdded { repo ->
+            if (repo instanceof MavenArtifactRepository
+                    && repo.url.toString() != localRepo) {
+                repo.url = localRepo
+            }
+        }
     }
 }
 
