@@ -41,6 +41,7 @@ import java.util.Set;
  */
 public class RockcraftPlugin implements Plugin<Project> {
 
+    public static final String HAS_ROCKCRAFT = "io.github.rockcrafters.rockcraft.has_rockcraft";
     private final Logger logger = Logging.getLogger(RockcraftPlugin.class);
 
     /**
@@ -98,22 +99,25 @@ public class RockcraftPlugin implements Plugin<Project> {
                 .register(ITaskNames.PUSH_BUILD_ROCK, PushBuildRockcraftTask.class, buildOptions);
         project.getTasks()
                 .getByName(ITaskNames.PUSH_BUILD_ROCK)
-                .dependsOn(project.getTasksByName(ITaskNames.BUILD_BUILD_ROCK, false));
+                .dependsOn(project.getTasksByName(ITaskNames.BUILD_BUILD_ROCK, false))
+                .onlyIf(task -> hasRockcraft(project));
 
 
         TaskProvider<Task> checkTask = project.getTasks().register(ITaskNames.CHECK_ROCKCRAFT, s -> {
             s.doFirst(x -> {
                 try {
                     RockBuilder.checkRockcraft();
+                    project.getExtensions().getExtraProperties().set(HAS_ROCKCRAFT, true);
                 } catch (IOException | InterruptedException e) {
-                    throw new UnsupportedOperationException(e.getMessage());
+                    logger.warn(e.getMessage());
                 }
             });
         });
 
         project.getTasks()
                 .getByName(ITaskNames.BUILD_BUILD_ROCK)
-                .dependsOn(checkTask);
+                .dependsOn(checkTask)
+                .onlyIf(task -> hasRockcraft(project));
 
         Set<Task> tasks;
         String deploymentTask = options.getDistTask();
@@ -142,17 +146,27 @@ public class RockcraftPlugin implements Plugin<Project> {
         TaskProvider<CreateRockcraftTask> create = project.getTasks().register(ITaskNames.CREATE_ROCK, CreateRockcraftTask.class, options);
 
         project.getTasks().getByName(ITaskNames.PUSH_ROCK)
-                .dependsOn(build);
+                .dependsOn(build)
+                .onlyIf(task -> hasRockcraft(project));
 
         project.getTasks().getByName(ITaskNames.BUILD_ROCK)
                 .dependsOn(create)
-                        .dependsOn(checkTask);
+                        .dependsOn(checkTask)
+                        .onlyIf(task -> hasRockcraft(project));
 
         project.getTasks().getByName(ITaskNames.BUILD_ROCK)
                 .dependsOn(create);
 
         project.getTasks().getByName(ITaskNames.CREATE_ROCK)
                 .dependsOn(tasks);
+    }
+
+    private boolean hasRockcraft(Project project) {
+        return Boolean.TRUE.equals(project
+                .getExtensions()
+                .getExtraProperties()
+                .getProperties()
+                .get(HAS_ROCKCRAFT));
     }
 
     private boolean isNativeCompile(Project project) {
