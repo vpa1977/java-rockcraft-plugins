@@ -96,18 +96,27 @@ public abstract class AbstractRockCrafter {
         return rockcraft;
     }
 
-    protected Map<String, Object> loadRockcraftSnippet(Yaml yaml) throws IOException {
+    protected Map<String, Object> loadRockcraftSnippet(Yaml yaml, String defaultPath) throws IOException {
         Map<String, Object> rockcraftYaml = new HashMap<>();
+        File rockcraftFile = null;
         if (getOptions().getRockcraftYaml() != null) {
-            File rockcraftFile = getSettings().getProjectPath().resolve(getOptions().getRockcraftYaml()).toFile();
+            rockcraftFile = getSettings().getProjectPath().resolve(getOptions().getRockcraftYaml()).toFile();
             if (!rockcraftFile.exists()) {
                 throw new UnsupportedOperationException("Rockcraft file " + rockcraftFile + " does not exist.\n");
             }
-            try (FileInputStream is = new FileInputStream(rockcraftFile)) {
-                rockcraftYaml = yaml.load(is);
-                if (rockcraftYaml == null) {
-                    throw new UnsupportedOperationException("Rockcraft file "+ rockcraftFile + " can not be parsed.\n");
-                }
+        }
+        // try the default location
+        if (rockcraftFile == null) {
+            rockcraftFile = getSettings().getProjectPath().resolve(defaultPath).toFile();
+            if (!rockcraftFile.exists()) {
+                return rockcraftYaml;
+            }
+        }
+
+        try (FileInputStream is = new FileInputStream(rockcraftFile)) {
+            rockcraftYaml = yaml.load(is);
+            if (rockcraftYaml == null) {
+                throw new UnsupportedOperationException("Rockcraft file "+ rockcraftFile + " can not be parsed.\n");
             }
         }
         return rockcraftYaml;

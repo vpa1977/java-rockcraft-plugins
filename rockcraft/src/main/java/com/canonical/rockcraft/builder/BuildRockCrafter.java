@@ -71,7 +71,7 @@ public class BuildRockCrafter extends AbstractRockCrafter {
         String name = (String) commonSection.get("name");
         commonSection.put("name", "build-" + name);
 
-        Map<String, Object> snippetRockcraft = loadRockcraftSnippet(yaml);
+        Map<String, Object> snippetRockcraft = loadRockcraftSnippet(yaml, "build-rock/rockcraft.yaml");
         Map<String, Object> snippetParts = (Map<String, Object>) snippetRockcraft.get(PARTS);
         snippetRockcraft.remove(PARTS);
 

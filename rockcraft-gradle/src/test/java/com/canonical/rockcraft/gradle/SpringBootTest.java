@@ -49,7 +49,7 @@ public class SpringBootTest extends BaseRockcraftTest {
         GradleRunner runner = GradleRunner.create();
         runner.forwardOutput();
         runner.withPluginClasspath();
-        runner.withArguments("build-rock", "--stacktrace");
+        runner.withArguments(ITaskNames.BUILD_ROCK, "--stacktrace");
         runner.withDebug(true);
         runner.withProjectDir(projectDir);
         runner.withGradleVersion("8.14.2");

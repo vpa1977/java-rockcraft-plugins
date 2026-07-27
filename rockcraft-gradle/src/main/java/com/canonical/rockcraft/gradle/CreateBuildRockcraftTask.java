@@ -48,7 +48,7 @@ public abstract class CreateBuildRockcraftTask extends DefaultTask {
         super();
         this.options = options;
         if (options.getBuildGoals().length == 0) {
-            options.setBuildGoals(new String[]{"build", "-x","checkRockcraft"});
+            options.setBuildGoals(new String[]{"build"});
         }
     }
 

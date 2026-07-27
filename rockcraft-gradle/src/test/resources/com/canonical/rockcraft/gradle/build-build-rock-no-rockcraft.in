@@ -1,0 +1,29 @@
+plugins {
+    id('application')
+    id('io.github.rockcrafters.rockcraft')
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Test'
+    }
+}
+
+// Allow checkRockcraft to run, then clear the project property it sets so we
+// can verify build-build-rock is skipped when the property is absent.
+tasks.register('clearRockcraftProperty') {
+    dependsOn 'checkRockcraft'
+    doLast {
+        project.ext.set('io.github.rockcrafters.rockcraft.has_rockcraft', false)
+    }
+}
+
+tasks.named('build-build-rock') {
+    dependsOn 'clearRockcraftProperty'
+}

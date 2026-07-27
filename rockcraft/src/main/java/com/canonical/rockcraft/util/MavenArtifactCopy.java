@@ -75,6 +75,10 @@ public class MavenArtifactCopy {
         Path outputLocation = getDestinationPath(group, name, version);
         outputLocation.toFile().mkdirs();
         Path destinationFile = outputLocation.resolve(f.getName());
+        if (Files.exists(destinationFile)) {
+            // skip existing files, maven repository is read-only
+            return;
+        }
         Files.copy(f.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
         writeDigest(destinationFile);
     }
