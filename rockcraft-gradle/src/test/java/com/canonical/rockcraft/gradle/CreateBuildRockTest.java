@@ -97,6 +97,7 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testBuildRockcraftPartMerge() throws IOException {
         writeString(getBuildFile(), getResource("build-rockcraft-options.in"));
         File buildRock = new File(getProjectDir(), "build-rock");
@@ -117,6 +118,7 @@ public class CreateBuildRockTest extends BaseRockcraftTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testToolchainOption() throws IOException {
         writeString(getBuildFile(), getResource("toolchain-options.in"));
         BuildResult result = runBuild("create-build-rock", "--stacktrace");
