@@ -33,7 +33,7 @@ public class DependencyExportTest extends BaseRockcraftTest {
     @Test
     public void testDefaultExport() {
         // The project should export dependencies without any dependant libraries
-        BuildResult result = runBuild("dependencies-export", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.DEPENDENCIES, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         Path dependencies = projectDir.toPath().resolve("build/"+ IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT);
         assertEquals(0, dependencies.toFile().list().length);
@@ -43,7 +43,7 @@ public class DependencyExportTest extends BaseRockcraftTest {
     public void testExportWithOptions() throws IOException {
         writeString(getBuildFile(), getResource("dependencies-options.in"));
         writeString(getSettingsFile(), getResource("settings.in"));
-        BuildResult result = runBuild("dependencies-export", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.DEPENDENCIES, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
 
         // plugin pom is not downloaded
@@ -68,7 +68,7 @@ public class DependencyExportTest extends BaseRockcraftTest {
         // tests that parent pom for the artifact and
         // parent pom for the used bom are downloaded
         writeString(getBuildFile(), getResource("dependencies-parent.in"));
-        BuildResult result = runBuild("dependencies-export", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.DEPENDENCIES, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
 
         Path springBootWsParent = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/ws/spring-ws/2.4.7.RELEASE/spring-ws-2.4.7.RELEASE.pom");
@@ -88,7 +88,7 @@ public class DependencyExportTest extends BaseRockcraftTest {
         // plugins are downloaded
 
         writeString(getBuildFile(), getResource("dependencies-build.in"));
-        BuildResult result = runBuild("dependencies-export", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.DEPENDENCIES, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         // leaf jar and pom are downloaded
         Path springBoot = projectDir.toPath().resolve("build/" + IRockcraftNames.BUILD_ROCK_OUTPUT + "/" + IRockcraftNames.DEPENDENCIES_ROCK_OUTPUT + "/org/springframework/boot/spring-boot/2.7.9/spring-boot-2.7.9.jar");

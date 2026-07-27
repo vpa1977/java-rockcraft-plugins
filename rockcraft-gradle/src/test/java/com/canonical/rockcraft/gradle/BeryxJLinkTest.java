@@ -38,14 +38,14 @@ public class BeryxJLinkTest extends BaseRockcraftTest {
      */
     @Test
     public void testBeryxJlinkBuild() {
-        BuildResult result = runBuild("build-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.BUILD_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testBeryxJlinkRockcraft() throws IOException {
-        BuildResult result = runBuild("create-rock", "--stacktrace");
+        BuildResult result = runBuild(ITaskNames.CREATE_ROCK, "--stacktrace");
         assertEquals(TaskOutcome.SUCCESS, getLastTaskOutcome(result)); // the build needs to succeed
         try (FileInputStream is = new FileInputStream(Paths.get(getProjectDir().getAbsolutePath(), "build", "rockcraft.yaml").toFile())) {
             Yaml yaml = new Yaml();
